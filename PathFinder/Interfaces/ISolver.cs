@@ -11,6 +11,7 @@ namespace PathFinder.Interfaces
 
         IList<T> GetPath();
         void Tick();
+        void Cancel();
     }
 
     public enum SolverState

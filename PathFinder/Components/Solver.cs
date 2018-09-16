@@ -21,6 +21,13 @@ namespace PathFinder.Components
             OriginNode = GetNode(origin);
         }
 
+        public void Cancel()
+        {
+            State = SolverState.Failed;
+        }
+        public abstract void Tick();
+        public abstract IList<T> GetPath();
+
         protected Node<T> GetNode(T obj) => GetNode(obj, true);
         protected Node<T> GetNode(T obj, bool performToCost)
         {
@@ -36,8 +43,5 @@ namespace PathFinder.Components
             node.TotalCost = node.FromCost + node.ToCost;
             return node;
         }
-
-        public abstract void Tick();
-        public abstract IList<T> GetPath();
     }
 }

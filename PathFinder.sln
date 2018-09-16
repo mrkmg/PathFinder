@@ -1,10 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathFinder", "PathFinder\PathFinder.csproj", "{9369AE15-4BC4-44FB-B17A-FF7643A8E687}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinder", "PathFinder\PathFinder.csproj", "{9369AE15-4BC4-44FB-B17A-FF7643A8E687}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathFinderTest", "PathFinderTest\PathFinderTest.csproj", "{11551E4D-764E-44E1-92FE-36F0F628C02A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderTest", "PathFinderTest\PathFinderTest.csproj", "{11551E4D-764E-44E1-92FE-36F0F628C02A}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -18,5 +24,14 @@ Global
 		{11551E4D-764E-44E1-92FE-36F0F628C02A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11551E4D-764E-44E1-92FE-36F0F628C02A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11551E4D-764E-44E1-92FE-36F0F628C02A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C4D5C0C7-A128-42EA-B93E-E1BFD719DF5B}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

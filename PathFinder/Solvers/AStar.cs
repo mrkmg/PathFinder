@@ -8,9 +8,9 @@ namespace PathFinder.Solvers
 {
     public class AStar<T> : Solver<T> where T : INode
     {
-        public IEnumerable<T> OpenNodes => _openNodes.Select(n => n.Obj);
-        public IEnumerable<T> ClosedNodes => _closedNodes.Select(n => n.Obj);
-        public T CurrentNode => _currentNode.Obj;
+        public IEnumerable<T> Open => _openNodes.Select(n => n.Obj);
+        public IEnumerable<T> Closed => _closedNodes.Select(n => n.Obj);
+        public T Current => _currentNode.Obj;
         public double Thoroughness
         {
             get => _thoroughness;
@@ -62,12 +62,18 @@ namespace PathFinder.Solvers
 
         private void SetCurrentNode()
         {
-            var minCost = _openNodes.Min(n => n.TotalCost);
-            _currentNode = _openNodes.Where(n => n.TotalCost == minCost).OrderBy(n => n.ToCost).First();
+            _currentNode = _openNodes.Aggregate(LowestNodeAggregateAlt);
 
             _openNodes.Remove(_currentNode);
             _closedNodes.Add(_currentNode);
         }
+
+        private static Node<T> LowestNodeAggregateAlt(Node<T> lNode, Node<T> tNode) =>
+            tNode.TotalCost > lNode.TotalCost ? lNode : tNode;
+
+        private static Node<T> LowestNodeAggregate(Node<T> lNode, Node<T> tNode) => tNode.TotalCost > lNode.TotalCost ||
+                                                                                    Math.Abs(tNode.TotalCost - lNode.TotalCost) < 1 && 
+                                                                                    tNode.ToCost > lNode.ToCost ? lNode : tNode;
 
         private void ProcessNeighbors()
         {
