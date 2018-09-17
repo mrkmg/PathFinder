@@ -45,7 +45,7 @@ namespace PathFinderTest.Sequencer
             _start = start;
             _end = end;
             _inc = inc;
-            Current = _start;
+            _isFirst = true;
         }
 
         public bool MoveNext()
@@ -106,6 +106,7 @@ namespace PathFinderTest.Sequencer
             _end = end;
             _inc = inc;
             Current = _start;
+            _isFirst = true;
         }
 
         public bool MoveNext()
@@ -166,6 +167,7 @@ namespace PathFinderTest.Sequencer
             _end = end;
             _inc = inc;
             Current = _start;
+            _isFirst = true;
         }
 
         public bool MoveNext()
@@ -226,6 +228,7 @@ namespace PathFinderTest.Sequencer
             _end = end;
             _inc = inc;
             Current = _start;
+            _isFirst = true;
         }
 
         public bool MoveNext()
@@ -286,6 +289,7 @@ namespace PathFinderTest.Sequencer
             _end = end;
             _inc = inc;
             Current = _start;
+            _isFirst = true;
         }
 
         public bool MoveNext()
@@ -346,6 +350,7 @@ namespace PathFinderTest.Sequencer
             _end = end;
             _inc = inc;
             Current = _start;
+            _isFirst = true;
         }
 
         public bool MoveNext()

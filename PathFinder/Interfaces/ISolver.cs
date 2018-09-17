@@ -8,8 +8,8 @@ namespace PathFinder.Interfaces
         int Ticks { get; }
         T Origin { get; }
         T Destination { get; }
+        IList<T> Path { get; }
 
-        IList<T> GetPath();
         void Tick();
         void Cancel();
     }

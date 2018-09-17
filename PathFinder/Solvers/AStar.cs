@@ -8,9 +8,24 @@ namespace PathFinder.Solvers
 {
     public class AStar<T> : Solver<T> where T : INode
     {
+        /// <summary>
+        /// A List of nodes which still need to be checked
+        /// </summary>
         public IEnumerable<T> Open => _openNodes.Select(n => n.Obj);
+
+        /// <summary>
+        /// A list of nodes which have already been checked
+        /// </summary>
         public IEnumerable<T> Closed => _closedNodes.Select(n => n.Obj);
+
+        /// <summary>
+        /// The last node to be checked
+        /// </summary>
         public T Current => _currentNode.Obj;
+
+        /// <summary>
+        /// How thorough the search should be. Should be a value between 0 and 1.
+        /// </summary>
         public double Thoroughness
         {
             get => _thoroughness;
@@ -21,16 +36,26 @@ namespace PathFinder.Solvers
             }
         }
 
+        public double Cost => DestinationNode.FromCost;
+
         private readonly HashSet<Node<T>> _openNodes = new HashSet<Node<T>>();
         private readonly HashSet<Node<T>> _closedNodes = new HashSet<Node<T>>();
         private double _thoroughness = 0.5;
         private Node<T> _currentNode;
 
-        public AStar(T originNode, T destinationNode) : base(originNode, destinationNode)
+        /// <summary>
+        /// Creates a solver using the A* method
+        /// </summary>
+        /// <param name="origin">The origin</param>
+        /// <param name="destination">The destination</param>
+        public AStar(T origin, T destination) : base(origin, destination)
         {
             _openNodes.Add(OriginNode);
         }
 
+        /// <summary>
+        /// Check one node
+        /// </summary>
         public override void Tick()
         {
             Ticks++;
@@ -47,17 +72,15 @@ namespace PathFinder.Solvers
             }
 
             SetCurrentNode();
-            ProcessNeighbors();
-        }
 
-        public override IList<T> GetPath()
-        {
-            if (State != SolverState.Success)
+            if (_currentNode == DestinationNode)
             {
-                throw new Exception("Path not found.");
+                State = SolverState.Success;
             }
-
-            return BuildPath();
+            else
+            {
+                ProcessNeighbors();
+            }
         }
 
         private void SetCurrentNode()
@@ -102,14 +125,9 @@ namespace PathFinder.Solvers
                 neighbor.FromCost = fromCost;
                 neighbor.TotalCost = totalCost;
             }
-
-            if (neighbor.Equals(DestinationNode))
-            {
-                State = SolverState.Success;
-            }
         }
 
-        private List<T> BuildPath()
+        protected override IList<T> BuildPath()
         {
             var path = new List<T> { DestinationNode.Obj };
             var cNode = DestinationNode;
