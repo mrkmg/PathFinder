@@ -5,7 +5,7 @@ using PathFinder.Interfaces;
 
 namespace PathFinderTest.Map
 {
-    class Position : INode
+    public class Position : INode
     {
         public readonly int W;
         public readonly int X;
@@ -25,11 +25,11 @@ namespace PathFinderTest.Map
 
         public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (23 + Y.GetHashCode());
 
-        public double RealCostTo(INode other) => other is Position n ? Math.Abs(W - n.W) * 5 + W : double.MaxValue;
+        public double RealCostTo(INode other) => other is Position n ? Math.Abs(W - n.W) * 5 + 1 : double.MaxValue;
 
         public double EstimatedCostTo(INode other)
             => !(other is Position n) ? double.MaxValue :
-                World.EstimateType == EstimateType.Square ? EstimateDistanceToSq(n) * 5 : EstimateDistanceToAbs(n) * 5;
+                World.EstimateType == EstimateType.Square ? EstimateDistanceToSq(n): EstimateDistanceToAbs(n);
 
         private double EstimateDistanceToAbs(Position n) => Math.Abs(n.X - X) + Math.Abs(n.Y - Y);
         private double EstimateDistanceToSq(Position n) => Math.Sqrt(Math.Pow(n.X - X, 2) + Math.Pow(n.Y - Y, 2));

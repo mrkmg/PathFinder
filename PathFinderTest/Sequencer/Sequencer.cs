@@ -1,381 +1,124 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PathFinderTest.Sequencer
 {
     public static class SequenceBuilder
     {
-        public static IEnumerable<short> Build(short end, short start = 0, short inc = 1) => new SequencerShort(start, end, inc);
-        public static IEnumerable<int> Build(int end, int start = 0, int inc = 1) => new SequencerInt(start, end, inc);
-        public static IEnumerable<float> Build(float end, float start = 0, float inc = 1) => new SequencerFloat(start, end, inc);
-        public static IEnumerable<long> Build(long end, long start, long inc = 1) => new SequencerLong(end, start, inc);
-        public static IEnumerable<double> Build(double end, double start = 1, double inc = 1) => new SequencerDouble(start, end, inc);
-        public static IEnumerable<decimal> Build(decimal end, decimal start = 1, decimal inc = 1) => new SequencerDecimal(start, end, inc);
-    }
-
-    public class SequencerShort : IEnumerable<short>
-    {
-        private readonly short _start;
-        private readonly short _end;
-        private readonly short _inc;
-
-        public SequencerShort(short start, short end, short inc)
+        public static IEnumerable<byte> Build(byte end, byte start = 0, byte inc = 1)
         {
             if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
-            _start = start;
-            _end = end;
-            _inc = inc;
-        }
+            if (end < start) throw new InvalidOperationException("start must be higher than end");
 
-        public IEnumerator<short> GetEnumerator() => new SequencerEnumeratorShort(_start, _end, _inc);
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+            var current = start;
 
-    internal class SequencerEnumeratorShort : IEnumerator<short>
-    {
-        private readonly short _start;
-        private readonly short _end;
-        private readonly short _inc;
-        private bool _isFirst;
-        public short Current { get; private set; }
-
-        public SequencerEnumeratorShort(short start, short end, short inc)
-        {
-            _start = start;
-            _end = end;
-            _inc = inc;
-            _isFirst = true;
-        }
-
-        public bool MoveNext()
-        {
-            if (_isFirst)
+            do
             {
-                _isFirst = false;
-                return true;
-            }
-
-            if (_inc < 0 && Current <= _end || _inc > 0 && Current >= _end) return false;
-            Current += _inc;
-            return true;
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
 
-        public void Reset()
-        {
-            Current = _start;
-            _isFirst = false;
-        }
-
-        object IEnumerator.Current => Current;
-
-        public void Dispose()
-        {
-        }
-    }
-
-    public class SequencerInt : IEnumerable<int>
-    {
-        private readonly int _start;
-        private readonly int _end;
-        private readonly int _inc;
-
-        public SequencerInt(int start, int end, int inc)
+        public static IEnumerable<short> Build(short end, short start = 0, short inc = 1)
         {
             if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
-            _start = start;
-            _end = end;
-            _inc = inc;
-        }
+            if (start < end && inc < 0 || start > end && inc > 0) throw new InvalidOperationException("invalid incrementor direction");
 
-        public IEnumerator<int> GetEnumerator() => new SequencerEnumeratorInt(_start, _end, _inc);
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+            var current = start;
 
-    internal class SequencerEnumeratorInt : IEnumerator<int>
-    {
-        private readonly int _start;
-        private readonly int _end;
-        private readonly int _inc;
-        private bool _isFirst;
-        public int Current { get; private set; }
-
-        public SequencerEnumeratorInt(int start, int end, int inc)
-        {
-            _start = start;
-            _end = end;
-            _inc = inc;
-            Current = _start;
-            _isFirst = true;
-        }
-
-        public bool MoveNext()
-        {
-            if (_isFirst)
+            do
             {
-                _isFirst = false;
-                return true;
-            }
-
-            if (_inc < 0 && Current <= _end || _inc > 0 && Current >= _end) return false;
-            Current += _inc;
-            return true;
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
 
-        public void Reset()
+        public static IEnumerable<int> Build(int end, int start = 0, int inc = 1)
         {
-            Current = _start;
-            _isFirst = false;
+            if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
+            if (start < end && inc < 0 || start > end && inc > 0) throw new InvalidOperationException("invalid incrementor direction");
+
+            var current = start;
+
+            do
+            {
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
 
-        object IEnumerator.Current => Current;
-
-        public void Dispose()
-        {
-        }
-    }
-
-    public class SequencerFloat : IEnumerable<float>
-    {
-        private readonly float _start;
-        private readonly float _end;
-        private readonly float _inc;
-
-        public SequencerFloat(float start, float end, float inc)
+        public static IEnumerable<float> Build(float end, float start = 0, float inc = 1)
         {
             if (Math.Abs(inc) < float.Epsilon) throw new InvalidOperationException("incrementor can not be 0");
-            _start = start;
-            _end = end;
-            _inc = inc;
-        }
+            if (start < end && inc < 0 || start > end && inc > 0) throw new InvalidOperationException("invalid incrementor direction");
 
-        public IEnumerator<float> GetEnumerator() => new SequencerEnumeratorFloat(_start, _end, _inc);
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+            var current = start;
 
-    internal class SequencerEnumeratorFloat : IEnumerator<float>
-    {
-        private readonly float _start;
-        private readonly float _end;
-        private readonly float _inc;
-        private bool _isFirst;
-        public float Current { get; private set; }
-
-        public SequencerEnumeratorFloat(float start, float end, float inc)
-        {
-            _start = start;
-            _end = end;
-            _inc = inc;
-            Current = _start;
-            _isFirst = true;
-        }
-
-        public bool MoveNext()
-        {
-            if (_isFirst)
+            do
             {
-                _isFirst = false;
-                return true;
-            }
-
-            if (_inc < 0 && Current <= _end || _inc > 0 && Current >= _end) return false;
-            Current += _inc;
-            return true;
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
 
-        public void Reset()
-        {
-            Current = _start;
-            _isFirst = false;
-        }
-
-        object IEnumerator.Current => Current;
-
-        public void Dispose()
-        {
-        }
-    }
-
-    public class SequencerLong : IEnumerable<long>
-    {
-        private readonly long _start;
-        private readonly long _end;
-        private readonly long _inc;
-
-        public SequencerLong(long start, long end, long inc)
-        {
-            if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
-            _start = start;
-            _end = end;
-            _inc = inc;
-        }
-
-        public IEnumerator<long> GetEnumerator() => new SequencerEnumeratorLong(_start, _end, _inc);
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
-
-    internal class SequencerEnumeratorLong : IEnumerator<long>
-    {
-        private readonly long _start;
-        private readonly long _end;
-        private readonly long _inc;
-        private bool _isFirst;
-        public long Current { get; private set; }
-
-        public SequencerEnumeratorLong(long start, long end, long inc)
-        {
-            _start = start;
-            _end = end;
-            _inc = inc;
-            Current = _start;
-            _isFirst = true;
-        }
-
-        public bool MoveNext()
-        {
-            if (_isFirst)
-            {
-                _isFirst = false;
-                return true;
-            }
-
-            if (_inc < 0 && Current <= _end || _inc > 0 && Current >= _end) return false;
-            Current += _inc;
-            return true;
-        }
-
-        public void Reset()
-        {
-            Current = _start;
-            _isFirst = false;
-        }
-
-        object IEnumerator.Current => Current;
-
-        public void Dispose()
-        {
-        }
-    }
-
-    public class SequencerDouble : IEnumerable<double>
-    {
-        private readonly double _start;
-        private readonly double _end;
-        private readonly double _inc;
-
-        public SequencerDouble(double start, double end, double inc)
+        public static IEnumerable<double> Build(double end, double start = 0, double inc = 1)
         {
             if (Math.Abs(inc) < double.Epsilon) throw new InvalidOperationException("incrementor can not be 0");
-            _start = start;
-            _end = end;
-            _inc = inc;
-        }
+            if (start < end && inc < 0 || start > end && inc > 0) throw new InvalidOperationException("invalid incrementor direction");
 
-        public IEnumerator<double> GetEnumerator() => new SequencerEnumeratorDouble(_start, _end, _inc);
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+            var current = start;
 
-    internal class SequencerEnumeratorDouble : IEnumerator<double>
-    {
-        private readonly double _start;
-        private readonly double _end;
-        private readonly double _inc;
-        private bool _isFirst;
-        public double Current { get; private set; }
-
-        public SequencerEnumeratorDouble(double start, double end, double inc)
-        {
-            _start = start;
-            _end = end;
-            _inc = inc;
-            Current = _start;
-            _isFirst = true;
-        }
-
-        public bool MoveNext()
-        {
-            if (_isFirst)
+            do
             {
-                _isFirst = false;
-                return true;
-            }
-
-            if (_inc < 0 && Current <= _end || _inc > 0 && Current >= _end) return false;
-            Current += _inc;
-            return true;
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
 
-        public void Reset()
-        {
-            Current = _start;
-            _isFirst = false;
-        }
-
-        object IEnumerator.Current => Current;
-
-        public void Dispose()
-        {
-        }
-    }
-
-    public class SequencerDecimal : IEnumerable<decimal>
-    {
-        private readonly decimal _start;
-        private readonly decimal _end;
-        private readonly decimal _inc;
-
-        public SequencerDecimal(decimal start, decimal end, decimal inc)
+        public static IEnumerable<long> Build(long end, long start = 0, long inc = 1)
         {
             if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
-            _start = start;
-            _end = end;
-            _inc = inc;
-        }
+            if (start < end && inc < 0 || start > end && inc > 0) throw new InvalidOperationException("invalid incrementor direction");
 
-        public IEnumerator<decimal> GetEnumerator() => new SequencerEnumeratorDecimal(_start, _end, _inc);
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+            var current = start;
 
-    internal class SequencerEnumeratorDecimal : IEnumerator<decimal>
-    {
-        private readonly decimal _start;
-        private readonly decimal _end;
-        private readonly decimal _inc;
-        private bool _isFirst;
-        public decimal Current { get; private set; }
-
-        public SequencerEnumeratorDecimal(decimal start, decimal end, decimal inc)
-        {
-            _start = start;
-            _end = end;
-            _inc = inc;
-            Current = _start;
-            _isFirst = true;
-        }
-
-        public bool MoveNext()
-        {
-            if (_isFirst)
+            do
             {
-                _isFirst = false;
-                return true;
-            }
-
-            if (_inc < 0 && Current <= _end || _inc > 0 && Current >= _end) return false;
-            Current += _inc;
-            return true;
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
 
-        public void Reset()
+        public static IEnumerable<decimal> Build(decimal end, decimal start = 0, decimal inc = 1)
         {
-            Current = _start;
-            _isFirst = true;
+            if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
+            if (start < end && inc < 0 || start > end && inc > 0) throw new InvalidOperationException("invalid incrementor direction");
+
+            var current = start;
+
+            do
+            {
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
 
-        object IEnumerator.Current => Current;
-
-        public void Dispose()
+        public static IEnumerable<sbyte> Build(sbyte end, sbyte start = 0, sbyte inc = 1)
         {
+            if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
+            if (start < end && inc < 0 || start > end && inc > 0) throw new InvalidOperationException("invalid incrementor direction");
+
+            var current = start;
+
+            do
+            {
+                yield return current;
+                current += inc;
+            } while (current <= end);
         }
     }
+
+
 }

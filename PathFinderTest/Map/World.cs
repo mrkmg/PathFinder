@@ -7,7 +7,7 @@ using SharpNoise.Modules;
 
 namespace PathFinderTest.Map
 {
-    class World
+    public class World
     {
         public bool CanCutCorner = false;
         public EstimateType EstimateType = EstimateType.Absolute;
@@ -22,7 +22,7 @@ namespace PathFinderTest.Map
             YSize = ySize;
 
             var wallNoiseMap = makeSimpleNoiseMap();
-            var hillsNoiseMap = makeComplexNoiseMap();
+            var hillsNoiseMap = makeTestNoiseMap();
 
 
             for (var x = 0; x < XSize; x++)
@@ -33,7 +33,7 @@ namespace PathFinderTest.Map
                     if (wallNoiseMap.GetValue(x, y) > 0.3) continue;
 
                     var point = (hillsNoiseMap.GetValue(x, y) + 1f) / 2;
-                    point *= 9f;
+                    point *= 8f;
                     AllNodes[x].Add(y, new Position(x, y, (int)Math.Round(point) + 1) { World = this});
                 }
             }
@@ -55,32 +55,58 @@ namespace PathFinderTest.Map
             return noiseMap;
         }
 
-        private NoiseMap makeComplexNoiseMap()
+        private NoiseMap makeTestNoiseMap()
         {
             var noiseMap = new NoiseMap();
-            var perlin = new Perlin { Seed = new Random().Next() };
-            var perlin2 = new Perlin {Seed = new Random().Next()};
-
-            var scale = new ScaleBias
+            var noiseMapBuilder = new PlaneNoiseMapBuilder
             {
-                Source0 = perlin,
-                Scale = 0.5
+                DestNoiseMap = noiseMap,
+//                SourceModule = new Curve
+//                {
+//                    Source0 = new Perlin { Seed = new Random().Next()},
+//                    ControlPoints = new List<Curve.ControlPoint>
+//                    {
+//                        new Curve.ControlPoint(-1, 0),
+//                        new Curve.ControlPoint(0, 0),
+//                        new Curve.ControlPoint(0.5, 0.5),
+//                        new Curve.ControlPoint(1, 1)
+//                    }
+//                }
+                SourceModule = new Clamp
+                {
+                    LowerBound = -1,
+                    UpperBound = 1,
+                    Source0 = new ScaleBias
+                    {
+                        Scale = 0.5,
+                        Source0 = new Add
+                        {
+                            // overall Slope
+                            Source0 = new ScaleBias {
+                                Scale = 2,
+                                Source0 = new Perlin{ Seed = new Random().Next() },
+                            },
+                            // ridge
+                            Source1 = new ScalePoint
+                            {
+                                XScale = 10,
+                                YScale = 10,
+                                Source0 = new Curve
+                                {
+                                    Source0 = new Perlin { Seed = new Random().Next()},
+                                    ControlPoints = new List<Curve.ControlPoint>
+                                    {
+                                        new Curve.ControlPoint(-1, -1),
+                                        new Curve.ControlPoint(-0.5, 0),
+                                        new Curve.ControlPoint(0.5, 0),
+                                        new Curve.ControlPoint(1, 1)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             };
-
-            var combine = new Add
-            {
-                Source0 = scale,
-                Source1 = perlin2
-            };
-
-            var divide = new ScaleBias()
-            {
-                Source0 = combine,
-                Scale = 0.75
-            };
-
-
-            var noiseMapBuilder = new PlaneNoiseMapBuilder { DestNoiseMap = noiseMap, SourceModule = divide };
             noiseMapBuilder.SetDestSize(XSize, YSize);
             noiseMapBuilder.SetBounds(-3, 3, -2, 2);
             noiseMapBuilder.Build();
@@ -88,7 +114,7 @@ namespace PathFinderTest.Map
         }
     }
 
-    enum EstimateType
+    public enum EstimateType
     {
         Absolute,
         Square

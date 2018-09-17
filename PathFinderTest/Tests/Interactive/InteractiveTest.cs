@@ -7,23 +7,23 @@ using System.Threading;
 using PathFinder.Interfaces;
 using PathFinder.Solvers;
 using PathFinderTest.Map;
+using PathFinderTest.Tests.Interactive;
 
 namespace PathFinderTest.Tests.Many
 {
     class InteractiveTest
     {
-        private int TickDelay = 0;
-
         private IList<decimal> _thoroughnesses;
 
-        private bool showSearch = true;
-        private bool CanDiag = true;
-        private bool UseCornerEstimate = true;
+        private bool _showSearch = true;
+        private bool _canDiag = true;
+        private bool _useCornerEstimate = true;
 
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
 
         private World _world;
+        private IWorldWriter _worldWriter;
 
         public InteractiveTest(IList<decimal> thoroughnesses)
         {
@@ -40,25 +40,33 @@ namespace PathFinderTest.Tests.Many
                 if (ShowMenu()) break;
                 MakeWorld();
 
-                var randomFromNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
-                var randomToNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
+                Position randomFromNode;
+                Position randomToNode;
+
+                do
+                {
+                    randomFromNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
+                    randomToNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
+                } while (randomFromNode.EstimatedCostTo(randomToNode) < 200);
+
 
                 var aStars = new Dictionary<decimal, AStar<Position>>();
 
-                PrintMap(_world);
+                _worldWriter.DrawWorld();
 
                 var i = 0;
                 foreach (var thoroughness in _thoroughnesses)
                 {
-                    aStars.Add(thoroughness, RunPathFinder(randomFromNode, randomToNode, thoroughness, GetColor(i)));
-                    PrintResult(aStars[thoroughness], GetColor(i), Console.WindowHeight - i);
+                    var aStar = RunPathFinder(randomFromNode, randomToNode, thoroughness, i);
+                    aStars.Add(thoroughness, aStar);
+                    _worldWriter.WriteResult(i, thoroughness, aStar.Cost, aStar.Ticks);
                     i++;
                 }
 
                 i = 0;
                 foreach (var thoroughness in _thoroughnesses)
                 {
-                    if (aStars[thoroughness].State == SolverState.Success) PrintPath(aStars[thoroughness].Path, GetColor(i));
+                    if (aStars[thoroughness].State == SolverState.Success) DrawPath(aStars[thoroughness].Path, i);
                     i++;
                 }
 
@@ -69,55 +77,23 @@ namespace PathFinderTest.Tests.Many
         private void MakeWorld()
         {
             var rnd = new Random();
-            var density = CanDiag ? 45 + rnd.Next(10) : rnd.Next(35);
+            var density = _canDiag ? 45 + rnd.Next(10) : rnd.Next(35);
             _world = new World(Console.WindowWidth - 1, Console.WindowHeight, density)
             {
-                CanCutCorner = CanDiag,
-                EstimateType = UseCornerEstimate ? EstimateType.Square : EstimateType.Absolute
+                CanCutCorner = _canDiag,
+                EstimateType = _useCornerEstimate ? EstimateType.Square : EstimateType.Absolute
             };
+
+            _worldWriter = new SimpleWorldWriter(_world, _thoroughnesses.Count);
         }
 
-        private void PrintPath(IList<Position> path, ConsoleColor color)
+        private void DrawPath(IList<Position> path, int testNumber)
         {
             foreach (var node in path)
             {
-                Console.CursorLeft = node.X;
-                Console.CursorTop = node.Y;
-                Console.BackgroundColor = color;
-                Console.Write(" ");
+                _worldWriter.DrawPosition(node.X, node.Y, testNumber);
+                Thread.Sleep(5);
             }
-        }
-
-        private void PrintMap(World map)
-        {
-            Console.CursorLeft = 0;
-            Console.CursorTop = 0;
-            for (var y = 0; y < map.YSize; y++)
-            {
-                for (var x = 0; x < map.XSize; x++)
-                {
-                    PrintNode(x, y, map);
-                }
-            }
-        }
-
-        private void PrintNode(int x, int y, World map)
-        {
-            Console.CursorLeft = x;
-            Console.CursorTop = y;
-            if ((map.AllNodes.ContainsKey(x) && map.AllNodes[x].ContainsKey(y)))
-            {
-                Console.BackgroundColor = ConsoleColor.White;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.Write(map.AllNodes[x][y].W);
-            }
-            else
-            {
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.Write(" ");
-            }
-
-            Console.ResetColor();
         }
 
         private bool ShowMenu()
@@ -126,8 +102,8 @@ namespace PathFinderTest.Tests.Many
             {
                 Console.ResetColor();
                 Console.Clear();
-                Console.WriteLine("(d) Can Diag: " + CanDiag);
-                Console.WriteLine("(c) Use Corner: " + UseCornerEstimate);
+                Console.WriteLine("(d) Can Diag: " + _canDiag);
+                Console.WriteLine("(c) Use Corner: " + _useCornerEstimate);
                 Console.WriteLine("(ENTER) Run");
                 Console.WriteLine("(q) Quit");
                 var key = Console.ReadKey();
@@ -138,16 +114,16 @@ namespace PathFinderTest.Tests.Many
                     case ConsoleKey.Enter:
                         return false;
                     case ConsoleKey.D:
-                        CanDiag = !CanDiag;
+                        _canDiag = !_canDiag;
                         break;
                     case ConsoleKey.C:
-                        UseCornerEstimate = !UseCornerEstimate;
+                        _useCornerEstimate = !_useCornerEstimate;
                         break;
                 }
             }
         }
 
-        private AStar<Position> RunPathFinder(Position origin, Position dest, decimal thoroughness, ConsoleColor color)
+        private AStar<Position> RunPathFinder(Position origin, Position dest, decimal thoroughness, int testNumber)
         {
             var aStar = new AStar<Position>(origin, dest) { Thoroughness = (double)thoroughness };
             _seenClosed = new HashSet<Position> { origin };
@@ -158,7 +134,7 @@ namespace PathFinderTest.Tests.Many
             {
                 aStar.Tick();
 
-                if (showSearch) PrintFinding(aStar, color);
+                if (_showSearch) PrintFinding(aStar);
 
                 if (Console.KeyAvailable && Console.ReadKey().Key == ConsoleKey.N)
                 {
@@ -167,93 +143,46 @@ namespace PathFinderTest.Tests.Many
                 }
             }
 
-            foreach (var node in _seenOpen) PrintNode(node.X, node.Y, _world);
-            foreach (var node in _seenClosed) PrintNode(node.X, node.Y, _world);
-            PrintNode(aStar.Current.X, aStar.Current.Y, _world);
+            foreach (var node in _seenOpen) _worldWriter.DrawPosition(node.X, node.Y);
+            foreach (var node in _seenClosed) _worldWriter.DrawPosition(node.X, node.Y);
+            _worldWriter.DrawPosition(aStar.Current.X, aStar.Current.Y);
 
             return aStar;
         }
 
-        private void PrintFinding(AStar<Position> astar, ConsoleColor color)
+        private void PrintFinding(AStar<Position> astar)
         {
-            Thread.Sleep(TickDelay);
+//            var sleepTime = 10 - Math.Min(10, astar.Closed.Count() / 100);
+//            if (sleepTime > 0)
+//                Thread.Sleep(sleepTime);
+
             var openNodes = astar.Open.Where(n => !_seenOpen.Contains(n));
             var closedNodes = astar.Closed.Where(n => !_seenClosed.Contains(n));
 
             foreach (var openNode in openNodes)
             {
                 _seenOpen.Add(openNode);
-                Console.CursorLeft = openNode.X;
-                Console.CursorTop = openNode.Y;
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.Write(" ");
+                _worldWriter.DrawPosition(openNode.X, openNode.Y, PositionType.Open);
             }
 
             foreach (var closednode in closedNodes)
             {
                 _seenOpen.Remove(closednode);
-                Console.CursorLeft = closednode.X;
-                Console.CursorTop = closednode.Y;
-                Console.BackgroundColor = color;
-                Console.Write(" ");
+                _worldWriter.DrawPosition(closednode.X, closednode.Y, PositionType.Closed);
 
                 if (!closednode.Equals(astar.Current)) _seenClosed.Add(closednode);
             }
 
             if (!astar.Current.Equals(astar.Origin))
             {
-                Console.CursorLeft = astar.Current.X;
-                Console.CursorTop = astar.Current.Y;
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.Write(" ");
+                _worldWriter.DrawPosition(astar.Current.X, astar.Current.Y, PositionType.Current);
             }
         }
 
-        private static void PrintEndPoints(AStar<Position> astar)
+        private void PrintEndPoints(AStar<Position> astar)
         {
-            Console.CursorLeft = astar.Origin.X;
-            Console.CursorTop = astar.Origin.Y;
-            Console.BackgroundColor = ConsoleColor.Magenta;
-            Console.Write(" ");
-
-            Console.CursorLeft = astar.Destination.X;
-            Console.CursorTop = astar.Destination.Y;
-            Console.BackgroundColor = ConsoleColor.Magenta;
-            Console.Write(" ");
-        }
-
-
-
-        private void PrintResult(AStar<Position> aStar, ConsoleColor color, int offset)
-        {
-            Console.ResetColor();
-            Console.BackgroundColor = color;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.CursorLeft = 0;
-            Console.CursorTop = offset;
-            Console.Write("                     ");
-            Console.CursorLeft = 0;
-
-            if (aStar.State == SolverState.Success)
-            {;
-                Console.Write(aStar.Thoroughness.ToString(CultureInfo.CurrentCulture).PadLeft(4) + " : " + aStar.Cost + " | " + aStar.Ticks);
-            }
-            else
-            {
-                Console.Write(aStar.Thoroughness.ToString(CultureInfo.CurrentCulture).PadLeft(4) + " No Path");
-            }
-        }
-
-        private static ConsoleColor GetColor(int i)
-        {
-            switch (i % 5)
-            {
-                case 0: return ConsoleColor.Cyan;
-                case 1: return ConsoleColor.Blue;
-                case 2: return ConsoleColor.Green;
-                case 3: return ConsoleColor.Yellow;
-                default: return ConsoleColor.Magenta;
-            }
+            _worldWriter.DrawPosition(astar.Origin.X, astar.Origin.Y, PositionType.End);
+            _worldWriter.DrawPosition(astar.Destination.X, astar.Destination.Y, PositionType.End);
         }
     }
 }

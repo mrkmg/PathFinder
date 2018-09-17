@@ -26,7 +26,7 @@ namespace PathFinderTest
                 var key = Console.ReadKey().Key;
                 if (key == ConsoleKey.I)
                 {
-                    var seq = SequenceBuilder.Build((decimal)0.6, (decimal)0, (decimal)0.1).ToList();
+                    var seq = SequenceBuilder.Build((decimal) 0.6, 0, (decimal) 0.1).ToList();
                     var interactiveTest = new InteractiveTest(seq);
                     interactiveTest.Main();
                 }

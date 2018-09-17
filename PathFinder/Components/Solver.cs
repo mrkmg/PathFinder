@@ -35,12 +35,12 @@ namespace PathFinder.Components
         /// <summary>
         /// A reference to the metadata of the origin.
         /// </summary>
-        protected Node<T> OriginNode;
+        protected readonly Node<T> OriginNode;
 
         /// <summary>
         /// A reference to the metadata of the destination.
         /// </summary>
-        protected Node<T> DestinationNode;
+        protected readonly Node<T> DestinationNode;
 
         private readonly Dictionary<T, Node<T>> _nodeLookup = new Dictionary<T, Node<T>>();
         private IList<T> _path;
