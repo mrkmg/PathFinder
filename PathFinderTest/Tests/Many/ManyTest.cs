@@ -23,32 +23,36 @@ namespace PathFinderTest.Tests.Many
         {
             _thoroughnesses = thouroughnesses;
             _outputFile = outputFile;
+
+            _outputFile = _outputFile.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+
+            Console.WriteLine(_outputFile);
         }
 
         public void Main(int numTests)
         {
-            var results = SequenceBuilder.Build(numTests).AsParallel().Select(i => RunTest(i, _thoroughnesses));
-            ExportResults(results);
+            ExportResults(SequenceBuilder.Build(numTests).AsParallel().Select(RunTest));
         }
 
         private void ExportResults(ParallelQuery<TestResult> results)
         {
             if (File.Exists(_outputFile)) File.Delete(_outputFile);
+
             using (var fileHandle = File.OpenWrite(_outputFile))
             using (var streamWriter = new StreamWriter(fileHandle))
             {
-                streamWriter.WriteLine("TestNum,Density,EstLength,Thorougness,Length,Cost");
+                streamWriter.WriteLine("TestNum,EstLength,Thorougness,Length,Cost");
+                streamWriter.Flush();
                 results.ForAll(result =>
                 {
                     lock (streamWriter)
                     {
                         foreach (var test in result.Tests)
                             streamWriter.WriteLine(result.TestNum + "," +
-                                               result.Density + "," +
-                                               result.EstLength + "," +
-                                               test.Key + "," +
-                                               test.Value.Item1 + "," +
-                                               test.Value.Item2);
+                                                   result.EstLength + "," +
+                                                   test.Key + "," +
+                                                   test.Value.Item1 + "," +
+                                                   test.Value.Item2);
                         streamWriter.Flush();
                     }
                 });
@@ -69,15 +73,14 @@ namespace PathFinderTest.Tests.Many
             }
         }
 
-        private TestResult RunTest(int testNumber, IList<decimal> thorougnesses)
+        private TestResult RunTest(int testNumber)
         {
             var rnd = new Random();
-            var widthPerResult = thorougnesses.Count + 5;
+            var widthPerResult = _thoroughnesses.Count + 5;
             var cols = Math.Floor((float) Console.WindowWidth / widthPerResult);
             var left = (int) (testNumber % cols) * widthPerResult;
             var top = (int) Math.Floor(testNumber / cols) % Console.WindowHeight;
-            var density = CanDiag ? 45 + rnd.Next(10) : rnd.Next(35);
-            var map = new World(MapWidth, MapHeight, density)
+            var map = new World(MapWidth, MapHeight)
             {
                 CanCutCorner = CanDiag,
                 EstimateType = UseCornerEstimate ? EstimateType.Square : EstimateType.Absolute
@@ -87,7 +90,6 @@ namespace PathFinderTest.Tests.Many
             var estLength = (int) o.EstimatedCostTo(d);
             var result = new TestResult
             {
-                Density = density,
                 EstLength = estLength,
                 TestNum = testNumber,
                 Tests = new Dictionary<decimal, Tuple<double, int>>()
@@ -98,7 +100,7 @@ namespace PathFinderTest.Tests.Many
 
             var i = 0;
             var cancelRest = false;
-            foreach (var t in thorougnesses.Select(v => Math.Clamp(v, 0, 1)))
+            foreach (var t in _thoroughnesses.Select(v => Math.Clamp(v, 0, 1)))
             {
                 if (cancelRest) continue;
 
@@ -143,7 +145,6 @@ namespace PathFinderTest.Tests.Many
     internal struct TestResult
     {
         public int TestNum;
-        public int Density;
         public int EstLength;
         public Dictionary<decimal, Tuple<double, int>> Tests;
     }

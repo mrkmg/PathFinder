@@ -16,7 +16,7 @@ namespace PathFinderTest.Map
         public int YSize;
         public Dictionary<int, Dictionary<int, Position>> AllNodes = new Dictionary<int, Dictionary<int, Position>>();
 
-        public World(int xSize, int ySize, int r)
+        public World(int xSize, int ySize)
         {
             XSize = xSize;
             YSize = ySize;

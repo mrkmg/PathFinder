@@ -76,9 +76,7 @@ namespace PathFinderTest.Tests.Many
 
         private void MakeWorld()
         {
-            var rnd = new Random();
-            var density = _canDiag ? 45 + rnd.Next(10) : rnd.Next(35);
-            _world = new World(Console.WindowWidth - 1, Console.WindowHeight, density)
+            _world = new World(Console.WindowWidth - 1, Console.WindowHeight)
             {
                 CanCutCorner = _canDiag,
                 EstimateType = _useCornerEstimate ? EstimateType.Square : EstimateType.Absolute
