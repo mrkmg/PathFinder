@@ -6,9 +6,9 @@ namespace PathFinderTest.Tests.Interactive
 {
     public class SimpleWorldWriter : IWorldWriter
     {
-        private const int ResultWidth = 35;
-        private World _world;
-        private int _totalTests;
+        private const int ResultWidth = 46;
+        private readonly int _totalTests;
+        private readonly World _world;
 
         public SimpleWorldWriter(World world, int totalTests)
         {
@@ -16,7 +16,7 @@ namespace PathFinderTest.Tests.Interactive
             _totalTests = totalTests;
         }
 
-        public void WriteResult(int testNum, decimal thoroughness, double cost, int ticks)
+        public void WriteResult(int testNum, decimal thoroughness, double cost, int ticks, long cpuCycles)
         {
             Console.BackgroundColor = GetBackgroundColor(testNum);
             Console.ForegroundColor = GetForegroundColor(testNum);
@@ -24,37 +24,42 @@ namespace PathFinderTest.Tests.Interactive
             Console.CursorTop = Console.WindowHeight - testNum - 1;
             Console.Write(testNum.ToString().PadRight(5) + " | " +
                           thoroughness.ToString(CultureInfo.CurrentCulture).PadRight(5) + " | " +
-                          cost.ToString(CultureInfo.CurrentCulture).PadLeft(8) + " / " +
-                          ticks.ToString().PadLeft(8));
+                          Math.Ceiling(cost).ToString(CultureInfo.CurrentCulture).PadLeft(6) + " / " +
+                          ticks.ToString().PadLeft(6) + " / " +
+                          cpuCycles.ToString().PadLeft(12));
         }
 
         public void DrawPosition(int x, int y)
         {
             if (_world.AllNodes[x].ContainsKey(y))
-            {
                 DrawPosition(x, y, ConsoleColor.White, ConsoleColor.Black);
-            }
             else
-            {
                 DrawPosition(x, y, ConsoleColor.Black, ConsoleColor.White);
-            }
         }
 
-        public void DrawPosition(int x, int y, int testNumber) => DrawPosition(x, y, GetBackgroundColor(testNumber), GetForegroundColor(testNumber));
+        public void DrawPosition(int x, int y, int testNumber)
+        {
+            DrawPosition(x, y, GetBackgroundColor(testNumber), GetForegroundColor(testNumber));
+        }
 
         public void DrawPosition(int x, int y, PositionType type)
         {
             switch (type)
             {
-                case PositionType.Normal: DrawPosition(x, y);
+                case PositionType.Normal:
+                    DrawPosition(x, y);
                     break;
-                case PositionType.Open: DrawPosition(x, y, ConsoleColor.Red, ConsoleColor.Black);
+                case PositionType.Open:
+                    DrawPosition(x, y, ConsoleColor.Red, ConsoleColor.Black);
                     break;
-                case PositionType.Closed: DrawPosition(x, y, ConsoleColor.Green, ConsoleColor.Black);
+                case PositionType.Closed:
+                    DrawPosition(x, y, ConsoleColor.Green, ConsoleColor.Black);
                     break;
-                case PositionType.Current: DrawPosition(x, y, ConsoleColor.Black, ConsoleColor.White);
+                case PositionType.Current:
+                    DrawPosition(x, y, ConsoleColor.Black, ConsoleColor.White);
                     break;
-                case PositionType.End: DrawPosition(x, y, ConsoleColor.Blue, ConsoleColor.White);
+                case PositionType.End:
+                    DrawPosition(x, y, ConsoleColor.Blue, ConsoleColor.White);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -70,13 +75,9 @@ namespace PathFinderTest.Tests.Interactive
             Console.BackgroundColor = background;
             Console.ForegroundColor = foreground;
             if (_world.AllNodes[x].ContainsKey(y))
-            {
-                Console.Write(_world.AllNodes[x][y].W);
-            }
+                Console.Write(_world.AllNodes[x][y].Z);
             else
-            {
                 Console.Write(" ");
-            }
 
             Console.ResetColor();
         }

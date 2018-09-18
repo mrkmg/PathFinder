@@ -9,15 +9,15 @@ using PathFinderTest.Sequencer;
 
 namespace PathFinderTest.Tests.Many
 {
-    class ManyTest
+    internal class ManyTest
     {
-        public bool CanDiag = false;
-        public bool UseCornerEstimate = true;
-        public int MapWidth = 600;
-        public int MapHeight = 600;
-        public int MaxSearchSpace = int.MaxValue;
         private readonly IList<decimal> _thoroughnesses;
-        private string _outputFile;
+        private readonly string _outputFile;
+        public bool CanDiag = false;
+        public int MapHeight = 600;
+        public int MapWidth = 600;
+        public int MaxSearchSpace = int.MaxValue;
+        public bool UseCornerEstimate = true;
 
         public ManyTest(IList<decimal> thouroughnesses, string outputFile)
         {
@@ -107,7 +107,6 @@ namespace PathFinderTest.Tests.Many
                 var aStar = new AStar<Position>(o, d) {Thoroughness = (double) t};
                 var keepGoing = true;
                 while (keepGoing)
-                {
                     switch (aStar.State)
                     {
                         case SolverState.Running:
@@ -131,8 +130,9 @@ namespace PathFinderTest.Tests.Many
                             cancelRest = true;
                             ThreadPrint(i + 3 + left, top, "-");
                             break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
-                }
 
                 i++;
             }

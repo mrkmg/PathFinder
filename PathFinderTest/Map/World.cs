@@ -9,12 +9,12 @@ namespace PathFinderTest.Map
 {
     public class World
     {
+        public Dictionary<int, Dictionary<int, Position>> AllNodes = new Dictionary<int, Dictionary<int, Position>>();
         public bool CanCutCorner = false;
         public EstimateType EstimateType = EstimateType.Absolute;
 
         public int XSize;
         public int YSize;
-        public Dictionary<int, Dictionary<int, Position>> AllNodes = new Dictionary<int, Dictionary<int, Position>>();
 
         public World(int xSize, int ySize)
         {
@@ -34,7 +34,7 @@ namespace PathFinderTest.Map
 
                     var point = (hillsNoiseMap.GetValue(x, y) + 1f) / 2;
                     point *= 8f;
-                    AllNodes[x].Add(y, new Position(x, y, (int)Math.Round(point) + 1) { World = this});
+                    AllNodes[x].Add(y, new Position(x, y, (int) Math.Round(point) + 1) {World = this});
                 }
             }
         }
@@ -47,8 +47,8 @@ namespace PathFinderTest.Map
         private NoiseMap makeSimpleNoiseMap()
         {
             var noiseMap = new NoiseMap();
-            var noiseSource = new Perlin { Seed = new Random().Next() };
-            var noiseMapBuilder = new PlaneNoiseMapBuilder { DestNoiseMap = noiseMap, SourceModule = noiseSource };
+            var noiseSource = new Perlin {Seed = new Random().Next()};
+            var noiseMapBuilder = new PlaneNoiseMapBuilder {DestNoiseMap = noiseMap, SourceModule = noiseSource};
             noiseMapBuilder.SetDestSize(XSize, YSize);
             noiseMapBuilder.SetBounds(-3, 3, -2, 2);
             noiseMapBuilder.Build();
@@ -82,9 +82,10 @@ namespace PathFinderTest.Map
                         Source0 = new Add
                         {
                             // overall Slope
-                            Source0 = new ScaleBias {
+                            Source0 = new ScaleBias
+                            {
                                 Scale = 2,
-                                Source0 = new Perlin{ Seed = new Random().Next() },
+                                Source0 = new Perlin {Seed = new Random().Next()}
                             },
                             // ridge
                             Source1 = new ScalePoint
@@ -93,7 +94,7 @@ namespace PathFinderTest.Map
                                 YScale = 10,
                                 Source0 = new Curve
                                 {
-                                    Source0 = new Perlin { Seed = new Random().Next()},
+                                    Source0 = new Perlin {Seed = new Random().Next()},
                                     ControlPoints = new List<Curve.ControlPoint>
                                     {
                                         new Curve.ControlPoint(-1, -1),

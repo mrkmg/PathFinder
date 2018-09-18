@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using PathFinder.Interfaces;
 using PathFinder.Solvers;
@@ -11,16 +10,16 @@ using PathFinderTest.Tests.Interactive;
 
 namespace PathFinderTest.Tests.Many
 {
-    class InteractiveTest
+    internal class InteractiveTest
     {
-        private IList<decimal> _thoroughnesses;
-
-        private bool _showSearch = true;
         private bool _canDiag = true;
-        private bool _useCornerEstimate = true;
 
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
+
+        private readonly bool _showSearch = false;
+        private readonly IList<decimal> _thoroughnesses;
+        private bool _useCornerEstimate = true;
 
         private World _world;
         private IWorldWriter _worldWriter;
@@ -32,7 +31,6 @@ namespace PathFinderTest.Tests.Many
 
         public void Main()
         {
-
             var rnd = new Random();
 
             while (true)
@@ -47,7 +45,7 @@ namespace PathFinderTest.Tests.Many
                 {
                     randomFromNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
                     randomToNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
-                } while (randomFromNode.EstimatedCostTo(randomToNode) < 200);
+                } while (randomFromNode.EstimatedCostTo(randomToNode) < 250);
 
 
                 var aStars = new Dictionary<decimal, AStar<Position>>();
@@ -57,9 +55,10 @@ namespace PathFinderTest.Tests.Many
                 var i = 0;
                 foreach (var thoroughness in _thoroughnesses)
                 {
-                    var aStar = RunPathFinder(randomFromNode, randomToNode, thoroughness, i);
+                    var timer = new Stopwatch();
+                    var aStar = RunPathFinder(randomFromNode, randomToNode, thoroughness, timer);
                     aStars.Add(thoroughness, aStar);
-                    _worldWriter.WriteResult(i, thoroughness, aStar.Cost, aStar.Ticks);
+                    _worldWriter.WriteResult(i, thoroughness, aStar.Cost, aStar.Ticks, timer.ElapsedTicks);
                     i++;
                 }
 
@@ -121,16 +120,18 @@ namespace PathFinderTest.Tests.Many
             }
         }
 
-        private AStar<Position> RunPathFinder(Position origin, Position dest, decimal thoroughness, int testNumber)
+        private AStar<Position> RunPathFinder(Position origin, Position dest, decimal thoroughness, Stopwatch timer)
         {
-            var aStar = new AStar<Position>(origin, dest) { Thoroughness = (double)thoroughness };
-            _seenClosed = new HashSet<Position> { origin };
-            _seenOpen = new HashSet<Position> { origin };
+            var aStar = new AStar<Position>(origin, dest) {Thoroughness = (double) thoroughness};
+            _seenClosed = new HashSet<Position> {origin};
+            _seenOpen = new HashSet<Position> {origin};
             PrintEndPoints(aStar);
 
             while (aStar.State == SolverState.Running)
             {
+                timer.Start();
                 aStar.Tick();
+                timer.Stop();
 
                 if (_showSearch) PrintFinding(aStar);
 
@@ -150,9 +151,6 @@ namespace PathFinderTest.Tests.Many
 
         private void PrintFinding(AStar<Position> astar)
         {
-//            var sleepTime = 10 - Math.Min(10, astar.Closed.Count() / 100);
-//            if (sleepTime > 0)
-//                Thread.Sleep(sleepTime);
 
             var openNodes = astar.Open.Where(n => !_seenOpen.Contains(n));
             var closedNodes = astar.Closed.Where(n => !_seenClosed.Contains(n));
@@ -171,10 +169,11 @@ namespace PathFinderTest.Tests.Many
                 if (!closednode.Equals(astar.Current)) _seenClosed.Add(closednode);
             }
 
-            if (!astar.Current.Equals(astar.Origin))
-            {
-                _worldWriter.DrawPosition(astar.Current.X, astar.Current.Y, PositionType.Current);
-            }
+            _worldWriter.DrawPosition(astar.Current.X, astar.Current.Y, PositionType.Current);
+
+//            var sleepTime = 10 - Math.Min(10, astar.Closed.Count() / 100);
+//            if (sleepTime > 0)
+//                Thread.Sleep(sleepTime);
         }
 
         private void PrintEndPoints(AStar<Position> astar)
