@@ -8,6 +8,8 @@ namespace PathFinder.Solvers
 {
     public class AStar<T> : ISolver<T> where T : INode
     {
+        private const double CostTolerance = 0.01d;
+
         public static IList<T> Solve(T origin, T destination, double thoroughness = 0.5)
         {
             var aStar = new AStar<T>(origin, destination);
@@ -128,7 +130,8 @@ namespace PathFinder.Solvers
 
         private static NodeMetaData<T> LowestNodeAggregate(NodeMetaData<T> lNode, NodeMetaData<T> tNode)
         {
-            return Math.Abs(lNode.TotalCost - tNode.TotalCost) < 0.01d ? lNode.ToCost < tNode.ToCost ? lNode : tNode :
+            return Math.Abs(lNode.TotalCost - tNode.TotalCost) < CostTolerance ?
+                lNode.ToCost < tNode.ToCost ? lNode : tNode :
                 lNode.TotalCost < tNode.TotalCost ? lNode : tNode;
         }
 
@@ -163,7 +166,7 @@ namespace PathFinder.Solvers
                 neighbor.FromCost = fromCost;
                 neighbor.TotalCost = totalCost;
             }
-            else if (Math.Abs(fromCost - neighbor.FromCost) < 0.01 && toCost < neighbor.ToCost || totalCost < neighbor.TotalCost)
+            else if (Math.Abs(fromCost - neighbor.FromCost) < CostTolerance && toCost < neighbor.ToCost || totalCost < neighbor.TotalCost)
             {
                 neighbor.Parent = Current;
                 neighbor.ToCost = toCost;

@@ -62,10 +62,10 @@ namespace PathFinderTest.Map
             return other is Position n && X == n.X && Y == n.Y;
         }
 
-        private double EstimateDistanceToAbs(Position n)
-        {
-            return Math.Abs(n.X - X) + Math.Abs(n.Y - Y);
-        }
+//        private double EstimateDistanceToAbs(Position n)
+//        {
+//            return Math.Abs(n.X - X) + Math.Abs(n.Y - Y);
+//        }
 
         private double EstimateDistanceToSq(Position n)
         {

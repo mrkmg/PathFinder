@@ -60,14 +60,20 @@ namespace PathFinderTest.Tests.Interactive
                     i++;
                 }
 
-                i = 0;
-                foreach (var thoroughness in _thoroughnesses)
+                IList<Position> previous = null;
+                while (true)
                 {
-                    if (aStars[thoroughness].State == SolverState.Success) DrawPath(aStars[thoroughness].Path, i);
-                    i++;
-                }
+                    var key = Console.ReadKey(true);
 
-                while (Console.ReadKey().Key != ConsoleKey.Enter) ;
+                    if (key.Key == ConsoleKey.Enter) break;
+
+                    if (!int.TryParse(key.KeyChar.ToString(), out var num) && num < _thoroughnesses.Count && aStars[_thoroughnesses[num]].State == SolverState.Success) continue;
+
+                    if (previous != null) ClearPath(previous);
+                    previous = aStars[_thoroughnesses[num]].Path;
+                    DrawPath(previous, num);
+
+                }
             }
         }
 
@@ -86,7 +92,14 @@ namespace PathFinderTest.Tests.Interactive
             foreach (var node in path)
             {
                 _worldWriter.DrawPosition(node.X, node.Y, testNumber);
-                Thread.Sleep(5);
+            }
+        }
+
+        private void ClearPath(IEnumerable<Position> path)
+        {
+            foreach (var node in path)
+            {
+                _worldWriter.DrawPosition(node.X, node.Y, PositionType.Normal);
             }
         }
 
