@@ -6,9 +6,8 @@ using System.Threading;
 using PathFinder.Interfaces;
 using PathFinder.Solvers;
 using PathFinderTest.Map;
-using PathFinderTest.Tests.Interactive;
 
-namespace PathFinderTest.Tests.Many
+namespace PathFinderTest.Tests.Interactive
 {
     internal class InteractiveTest
     {
@@ -17,9 +16,8 @@ namespace PathFinderTest.Tests.Many
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
 
-        private bool _showSearch = false;
+        private bool _showSearch;
         private readonly IList<decimal> _thoroughnesses;
-        private bool _useCornerEstimate = true;
 
         private World _world;
         private IWorldWriter _worldWriter;
@@ -45,7 +43,7 @@ namespace PathFinderTest.Tests.Many
                 {
                     randomFromNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
                     randomToNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
-                } while (randomFromNode.EstimatedCostTo(randomToNode) < 250);
+                } while (randomFromNode.EstimatedCostTo(randomToNode) < 100);
 
 
                 var aStars = new Dictionary<decimal, AStar<Position>>();
@@ -77,14 +75,13 @@ namespace PathFinderTest.Tests.Many
         {
             _world = new World(Console.WindowWidth - 1, Console.WindowHeight)
             {
-                CanCutCorner = _canDiag,
-                EstimateType = _useCornerEstimate ? EstimateType.Square : EstimateType.Absolute
+                CanCutCorner = _canDiag
             };
 
             _worldWriter = new SimpleWorldWriter(_world, _thoroughnesses.Count);
         }
 
-        private void DrawPath(IList<Position> path, int testNumber)
+        private void DrawPath(IEnumerable<Position> path, int testNumber)
         {
             foreach (var node in path)
             {
@@ -100,11 +97,12 @@ namespace PathFinderTest.Tests.Many
                 Console.ResetColor();
                 Console.Clear();
                 Console.WriteLine("(d) Can Diag: " + _canDiag);
-                Console.WriteLine("(c) Use Corner: " + _useCornerEstimate);
                 Console.WriteLine("(s) Show Search: " + _showSearch);
                 Console.WriteLine("(ENTER) Run");
                 Console.WriteLine("(q) Quit");
                 var key = Console.ReadKey();
+
+                // ReSharper disable once SwitchStatementMissingSomeCases
                 switch (key.Key)
                 {
                     case ConsoleKey.Q:
@@ -113,9 +111,6 @@ namespace PathFinderTest.Tests.Many
                         return false;
                     case ConsoleKey.D:
                         _canDiag = !_canDiag;
-                        break;
-                    case ConsoleKey.C:
-                        _useCornerEstimate = !_useCornerEstimate;
                         break;
                     case ConsoleKey.S:
                         _showSearch= !_showSearch;
@@ -139,11 +134,10 @@ namespace PathFinderTest.Tests.Many
 
                 if (_showSearch) PrintFinding(aStar);
 
-                if (Console.KeyAvailable && Console.ReadKey().Key == ConsoleKey.N)
-                {
-                    aStar.Cancel();
-                    break;
-                }
+                if (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.N) continue;
+
+                aStar.Cancel();
+                break;
             }
 
             foreach (var node in _seenOpen) _worldWriter.DrawPosition(node.X, node.Y);
@@ -155,7 +149,6 @@ namespace PathFinderTest.Tests.Many
 
         private void PrintFinding(AStar<Position> astar)
         {
-
             var openNodes = astar.Open.Where(n => !_seenOpen.Contains(n));
             var closedNodes = astar.Closed.Where(n => !_seenClosed.Contains(n));
 
@@ -174,13 +167,9 @@ namespace PathFinderTest.Tests.Many
             }
 
             _worldWriter.DrawPosition(astar.Current.X, astar.Current.Y, PositionType.Current);
-
-//            var sleepTime = 10 - Math.Min(10, astar.Closed.Count() / 100);
-//            if (sleepTime > 0)
-//                Thread.Sleep(sleepTime);
         }
 
-        private void PrintEndPoints(AStar<Position> astar)
+        private void PrintEndPoints(ISolver<Position> astar)
         {
             _worldWriter.DrawPosition(astar.Origin.X, astar.Origin.Y, PositionType.End);
             _worldWriter.DrawPosition(astar.Destination.X, astar.Destination.Y, PositionType.End);

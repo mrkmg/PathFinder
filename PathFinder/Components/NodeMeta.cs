@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using PathFinder.Interfaces;
 
 namespace PathFinder.Components
@@ -36,5 +35,6 @@ namespace PathFinder.Components
         public bool Equals(NodeMetaData<T> other) => Equals(this, other);
         public override bool Equals(object obj) => obj is NodeMetaData<T> n && Equals(n);
         public override int GetHashCode() => Obj.GetHashCode();
+        public override string ToString() => Obj.ToString();
     }
 }

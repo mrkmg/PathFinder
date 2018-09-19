@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PathFinder.Components;
@@ -107,9 +106,9 @@ namespace PathFinder.Solvers
                 return;
             }
 
-            ProcessNeighbors();
-
             Ticks++;
+
+            ProcessNeighbors();
 
             if (Current.Equals(Destination))
                 State = SolverState.Success;
@@ -129,7 +128,7 @@ namespace PathFinder.Solvers
 
         private static NodeMetaData<T> LowestNodeAggregate(NodeMetaData<T> lNode, NodeMetaData<T> tNode)
         {
-            return Math.Abs(lNode.TotalCost - tNode.TotalCost) < 0.1 ? lNode.ToCost < tNode.ToCost ? lNode : tNode :
+            return Math.Abs(lNode.TotalCost - tNode.TotalCost) < 0.01d ? lNode.ToCost < tNode.ToCost ? lNode : tNode :
                 lNode.TotalCost < tNode.TotalCost ? lNode : tNode;
         }
 
@@ -164,9 +163,10 @@ namespace PathFinder.Solvers
                 neighbor.FromCost = fromCost;
                 neighbor.TotalCost = totalCost;
             }
-            else if (fromCost < neighbor.FromCost)
+            else if (Math.Abs(fromCost - neighbor.FromCost) < 0.01 && toCost < neighbor.ToCost || totalCost < neighbor.TotalCost)
             {
                 neighbor.Parent = Current;
+                neighbor.ToCost = toCost;
                 neighbor.FromCost = fromCost;
                 neighbor.TotalCost = totalCost;
             }
@@ -207,17 +207,6 @@ namespace PathFinder.Solvers
             }
 
             return cost;
-        }
-    }
-
-    internal static class ForAllExtension
-    {
-        public static void ForAll<T>(this IEnumerable<T> iEnumerable, Action<T> action)
-        {
-            foreach (var item in iEnumerable)
-            {
-                action(item);
-            }
         }
     }
 }

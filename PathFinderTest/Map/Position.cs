@@ -21,13 +21,16 @@ namespace PathFinderTest.Map
 
         public double RealCostTo(INode other)
         {
+//            return 1;
+//            return other is Position n ? EstimateDistanceToSq(n) : double.MaxValue;
             return other is Position n ? EstimateDistanceToSq(n) + Math.Abs(n.Z - Z) : double.MaxValue;
         }
 
         public double EstimatedCostTo(INode other)
         {
             if (!(other is Position n)) return double.MaxValue;
-            return (World.EstimateType == EstimateType.Square ? EstimateDistanceToSq(n) : EstimateDistanceToAbs(n)) + Math.Abs(n.Z - Z) ;
+//            return EstimateDistanceToSq(n);
+            return EstimateDistanceToSq(n) + Math.Abs(n.Z - Z);
         }
 
         public IEnumerable<INode> GetNeighbors()
@@ -66,7 +69,9 @@ namespace PathFinderTest.Map
 
         private double EstimateDistanceToSq(Position n)
         {
-            return Math.Sqrt(Math.Pow(n.X - X, 2) + Math.Pow(n.Y - Y, 2));
+            var dX = Math.Abs(n.X - X);
+            var dY = Math.Abs(n.Y - Y);
+            return Math.Sqrt(dX * dX + dY * dY);
         }
 
         public override string ToString()
@@ -92,8 +97,8 @@ namespace PathFinderTest.Map
 
     internal struct Xy
     {
-        public int X;
-        public int Y;
+        public readonly int X;
+        public readonly int Y;
 
         public Xy(int x, int y)
         {

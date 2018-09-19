@@ -20,7 +20,7 @@ namespace PathFinder.Interfaces
         double EstimatedCostTo(INode other);
 
         /// <summary>
-        ///     Get nodes that are accessable from this node.
+        ///     Get nodes that are accessible from this node.
         /// </summary>
         /// <returns></returns>
         IEnumerable<INode> GetNeighbors();

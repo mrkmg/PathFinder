@@ -16,6 +16,15 @@ namespace PathFinderTest.Tests.Interactive
             _totalTests = totalTests;
         }
 
+        public void WriteInfo(string info)
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.CursorLeft = 0;
+            Console.CursorTop = 0;
+            Console.Write(info);
+        }
+
         public void WriteResult(int testNum, decimal thoroughness, double cost, int ticks, long cpuCycles)
         {
             Console.BackgroundColor = GetBackgroundColor(testNum);

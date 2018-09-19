@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using PathFinderTest.Sequencer;
+using PathFinderTest.Tests.Interactive;
 using PathFinderTest.Tests.Many;
 
 namespace PathFinderTest
@@ -19,6 +19,7 @@ namespace PathFinderTest
                 if (key == ConsoleKey.I)
                 {
                     var seq = SequenceBuilder.Build((decimal) 0.5, 0, (decimal) 0.1).ToList();
+                    seq.Add(1);
                     var interactiveTest = new InteractiveTest(seq);
                     interactiveTest.Main();
                 }
@@ -26,25 +27,33 @@ namespace PathFinderTest
                 {
                     Console.Clear();
 
-                    const int width = 300;
-                    const int height = 300;
+                    var sizes = new [] {100, 200, 300, 400, 500};
+
                     const int numTests = 200;
                     const int series = 1;
-                    var thoroughness = SequenceBuilder.Build(0.6m, 0m, 0.01m)
-                        .ToList();
 
-                    var manyTest = new ManyTest
+
+
+                    foreach (var size in sizes)
                     {
-                        NumberOfTests = numTests,
-                        CanDiag = true,
-                        MapHeight = height,
-                        MapWidth = width,
-                        MaxSearchSpace = int.MaxValue,
-                        OutputFile = $"~/Documents/AStarTests/{width}x{height} {numTests} Series {series}.csv",
-                        Thoroughnesses = thoroughness
-                    };
+                        var thoroughness = SequenceBuilder.Build(0.6m, 0m, 0.01m)
+                            .Concat(SequenceBuilder.Build(1m, 0.7m, 0.1m))
+                            .ToList();
 
-                    manyTest.Run();
+                        var manyTest = new ManyTest
+                        {
+                            NumberOfTests = numTests,
+                            CanDiag = true,
+                            MapHeight = size,
+                            MapWidth = size,
+                            MaxSearchSpace = int.MaxValue,
+                            OutputFile = $"~/Documents/AStarTests/{size}x{size} {numTests} Series {series}.csv",
+                            Thoroughnesses = thoroughness
+                        };
+
+                        manyTest.Run();
+                    }
+
                 }
                 else if (key == ConsoleKey.Q)
                 {

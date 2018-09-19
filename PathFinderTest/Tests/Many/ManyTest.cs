@@ -18,12 +18,11 @@ namespace PathFinderTest.Tests.Many
             get => _outputFile;
             set => _outputFile = value.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
         }
-        public bool CanDiag = false;
+        public bool CanDiag = true;
         public int NumberOfTests = 100;
         public int MapHeight = 400;
         public int MapWidth = 400;
         public int MaxSearchSpace = int.MaxValue;
-        public bool UseCornerEstimate = true;
         public Random Random = new Random();
         private string _outputFile = "./test.csv";
         private readonly object _fileLock = new { };
@@ -45,8 +44,7 @@ namespace PathFinderTest.Tests.Many
         {
             var map = new World(MapWidth, MapHeight)
             {
-                CanCutCorner = CanDiag,
-                EstimateType = UseCornerEstimate ? EstimateType.Square : EstimateType.Absolute
+                CanCutCorner = CanDiag
             };
 
             Position origin;
@@ -108,7 +106,7 @@ namespace PathFinderTest.Tests.Many
                             PathCost = aStar.Cost,
                             Checks = aStar.Ticks,
                             Ticks = timer.ElapsedTicks,
-                            Time = timer.ElapsedTicks
+                            Time = timer.ElapsedMilliseconds
                         };
                     case SolverState.Failed:
                         return null;

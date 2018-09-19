@@ -11,12 +11,11 @@ namespace PathFinderTest.Map
     {
         public Dictionary<int, Dictionary<int, Position>> AllNodes = new Dictionary<int, Dictionary<int, Position>>();
         public bool CanCutCorner = false;
-        public EstimateType EstimateType = EstimateType.Absolute;
 
         public int XSize;
         public int YSize;
 
-        private Random _random;
+        private readonly Random _random;
 
         public World(int xSize, int ySize, Random random = null)
         {
@@ -106,11 +105,5 @@ namespace PathFinderTest.Map
             noiseMapBuilder.Build();
             return noiseMap;
         }
-    }
-
-    public enum EstimateType
-    {
-        Absolute,
-        Square
     }
 }
