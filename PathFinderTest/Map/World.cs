@@ -16,13 +16,17 @@ namespace PathFinderTest.Map
         public int XSize;
         public int YSize;
 
-        public World(int xSize, int ySize)
+        private Random _random;
+
+        public World(int xSize, int ySize, Random random = null)
         {
             XSize = xSize;
             YSize = ySize;
 
-            var wallNoiseMap = makeSimpleNoiseMap();
-            var hillsNoiseMap = makeTestNoiseMap();
+            _random = random ?? new Random();
+
+            var wallNoiseMap = MakeSimpleNoiseMap();
+            var hillsNoiseMap = MakeTestNoiseMap();
 
 
             for (var x = 0; x < XSize; x++)
@@ -44,10 +48,10 @@ namespace PathFinderTest.Map
             return AllNodes.Values.SelectMany(t => t.Values);
         }
 
-        private NoiseMap makeSimpleNoiseMap()
+        private NoiseMap MakeSimpleNoiseMap()
         {
             var noiseMap = new NoiseMap();
-            var noiseSource = new Perlin {Seed = new Random().Next()};
+            var noiseSource = new Perlin {Seed = _random.Next()};
             var noiseMapBuilder = new PlaneNoiseMapBuilder {DestNoiseMap = noiseMap, SourceModule = noiseSource};
             noiseMapBuilder.SetDestSize(XSize, YSize);
             noiseMapBuilder.SetBounds(-3, 3, -2, 2);
@@ -55,23 +59,12 @@ namespace PathFinderTest.Map
             return noiseMap;
         }
 
-        private NoiseMap makeTestNoiseMap()
+        private NoiseMap MakeTestNoiseMap()
         {
             var noiseMap = new NoiseMap();
             var noiseMapBuilder = new PlaneNoiseMapBuilder
             {
                 DestNoiseMap = noiseMap,
-//                SourceModule = new Curve
-//                {
-//                    Source0 = new Perlin { Seed = new Random().Next()},
-//                    ControlPoints = new List<Curve.ControlPoint>
-//                    {
-//                        new Curve.ControlPoint(-1, 0),
-//                        new Curve.ControlPoint(0, 0),
-//                        new Curve.ControlPoint(0.5, 0.5),
-//                        new Curve.ControlPoint(1, 1)
-//                    }
-//                }
                 SourceModule = new Clamp
                 {
                     LowerBound = -1,
@@ -85,7 +78,7 @@ namespace PathFinderTest.Map
                             Source0 = new ScaleBias
                             {
                                 Scale = 2,
-                                Source0 = new Perlin {Seed = new Random().Next()}
+                                Source0 = new Perlin {Seed = _random.Next()}
                             },
                             // ridge
                             Source1 = new ScalePoint
@@ -94,7 +87,7 @@ namespace PathFinderTest.Map
                                 YScale = 10,
                                 Source0 = new Curve
                                 {
-                                    Source0 = new Perlin {Seed = new Random().Next()},
+                                    Source0 = new Perlin {Seed = _random.Next()},
                                     ControlPoints = new List<Curve.ControlPoint>
                                     {
                                         new Curve.ControlPoint(-1, -1),

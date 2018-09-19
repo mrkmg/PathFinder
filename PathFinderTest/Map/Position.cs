@@ -79,6 +79,11 @@ namespace PathFinderTest.Map
             return x is Position xn && y is Position yn && xn.Equals(yn);
         }
 
+        public int GetHashCode(INode obj)
+        {
+            return obj.GetHashCode();
+        }
+
         public override int GetHashCode()
         {
             return 17 * (23 + X.GetHashCode()) * (23 + Y.GetHashCode());

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PathFinderTest.Sequencer;
 using PathFinderTest.Tests.Many;
@@ -24,13 +25,26 @@ namespace PathFinderTest
                 else if (key == ConsoleKey.M)
                 {
                     Console.Clear();
-                    Console.WriteLine("Input a file path to write results to");
-                    var outputFile = Console.ReadLine().Trim();
-                    Console.WriteLine("Number of tests to run?");
-                    var numTest = int.Parse(Console.ReadLine().Trim());
-                    var seq = SequenceBuilder.Build(1, 0, (decimal) 0.05).ToList();
-                    var manyTest = new ManyTest(seq, outputFile);
-                    manyTest.Main(numTest);
+
+                    const int width = 300;
+                    const int height = 300;
+                    const int numTests = 200;
+                    const int series = 1;
+                    var thoroughness = SequenceBuilder.Build(0.6m, 0m, 0.01m)
+                        .ToList();
+
+                    var manyTest = new ManyTest
+                    {
+                        NumberOfTests = numTests,
+                        CanDiag = true,
+                        MapHeight = height,
+                        MapWidth = width,
+                        MaxSearchSpace = int.MaxValue,
+                        OutputFile = $"~/Documents/AStarTests/{width}x{height} {numTests} Series {series}.csv",
+                        Thoroughnesses = thoroughness
+                    };
+
+                    manyTest.Run();
                 }
                 else if (key == ConsoleKey.Q)
                 {

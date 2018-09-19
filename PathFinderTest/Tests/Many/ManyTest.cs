@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using PathFinder.Interfaces;
@@ -11,141 +12,153 @@ namespace PathFinderTest.Tests.Many
 {
     internal class ManyTest
     {
-        private readonly IList<decimal> _thoroughnesses;
-        private readonly string _outputFile;
+        public IList<decimal> Thoroughnesses = new List<decimal> { 0.25m, 0.5m };
+        public string OutputFile
+        {
+            get => _outputFile;
+            set => _outputFile = value.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+        }
         public bool CanDiag = false;
-        public int MapHeight = 600;
-        public int MapWidth = 600;
+        public int NumberOfTests = 100;
+        public int MapHeight = 400;
+        public int MapWidth = 400;
         public int MaxSearchSpace = int.MaxValue;
         public bool UseCornerEstimate = true;
+        public Random Random = new Random();
+        private string _outputFile = "./test.csv";
+        private readonly object _fileLock = new { };
 
-        public ManyTest(IList<decimal> thouroughnesses, string outputFile)
+        public void Run()
         {
-            _thoroughnesses = thouroughnesses;
-            _outputFile = outputFile;
+            WriteFileHeader();
 
-            _outputFile = _outputFile.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
-
-            Console.WriteLine(_outputFile);
+            SequenceBuilder
+                .Build(NumberOfTests)
+                .SelectMany(BuildTest)
+                .AsParallel()
+                .Select(RunTest)
+                .Where(r => r != null)
+                .ForAll(WriteResult);
         }
 
-        public void Main(int numTests)
+        private IEnumerable<Test> BuildTest(int testId)
         {
-            ExportResults(SequenceBuilder.Build(numTests).AsParallel().Select(RunTest));
-        }
-
-        private void ExportResults(ParallelQuery<TestResult> results)
-        {
-            if (File.Exists(_outputFile)) File.Delete(_outputFile);
-
-            using (var fileHandle = File.OpenWrite(_outputFile))
-            using (var streamWriter = new StreamWriter(fileHandle))
-            {
-                streamWriter.WriteLine("TestNum,EstLength,Thorougness,Length,Cost");
-                streamWriter.Flush();
-                results.ForAll(result =>
-                {
-                    lock (streamWriter)
-                    {
-                        foreach (var test in result.Tests)
-                            streamWriter.WriteLine(result.TestNum + "," +
-                                                   result.EstLength + "," +
-                                                   test.Key + "," +
-                                                   test.Value.Item1 + "," +
-                                                   test.Value.Item2);
-                        streamWriter.Flush();
-                    }
-                });
-            }
-        }
-
-        private void ThreadPrint(int x, int y, string o, ConsoleColor b = ConsoleColor.Black,
-            ConsoleColor f = ConsoleColor.White)
-        {
-            lock (Console.Out)
-            {
-                Console.BackgroundColor = b;
-                Console.ForegroundColor = f;
-                Console.CursorLeft = x;
-                Console.CursorTop = y;
-                Console.Write(o);
-                Console.ResetColor();
-            }
-        }
-
-        private TestResult RunTest(int testNumber)
-        {
-            var rnd = new Random();
-            var widthPerResult = _thoroughnesses.Count + 5;
-            var cols = Math.Floor((float) Console.WindowWidth / widthPerResult);
-            var left = (int) (testNumber % cols) * widthPerResult;
-            var top = (int) Math.Floor(testNumber / cols) % Console.WindowHeight;
             var map = new World(MapWidth, MapHeight)
             {
                 CanCutCorner = CanDiag,
                 EstimateType = UseCornerEstimate ? EstimateType.Square : EstimateType.Absolute
             };
-            var o = map.GetAllNodes().OrderBy(n => rnd.Next()).First();
-            var d = map.GetAllNodes().OrderBy(n => rnd.Next()).First();
-            var estLength = (int) o.EstimatedCostTo(d);
-            var result = new TestResult
+
+            Position origin;
+            Position destination;
+
+            do
             {
-                EstLength = estLength,
-                TestNum = testNumber,
-                Tests = new Dictionary<decimal, Tuple<double, int>>()
-            };
+                origin = map.GetAllNodes().OrderBy(n => Random.Next()).First();
+                destination = map.GetAllNodes().OrderBy(n => Random.Next()).First();
+            } while (AStar<Position>.Solve(origin, destination, 0) != null);
 
-            ThreadPrint(left, top, testNumber.ToString().PadRight(3), ConsoleColor.Red, ConsoleColor.Black);
-            ThreadPrint(left + 3, top, new string(' ', widthPerResult - 3));
+            var estimatedCostTo = (int)origin.EstimatedCostTo(destination);
 
-            var i = 0;
-            var cancelRest = false;
-            foreach (var t in _thoroughnesses.Select(v => Math.Clamp(v, 0, 1)))
+            var subTestNum = 0;
+            foreach (var thoroughness in Thoroughnesses)
             {
-                if (cancelRest) continue;
+                yield return new Test
+                {
+                    Id = testId,
+                    SubId = subTestNum,
+                    Origin = origin,
+                    Destination = destination,
+                    EstimatedCostTo = estimatedCostTo,
+                    Thoroughness = thoroughness,
+                    World = map
+                };
 
-                var aStar = new AStar<Position>(o, d) {Thoroughness = (double) t};
-                var keepGoing = true;
-                while (keepGoing)
-                    switch (aStar.State)
-                    {
-                        case SolverState.Running:
-                            aStar.Tick();
-                            if (aStar.Ticks > MaxSearchSpace)
-                            {
-                                aStar.Cancel();
-                                ThreadPrint(i + 3 + left, top, "*");
-                                keepGoing = false;
-                                cancelRest = true;
-                            }
-
-                            break;
-                        case SolverState.Success:
-                            result.Tests.Add(t, new Tuple<double, int>(aStar.Cost, aStar.Ticks));
-                            ThreadPrint(i + 3 + left, top, "+");
-                            keepGoing = false;
-                            break;
-                        case SolverState.Failed:
-                            keepGoing = false;
-                            cancelRest = true;
-                            ThreadPrint(i + 3 + left, top, "-");
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                i++;
+                subTestNum++;
             }
+        }
 
-            ThreadPrint(left, top, testNumber.ToString().PadRight(3), ConsoleColor.Green, ConsoleColor.Black);
-            return result;
+        private TestResult RunTest(Test test)
+        {
+            var aStar = new AStar<Position>(test.Origin, test.Destination) { Thoroughness = (double)test.Thoroughness };
+            var timer = new Stopwatch();
+            
+            while (true)
+                switch (aStar.State)
+                {
+                    case SolverState.Running:
+                        timer.Start();
+                        aStar.Tick();
+                        timer.Stop();
+
+                        if (aStar.Ticks > MaxSearchSpace)
+                        {
+                            aStar.Cancel();
+                            return null;
+                        }
+
+                        break;
+                    case SolverState.Success:
+                        return new TestResult
+                        {
+                            TestId = test.Id,
+                            SubId = test.SubId,
+                            EstimatedCostTo = test.EstimatedCostTo,
+                            Thoroughness = test.Thoroughness,
+                            PathCost = aStar.Cost,
+                            Checks = aStar.Ticks,
+                            Ticks = timer.ElapsedTicks,
+                            Time = timer.ElapsedTicks
+                        };
+                    case SolverState.Failed:
+                        return null;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+        }
+
+        private void WriteFileHeader()
+        {
+            lock (_fileLock)
+            {
+                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,Thoroughness,PathCost,Check,Ticks,Time\n");
+            }
+        }
+
+        private void WriteResult(TestResult result)
+        {
+            lock (_fileLock)
+            {
+                File.AppendAllText(OutputFile,
+                    $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Thoroughness},{result.PathCost},{result.Checks},{result.Ticks},{result.Time}\n");
+            }
+            lock (Console.Out)
+            {
+                Console.WriteLine($"{result.TestId}\t{result.SubId}\t{result.EstimatedCostTo}\t{result.Thoroughness}\t{result.PathCost}\t{result.Checks}\t{result.Ticks}\t{result.Time}");
+            }
         }
     }
 
-    internal struct TestResult
+    internal class Test
     {
-        public int TestNum;
-        public int EstLength;
-        public Dictionary<decimal, Tuple<double, int>> Tests;
+        public int Id;
+        public int SubId;
+        public World World;
+        public int EstimatedCostTo;
+        public Position Origin;
+        public Position Destination;
+        public decimal Thoroughness;
+    }
+
+    internal class TestResult
+    {
+        public int TestId;
+        public int SubId;
+        public int EstimatedCostTo;
+        public decimal Thoroughness;
+        public double PathCost;
+        public int Checks;
+        public long Ticks;
+        public long Time; 
     }
 }

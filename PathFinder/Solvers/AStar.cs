@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PathFinder.Components;
@@ -8,12 +9,18 @@ namespace PathFinder.Solvers
 {
     public class AStar<T> : ISolver<T> where T : INode
     {
-        private readonly HashSet<T> _closedNodes = new HashSet<T>();
+        public static IList<T> Solve(T origin, T destination, double thoroughness = 0.5)
+        {
+            var aStar = new AStar<T>(origin, destination);
+            while (aStar.State != SolverState.Running) aStar.Tick();
+            return aStar.State == SolverState.Success ? aStar.Path : null;
+        }
+
+        private readonly HashSet<NodeMetaData<T>> _closedNodes = new HashSet<NodeMetaData<T>>();
+        private readonly HashSet<NodeMetaData<T>> _openNodes = new HashSet<NodeMetaData<T>>();
         private readonly NodeMetas<T> _nodeMetas = new NodeMetas<T>();
-        private readonly HashSet<T> _openNodes = new HashSet<T>();
-        private T _currentNode;
         private IList<T> _path;
-        private IEnumerable<T> _pendingNeighbors;
+        private NodeMetaData<T> _current;
         private double _thoroughness = 0.5;
 
         /// <summary>
@@ -25,24 +32,24 @@ namespace PathFinder.Solvers
         {
             Origin = origin;
             Destination = destination;
-            _openNodes.Add(origin);
-            _currentNode = Origin;
+            _current = _nodeMetas.Get(origin);
+            _openNodes.Add(_current);
         }
 
         /// <summary>
         ///     A List of nodes which still need to be checked
         /// </summary>
-        public IEnumerable<T> Open => _openNodes.AsEnumerable();
+        public IEnumerable<T> Open => _openNodes.Select(n => n.Obj);
 
         /// <summary>
         ///     A list of nodes which have already been checked
         /// </summary>
-        public IEnumerable<T> Closed => _closedNodes.AsEnumerable();
+        public IEnumerable<T> Closed => _closedNodes.Select(n => n.Obj);
 
         /// <summary>
         ///     The last node to be checked
         /// </summary>
-        public T Current => _currentNode;
+        public T Current => _current.Obj;
 
         /// <summary>
         ///     How thorough the search should be. Should be a value between 0 and 1.
@@ -104,7 +111,7 @@ namespace PathFinder.Solvers
 
             Ticks++;
 
-            if (_currentNode.Equals(Destination))
+            if (Current.Equals(Destination))
                 State = SolverState.Success;
             else if (_openNodes.Count == 0)
                 State = SolverState.Failed;
@@ -128,39 +135,40 @@ namespace PathFinder.Solvers
 
         private void SetCurrentNode()
         {
-            _currentNode = _openNodes.Select(_nodeMetas.Get).Aggregate(LowestNodeAggregate).Obj;
+            _current = _openNodes.Aggregate(LowestNodeAggregate);
 
-            _openNodes.Remove(_currentNode);
-            _closedNodes.Add(_currentNode);
+            _openNodes.Remove(_current);
+            _closedNodes.Add(_current);
         }
 
         private void ProcessNeighbors()
         {
-            foreach (var neighbor in _currentNode.GetNeighbors().Where(n => !_closedNodes.Contains((T) n))) ProcessNeighbor((T) neighbor);
+            Current
+                .GetNeighbors()
+                .Select(neighbor => _nodeMetas.Get((T)neighbor))
+                .Where(n => !_closedNodes.Contains(n))
+                .ForAll(ProcessNeighbor);
         }
 
-        private void ProcessNeighbor(T neighbor)
+        private void ProcessNeighbor(NodeMetaData<T> neighbor)
         {
-            var neighborMeta = _nodeMetas.Get(neighbor);
-            var currentMeta = _nodeMetas.Get(_currentNode);
-
-            var fromCost = currentMeta.FromCost + _currentNode.RealCostTo(neighbor);
-            var toCost = neighbor.EstimatedCostTo(Destination);
+            var fromCost = _current.FromCost + Current.RealCostTo(neighbor.Obj);
+            var toCost = neighbor.Obj.EstimatedCostTo(Destination);
             var totalCost = fromCost * Thoroughness + toCost * (1 - Thoroughness);
 
             if (!_openNodes.Contains(neighbor))
             {
                 _openNodes.Add(neighbor);
-                neighborMeta.Parent = _currentNode;
-                neighborMeta.ToCost = toCost;
-                neighborMeta.FromCost = fromCost;
-                neighborMeta.TotalCost = totalCost;
+                neighbor.Parent = Current;
+                neighbor.ToCost = toCost;
+                neighbor.FromCost = fromCost;
+                neighbor.TotalCost = totalCost;
             }
-            else if (fromCost < neighborMeta.FromCost)
+            else if (fromCost < neighbor.FromCost)
             {
-                neighborMeta.Parent = _currentNode;
-                neighborMeta.FromCost = fromCost;
-                neighborMeta.TotalCost = totalCost;
+                neighbor.Parent = Current;
+                neighbor.FromCost = fromCost;
+                neighbor.TotalCost = totalCost;
             }
         }
 
@@ -199,6 +207,17 @@ namespace PathFinder.Solvers
             }
 
             return cost;
+        }
+    }
+
+    internal static class ForAllExtension
+    {
+        public static void ForAll<T>(this IEnumerable<T> iEnumerable, Action<T> action)
+        {
+            foreach (var item in iEnumerable)
+            {
+                action(item);
+            }
         }
     }
 }

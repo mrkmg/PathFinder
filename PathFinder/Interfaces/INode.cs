@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PathFinder.Interfaces
 {
-    public interface INode : IEquatable<INode>
+    public interface INode : IEquatable<INode>, IEqualityComparer<INode>
     {
         /// <summary>
         ///     Calculate the real cost to another node.

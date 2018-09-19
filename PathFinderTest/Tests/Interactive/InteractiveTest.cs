@@ -17,7 +17,7 @@ namespace PathFinderTest.Tests.Many
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
 
-        private readonly bool _showSearch = false;
+        private bool _showSearch = false;
         private readonly IList<decimal> _thoroughnesses;
         private bool _useCornerEstimate = true;
 
@@ -101,6 +101,7 @@ namespace PathFinderTest.Tests.Many
                 Console.Clear();
                 Console.WriteLine("(d) Can Diag: " + _canDiag);
                 Console.WriteLine("(c) Use Corner: " + _useCornerEstimate);
+                Console.WriteLine("(s) Show Search: " + _showSearch);
                 Console.WriteLine("(ENTER) Run");
                 Console.WriteLine("(q) Quit");
                 var key = Console.ReadKey();
@@ -115,6 +116,9 @@ namespace PathFinderTest.Tests.Many
                         break;
                     case ConsoleKey.C:
                         _useCornerEstimate = !_useCornerEstimate;
+                        break;
+                    case ConsoleKey.S:
+                        _showSearch= !_showSearch;
                         break;
                 }
             }
