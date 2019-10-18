@@ -4,7 +4,7 @@ using PathFinder.Interfaces;
 
 namespace PathFinder.Components
 {
-    public class NodeMetas<T> where T : INode
+    internal class NodeMetas<T> where T : INode
     {
         private readonly Dictionary<T, NodeMetaData<T>> _nodeMetaData = new Dictionary<T, NodeMetaData<T>>();
 
@@ -21,20 +21,20 @@ namespace PathFinder.Components
         }
     }
 
-    public class NodeMetaData<T> : IEqualityComparer<NodeMetaData<T>>, IEquatable<NodeMetaData<T>> where T : INode
+    internal class NodeMetaData<T> : IEqualityComparer<NodeMetaData<T>>, IEquatable<NodeMetaData<T>> where T : INode
     {
-        public readonly T Obj;
+        public readonly T Node;
         public double FromCost;
         public T Parent;
         public double ToCost;
         public double TotalCost;
 
-        public NodeMetaData(T obj) => Obj = obj;
-        public bool Equals(NodeMetaData<T> x, NodeMetaData<T> y) => y != null && x != null && Obj.Equals(x.Obj, y.Obj);
-        public int GetHashCode(NodeMetaData<T> obj) => Obj.GetHashCode(obj.Obj);
+        public NodeMetaData(T obj) => Node = obj;
+        public bool Equals(NodeMetaData<T> x, NodeMetaData<T> y) => y != null && x != null && Node.Equals(x.Node, y.Node);
+        public int GetHashCode(NodeMetaData<T> obj) => Node.GetHashCode(obj.Node);
         public bool Equals(NodeMetaData<T> other) => Equals(this, other);
         public override bool Equals(object obj) => obj is NodeMetaData<T> n && Equals(n);
-        public override int GetHashCode() => Obj.GetHashCode();
-        public override string ToString() => Obj.ToString();
+        public override int GetHashCode() => Node.GetHashCode();
+        public override string ToString() => Node.ToString();
     }
 }

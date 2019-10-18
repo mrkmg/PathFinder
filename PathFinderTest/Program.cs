@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using PathFinder.Components;
 using PathFinderTest.Sequencer;
 using PathFinderTest.Tests.Interactive;
 using PathFinderTest.Tests.Many;
@@ -10,6 +11,9 @@ namespace PathFinderTest
     {
         private static void Main()
         {
+//            testSortedLinkedList();
+//            return;
+            
             while (true)
             {
                 Console.ResetColor();
@@ -18,27 +22,37 @@ namespace PathFinderTest
                 var key = Console.ReadKey().Key;
                 if (key == ConsoleKey.I)
                 {
-                    var seq = SequenceBuilder.Build((decimal) 0.5, 0, (decimal) 0.1).ToList();
-                    seq.Add(1);
-                    var interactiveTest = new InteractiveTest(seq);
+                    var interactiveTest = new InteractiveTest();
                     interactiveTest.Main();
                 }
                 else if (key == ConsoleKey.M)
                 {
                     Console.Clear();
 
+                    Console.WriteLine("Multi Test Run");
+                    
+                    var numTests = 200;
+                    Console.Write("Num Tests (200)? ");
+                    var numTestsStr = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(numTestsStr)) numTests = Int32.Parse(numTestsStr); 
+
                     var sizes = new [] {100, 200, 300, 400, 500};
-
-                    const int numTests = 200;
-                    const int series = 1;
-
-
-
+                    Console.Write("Sizes (100, 200, 300, 400, 500)?");
+                    var sizesStr = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(sizesStr))
+                    {
+                        sizes = sizesStr.Split(',').Select(s => int.Parse(s.Trim())).ToArray();
+                    }
+                    
+                    
+                    var dateStr = DateTime.Now.ToString("yyyyMMdd-HHmm");
+                    
                     foreach (var size in sizes)
                     {
-                        var thoroughness = SequenceBuilder.Build(0.6m, 0m, 0.01m)
-                            .Concat(SequenceBuilder.Build(1m, 0.7m, 0.1m))
-                            .ToList();
+                        var thoroughness = 
+                            SequenceBuilder
+                                .Build(1m, 0m, 0.05m)
+                                .ToList();
 
                         var manyTest = new ManyTest
                         {
@@ -47,13 +61,12 @@ namespace PathFinderTest
                             MapHeight = size,
                             MapWidth = size,
                             MaxSearchSpace = int.MaxValue,
-                            OutputFile = $"~/Documents/AStarTests/{size}x{size} {numTests} Series {series}.csv",
+                            OutputFile = $"~/Documents/AStarTests/{dateStr}/{size}x{size} {numTests}.csv",
                             Thoroughnesses = thoroughness
                         };
 
                         manyTest.Run();
                     }
-
                 }
                 else if (key == ConsoleKey.Q)
                 {

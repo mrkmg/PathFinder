@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
+using PathFinder.Solvers;
 using PathFinderTest.Map;
 
 namespace PathFinderTest.Tests.Interactive
@@ -25,10 +27,10 @@ namespace PathFinderTest.Tests.Interactive
             Console.Write(info);
         }
 
-        public void WriteResult(int testNum, decimal thoroughness, double cost, int ticks, long cpuCycles)
+        public void WriteResult(int testNum, double thoroughness, double cost, int ticks, long cpuCycles)
         {
-            Console.BackgroundColor = GetBackgroundColor(testNum);
-            Console.ForegroundColor = GetForegroundColor(testNum);
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.CursorLeft = 0;
             Console.CursorTop = Console.WindowHeight - testNum - 1;
             Console.Write(testNum.ToString().PadRight(5) + " | " +
@@ -40,15 +42,18 @@ namespace PathFinderTest.Tests.Interactive
 
         public void DrawPosition(int x, int y)
         {
-            if (_world.AllNodes[x].ContainsKey(y))
-                DrawPosition(x, y, ConsoleColor.White, ConsoleColor.Black);
+            var node = _world.GetNode(x, y);
+            if (node != null)
+            {
+                DrawPosition(x, y, GetWorldBackground(node.Z), GetWorldForeground(node.Z));
+            }
             else
                 DrawPosition(x, y, ConsoleColor.Black, ConsoleColor.White);
         }
 
         public void DrawPosition(int x, int y, int testNumber)
         {
-            DrawPosition(x, y, GetBackgroundColor(testNumber), GetForegroundColor(testNumber));
+            DrawPosition(x, y, ConsoleColor.Green, ConsoleColor.Black);
         }
 
         public void DrawPosition(int x, int y, PositionType type)
@@ -59,7 +64,7 @@ namespace PathFinderTest.Tests.Interactive
                     DrawPosition(x, y);
                     break;
                 case PositionType.Open:
-                    DrawPosition(x, y, ConsoleColor.Red, ConsoleColor.Black);
+                    DrawPosition(x, y, ConsoleColor.Yellow, ConsoleColor.Black);
                     break;
                 case PositionType.Closed:
                     DrawPosition(x, y, ConsoleColor.Green, ConsoleColor.Black);
@@ -68,7 +73,7 @@ namespace PathFinderTest.Tests.Interactive
                     DrawPosition(x, y, ConsoleColor.Black, ConsoleColor.White);
                     break;
                 case PositionType.End:
-                    DrawPosition(x, y, ConsoleColor.Blue, ConsoleColor.White);
+                    DrawPosition(x, y, ConsoleColor.White, ConsoleColor.Black);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -83,8 +88,9 @@ namespace PathFinderTest.Tests.Interactive
             Console.CursorTop = y;
             Console.BackgroundColor = background;
             Console.ForegroundColor = foreground;
-            if (_world.AllNodes[x].ContainsKey(y))
-                Console.Write(_world.AllNodes[x][y].Z);
+            var node = _world.GetNode(x, y);
+            if (node != null)
+                Console.Write(node.Z);
             else
                 Console.Write(" ");
 
@@ -98,28 +104,22 @@ namespace PathFinderTest.Tests.Interactive
                 DrawPosition(x, y);
         }
 
-        private static ConsoleColor GetBackgroundColor(int testNumber)
+        public ConsoleColor GetWorldBackground(int level)
         {
-            switch (testNumber % 5)
+            switch (level)
             {
-                case 0: return ConsoleColor.Cyan;
-                case 1: return ConsoleColor.Blue;
-                case 2: return ConsoleColor.Green;
-                case 3: return ConsoleColor.Yellow;
-                default: return ConsoleColor.Magenta;
+                case 1: case 2: return ConsoleColor.Blue;
+                case 3: case 4: return ConsoleColor.Cyan;
+                case 5: case 6: return ConsoleColor.Magenta;
+                case 7: case 8: return ConsoleColor.Red;
+                case 9: return ConsoleColor.Black;
+                default: return ConsoleColor.Gray;
             }
         }
-
-        private static ConsoleColor GetForegroundColor(int testNumber)
+        
+        public ConsoleColor GetWorldForeground(int level)
         {
-            switch (testNumber % 5)
-            {
-                case 0: return ConsoleColor.Black;
-                case 1: return ConsoleColor.White;
-                case 2: return ConsoleColor.Black;
-                case 3: return ConsoleColor.Black;
-                default: return ConsoleColor.Black;
-            }
+            return level == 9 ? ConsoleColor.White : ConsoleColor.Black;
         }
     }
 }

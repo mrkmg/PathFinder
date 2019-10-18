@@ -21,16 +21,16 @@ namespace PathFinderTest.Map
 
         public double RealCostTo(INode other)
         {
-//            return 1;
-//            return other is Position n ? EstimateDistanceToSq(n) : double.MaxValue;
-            return other is Position n ? EstimateDistanceToSq(n) + Math.Abs(n.Z - Z) : double.MaxValue;
+            return other is Position otherNode 
+                ? EstimateDistance(otherNode) * Z
+                : double.MaxValue;
         }
 
         public double EstimatedCostTo(INode other)
         {
-            if (!(other is Position n)) return double.MaxValue;
-//            return EstimateDistanceToSq(n);
-            return EstimateDistanceToSq(n) + Math.Abs(n.Z - Z);
+            return other is Position otherNode
+                ? EstimateDistance(otherNode) * 3
+                : double.MaxValue;
         }
 
         public IEnumerable<INode> GetNeighbors()
@@ -52,8 +52,8 @@ namespace PathFinderTest.Map
             }
 
             return possibleLocations
-                .Where(l => World.AllNodes.ContainsKey(l.X) && World.AllNodes[l.X].ContainsKey(l.Y))
-                .Select(l => World.AllNodes[l.X][l.Y]);
+                .Select(l => World.GetNode(l.X, l.Y))
+                .Where(l => l != null);
         }
 
 
@@ -67,11 +67,19 @@ namespace PathFinderTest.Map
 //            return Math.Abs(n.X - X) + Math.Abs(n.Y - Y);
 //        }
 
-        private double EstimateDistanceToSq(Position n)
+        private double EstimateDistance(Position n)
         {
             var dX = Math.Abs(n.X - X);
             var dY = Math.Abs(n.Y - Y);
-            return Math.Sqrt(dX * dX + dY * dY);
+            if (World.CanCutCorner)
+            {
+                return Math.Sqrt(dX * dX + dY * dY);
+            }
+            else
+            {
+
+                return dX + dY;
+            }
         }
 
         public override string ToString()

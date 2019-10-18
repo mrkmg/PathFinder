@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using SharpNoise;
 using SharpNoise.Builders;
 using SharpNoise.Modules;
@@ -9,7 +10,7 @@ namespace PathFinderTest.Map
 {
     public class World
     {
-        public Dictionary<int, Dictionary<int, Position>> AllNodes = new Dictionary<int, Dictionary<int, Position>>();
+        private Position[][] _allNodes;
         public bool CanCutCorner = false;
 
         public int XSize;
@@ -22,6 +23,8 @@ namespace PathFinderTest.Map
             XSize = xSize;
             YSize = ySize;
 
+            _allNodes = new Position[XSize][];
+
             _random = random ?? new Random();
 
             var wallNoiseMap = MakeSimpleNoiseMap();
@@ -30,21 +33,28 @@ namespace PathFinderTest.Map
 
             for (var x = 0; x < XSize; x++)
             {
-                AllNodes.Add(x, new Dictionary<int, Position>());
+                _allNodes[x] = new Position[YSize];
                 for (var y = 0; y < YSize; y++)
                 {
                     if (wallNoiseMap.GetValue(x, y) > 0.3) continue;
 
                     var point = (hillsNoiseMap.GetValue(x, y) + 1f) / 2;
                     point *= 8f;
-                    AllNodes[x].Add(y, new Position(x, y, (int) Math.Round(point) + 1) {World = this});
+                    _allNodes[x][y] = new Position(x, y, (int) Math.Round(point) + 1) {World = this};
                 }
             }
         }
 
+        [CanBeNull]
+        public Position GetNode(int x, int y)
+        {
+            if (x < 0 || x >= XSize || y < 0 || y >= YSize) return null;
+            return _allNodes[x][y];
+        }
+
         public IEnumerable<Position> GetAllNodes()
         {
-            return AllNodes.Values.SelectMany(t => t.Values);
+            return _allNodes.SelectMany(a => a).Where(a => a != null);
         }
 
         private NoiseMap MakeSimpleNoiseMap()
@@ -80,20 +90,14 @@ namespace PathFinderTest.Map
                                 Source0 = new Perlin {Seed = _random.Next()}
                             },
                             // ridge
-                            Source1 = new ScalePoint
+                            Source1 = new ScaleBias
                             {
-                                XScale = 10,
-                                YScale = 10,
-                                Source0 = new Curve
+                                Scale = 1,
+                                Source0 = new RidgedMulti
                                 {
-                                    Source0 = new Perlin {Seed = _random.Next()},
-                                    ControlPoints = new List<Curve.ControlPoint>
-                                    {
-                                        new Curve.ControlPoint(-1, -1),
-                                        new Curve.ControlPoint(-0.5, 0),
-                                        new Curve.ControlPoint(0.5, 0),
-                                        new Curve.ControlPoint(1, 1)
-                                    }
+                                    Seed = _random.Next(),
+                                    Frequency = 2000,
+                                    Quality = NoiseQuality.Best,
                                 }
                             }
                         }

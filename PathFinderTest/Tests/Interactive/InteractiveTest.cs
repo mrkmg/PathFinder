@@ -6,26 +6,36 @@ using System.Threading;
 using PathFinder.Interfaces;
 using PathFinder.Solvers;
 using PathFinderTest.Map;
+using PathFinderTest.Sequencer;
 
 namespace PathFinderTest.Tests.Interactive
 {
     internal class InteractiveTest
     {
-        private bool _canDiag = true;
+        private bool _bigJumps;
+        private bool _canDiag;
+        private bool _showSearch = true;
+        private bool _slowMode;
 
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
 
-        private bool _showSearch;
-        private readonly IList<decimal> _thoroughnesses;
+        private readonly IList<double> _thoroughnesses;
 
         private World _world;
         private IWorldWriter _worldWriter;
 
-        public InteractiveTest(IList<decimal> thoroughnesses)
+        public InteractiveTest()
         {
-            _thoroughnesses = thoroughnesses;
+            _thoroughnesses = 
+                SequenceBuilder.Build(0.3m, 0m, 0.1m)
+                .Concat(SequenceBuilder.Build(0.5m, 0.35m, 0.05m))
+                .Select(n => (double)n)
+                .ToList();
+            _thoroughnesses.Add(1);
         }
+
+        private bool BigJumpCheck(Position a, Position b) => !_bigJumps || Math.Abs(a.Z - b.Z) <= 1;
 
         public void Main()
         {
@@ -34,19 +44,21 @@ namespace PathFinderTest.Tests.Interactive
             while (true)
             {
                 if (ShowMenu()) break;
-                MakeWorld();
 
+                MakeWorld();
+                
                 Position randomFromNode;
                 Position randomToNode;
 
+                IList<Position> path;
                 do
                 {
                     randomFromNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
                     randomToNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
-                } while (randomFromNode.EstimatedCostTo(randomToNode) < 100);
-
-
-                var aStars = new Dictionary<decimal, AStar<Position>>();
+                    path = AStar.Solve(randomFromNode, randomToNode, BigJumpCheck, 0.0);
+                } while (path == null || path.Count < 100);
+                
+                var aStars = new Dictionary<double, AStar<Position>>();
 
                 _worldWriter.DrawWorld();
 
@@ -65,13 +77,18 @@ namespace PathFinderTest.Tests.Interactive
                 {
                     var key = Console.ReadKey(true);
 
-                    if (key.Key == ConsoleKey.Enter) break;
+                    if (key.Key == ConsoleKey.Q || key.Key == ConsoleKey.Enter) break;
 
                     if (!int.TryParse(key.KeyChar.ToString(), out var num) && num < _thoroughnesses.Count && aStars[_thoroughnesses[num]].State == SolverState.Success) continue;
 
                     if (previous != null) ClearPath(previous);
-                    previous = aStars[_thoroughnesses[num]].Path;
-                    DrawPath(previous, num);
+                    
+                    if (num < _thoroughnesses.Count)
+                    {
+                        previous = aStars[_thoroughnesses[num]].Path;
+                        if (previous != null)
+                            DrawPath(previous, num);
+                    }
 
                 }
             }
@@ -111,6 +128,8 @@ namespace PathFinderTest.Tests.Interactive
                 Console.Clear();
                 Console.WriteLine("(d) Can Diag: " + _canDiag);
                 Console.WriteLine("(s) Show Search: " + _showSearch);
+                Console.WriteLine("(l) Slow Mode: " + _slowMode);
+                Console.WriteLine("(j) Big Jumps: " + _bigJumps);
                 Console.WriteLine("(ENTER) Run");
                 Console.WriteLine("(q) Quit");
                 var key = Console.ReadKey();
@@ -125,38 +144,59 @@ namespace PathFinderTest.Tests.Interactive
                     case ConsoleKey.D:
                         _canDiag = !_canDiag;
                         break;
+                    case ConsoleKey.L:
+                        _slowMode = !_slowMode;
+                        break;
                     case ConsoleKey.S:
-                        _showSearch= !_showSearch;
+                        _showSearch = !_showSearch;
+                        break;
+                    case ConsoleKey.J:
+                        _bigJumps = !_bigJumps;
                         break;
                 }
             }
         }
 
-        private AStar<Position> RunPathFinder(Position origin, Position dest, decimal thoroughness, Stopwatch timer)
+        private AStar<Position> RunPathFinder(Position origin, Position dest, double thoroughness, Stopwatch timer)
         {
-            var aStar = new AStar<Position>(origin, dest) {Thoroughness = (double) thoroughness};
+            AStar<Position> aStar;
+            
+            if (_bigJumps)
+                aStar = new AStar<Position>(origin, dest, thoroughness);
+            else
+                aStar = new AStar<Position>(origin, dest, BigJumpCheck, thoroughness);
+            
             _seenClosed = new HashSet<Position> {origin};
             _seenOpen = new HashSet<Position> {origin};
             PrintEndPoints(aStar);
 
-            while (aStar.State == SolverState.Running)
+            if (_showSearch)
+            {
+                while (aStar.State == SolverState.Running)
+                {
+                    timer.Start();
+                    aStar.Tick();
+                    timer.Stop();
+
+                    if (_slowMode) Thread.Sleep(20);
+                    PrintFinding(aStar);
+                    
+                    if (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.N) continue;
+
+                    aStar.Cancel();
+                    break;
+                }
+
+                foreach (var node in _seenOpen) _worldWriter.DrawPosition(node.X, node.Y);
+                foreach (var node in _seenClosed) _worldWriter.DrawPosition(node.X, node.Y);
+                _worldWriter.DrawPosition(aStar.Current.X, aStar.Current.Y);
+            }
+            else
             {
                 timer.Start();
-                aStar.Tick();
+                aStar.Solve();
                 timer.Stop();
-
-                if (_showSearch) PrintFinding(aStar);
-
-                if (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.N) continue;
-
-                aStar.Cancel();
-                break;
             }
-
-            foreach (var node in _seenOpen) _worldWriter.DrawPosition(node.X, node.Y);
-            foreach (var node in _seenClosed) _worldWriter.DrawPosition(node.X, node.Y);
-            _worldWriter.DrawPosition(aStar.Current.X, aStar.Current.Y);
-
             return aStar;
         }
 
@@ -171,12 +211,12 @@ namespace PathFinderTest.Tests.Interactive
                 _worldWriter.DrawPosition(openNode.X, openNode.Y, PositionType.Open);
             }
 
-            foreach (var closednode in closedNodes)
+            foreach (var closedNode in closedNodes)
             {
-                _seenOpen.Remove(closednode);
-                _worldWriter.DrawPosition(closednode.X, closednode.Y, PositionType.Closed);
+                _seenOpen.Remove(closedNode);
+                _worldWriter.DrawPosition(closedNode.X, closedNode.Y, PositionType.Closed);
 
-                if (!closednode.Equals(astar.Current)) _seenClosed.Add(closednode);
+                if (!closedNode.Equals(astar.Current)) _seenClosed.Add(closedNode);
             }
 
             _worldWriter.DrawPosition(astar.Current.X, astar.Current.Y, PositionType.Current);

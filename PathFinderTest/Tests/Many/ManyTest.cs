@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using PathFinder.Interfaces;
@@ -16,8 +18,17 @@ namespace PathFinderTest.Tests.Many
         public string OutputFile
         {
             get => _outputFile;
-            set => _outputFile = value.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+            set
+            {
+                _outputFile = value.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+                var path = Path.GetDirectoryName(_outputFile);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
         }
+
         public bool CanDiag = true;
         public int NumberOfTests = 100;
         public int MapHeight = 400;
@@ -50,12 +61,17 @@ namespace PathFinderTest.Tests.Many
             Position origin;
             Position destination;
 
+            AStar<Position> aStarSolver;
             do
             {
                 origin = map.GetAllNodes().OrderBy(n => Random.Next()).First();
                 destination = map.GetAllNodes().OrderBy(n => Random.Next()).First();
-            } while (AStar<Position>.Solve(origin, destination, 0) != null);
+                
+                aStarSolver = new AStar<Position>(origin, destination, 1);
+                aStarSolver.Solve();
+            } while (aStarSolver.State == SolverState.Failed);
 
+            var bestCostTo = Math.Round(aStarSolver.Cost, 3);
             var estimatedCostTo = (int)origin.EstimatedCostTo(destination);
 
             var subTestNum = 0;
@@ -68,6 +84,7 @@ namespace PathFinderTest.Tests.Many
                     Origin = origin,
                     Destination = destination,
                     EstimatedCostTo = estimatedCostTo,
+                    BestCostTo = bestCostTo,
                     Thoroughness = thoroughness,
                     World = map
                 };
@@ -78,48 +95,52 @@ namespace PathFinderTest.Tests.Many
 
         private TestResult RunTest(Test test)
         {
-            var aStar = new AStar<Position>(test.Origin, test.Destination) { Thoroughness = (double)test.Thoroughness };
+            var aStar = new AStar<Position>(test.Origin, test.Destination, (double)test.Thoroughness);
             var timer = new Stopwatch();
-            
-            while (true)
-                switch (aStar.State)
-                {
-                    case SolverState.Running:
-                        timer.Start();
-                        aStar.Tick();
-                        timer.Stop();
+            timer.Start();
+            aStar.Solve();
+            timer.Stop();
 
-                        if (aStar.Ticks > MaxSearchSpace)
-                        {
-                            aStar.Cancel();
-                            return null;
-                        }
+            if (aStar.State == SolverState.Failed) return null;
 
-                        break;
-                    case SolverState.Success:
-                        return new TestResult
-                        {
-                            TestId = test.Id,
-                            SubId = test.SubId,
-                            EstimatedCostTo = test.EstimatedCostTo,
-                            Thoroughness = test.Thoroughness,
-                            PathCost = aStar.Cost,
-                            Checks = aStar.Ticks,
-                            Ticks = timer.ElapsedTicks,
-                            Time = timer.ElapsedMilliseconds
-                        };
-                    case SolverState.Failed:
-                        return null;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+            return new TestResult
+            {
+                TestId = test.Id,
+                SubId = test.SubId,
+                BestCostTo = test.BestCostTo,
+                EstimatedCostTo = test.EstimatedCostTo,
+                Thoroughness = test.Thoroughness,
+                PathCost = Math.Round(aStar.Cost, 3),
+                Checks = aStar.Ticks,
+                Ticks = timer.ElapsedTicks,
+                Time = timer.ElapsedMilliseconds
+            };
         }
 
         private void WriteFileHeader()
         {
+            lock (Console.Out)
+            {
+                Console.Clear();
+                Console.CursorLeft = 0;
+                Console.CursorTop = 0;
+                Console.WriteLine($"{MapWidth}x{MapHeight} - {NumberOfTests}");
+                Console.WriteLine(
+                    "TId".PadRight(5) +
+                    "StId".PadRight(5) +
+                    "T".PadRight(6) +
+                    "ECT".PadRight(8) +
+                    "BC".PadRight(12) +
+                    "PC".PadRight(12) +
+                    "C".PadRight(6) +
+                    "Ti".PadRight(12) +
+                    "Tm".PadRight(12)
+                );
+            }
+            
             lock (_fileLock)
             {
-                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,Thoroughness,PathCost,Check,Ticks,Time\n");
+                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,Thoroughness,BestCost,PathCost,Check,Ticks,Time\n");
             }
         }
 
@@ -127,12 +148,22 @@ namespace PathFinderTest.Tests.Many
         {
             lock (_fileLock)
             {
-                File.AppendAllText(OutputFile,
-                    $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Thoroughness},{result.PathCost},{result.Checks},{result.Ticks},{result.Time}\n");
+                File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Thoroughness},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time}\n");
             }
             lock (Console.Out)
             {
-                Console.WriteLine($"{result.TestId}\t{result.SubId}\t{result.EstimatedCostTo}\t{result.Thoroughness}\t{result.PathCost}\t{result.Checks}\t{result.Ticks}\t{result.Time}");
+                if (Console.CursorTop >= Console.BufferHeight - 2)
+                    Console.CursorTop = 2;
+                Console.WriteLine(
+                    result.TestId.PadResult(5) +
+                    result.SubId.PadResult(5) +
+                    result.Thoroughness.PadResult(6) +
+                    result.EstimatedCostTo.PadResult(8) +
+                    result.BestCostTo.PadResult(12) +
+                    result.PathCost.PadResult(12) +
+                    result.Checks.PadResult(6) +
+                    result.Ticks.PadResult(12) +
+                    result.Time.PadResult(12));
             }
         }
     }
@@ -143,6 +174,7 @@ namespace PathFinderTest.Tests.Many
         public int SubId;
         public World World;
         public int EstimatedCostTo;
+        public double BestCostTo;
         public Position Origin;
         public Position Destination;
         public decimal Thoroughness;
@@ -153,10 +185,20 @@ namespace PathFinderTest.Tests.Many
         public int TestId;
         public int SubId;
         public int EstimatedCostTo;
+        public double BestCostTo;
         public decimal Thoroughness;
         public double PathCost;
         public int Checks;
         public long Ticks;
         public long Time; 
+    }
+
+    internal static class TestFormats
+    {
+        public static string PadResult(this int result, int length) => result.ToString().PadRight(length);
+        public static string PadResult(this float result, int length) => result.ToString(CultureInfo.InvariantCulture).PadRight(length);
+        public static string PadResult(this double result, int length) => result.ToString(CultureInfo.InvariantCulture).PadRight(length);
+        public static string PadResult(this decimal result, int length) => result.ToString(CultureInfo.InvariantCulture).PadRight(length);
+        public static string PadResult(this long result, int length) => result.ToString(CultureInfo.InvariantCulture).PadRight(length);
     }
 }
