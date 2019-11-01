@@ -71,15 +71,15 @@ namespace SimpleWorld.Map
         {
             var dX = Math.Abs(n.X - X);
             var dY = Math.Abs(n.Y - Y);
-            if (World.CanCutCorner)
-            {
+//            if (World.CanCutCorner)
+//            {
                 return Math.Sqrt(dX * dX + dY * dY);
-            }
-            else
-            {
+//            }
+//            else
+//            {
 
-                return dX + dY;
-            }
+//                return dX + dY;
+//            }
         }
 
         public override string ToString()

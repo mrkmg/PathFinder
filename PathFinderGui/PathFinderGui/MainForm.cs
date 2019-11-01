@@ -82,7 +82,7 @@ namespace PathFinderGui
                 {
                     start = points.Item1;
                     end = points.Item2;
-                    map.DrawAll(world.GetAllNodes().AsDrawPoints());
+                    map.DrawAll(world.GetAllNodes().AsMapDrawPoints());
                     map.DrawPoint(start.X, start.Y, Colors.Blue);
                     map.DrawPoint(end.X, end.Y, Colors.Blue);
                 }
@@ -181,15 +181,15 @@ namespace PathFinderGui
         private void Go(World world, int thoroughness, Position randomFromNode, Position randomToNode)
         {
             KillRunning();
-            map.DrawAll(world.GetAllNodes().AsDrawPoints());
+            map.DrawAll(world.GetAllNodes().AsMapDrawPoints());
             map.DrawPoint(randomFromNode.X, randomFromNode.Y, Colors.Blue);
             map.DrawPoint(randomToNode.X, randomToNode.Y, Colors.Blue);
             
             var t = (double) thoroughness / 100;
-            
-            var solver = new Greedy<Position>(randomFromNode, randomToNode);
 
-            timer = new UITimer { Interval = 1d/60d };
+            var solver = new AStar<Position>(randomFromNode, randomToNode, t);
+
+            timer = new UITimer { Interval = 1d/30d };
             timer.Elapsed += (sender, args) =>
             {
                 if (solver.State == SolverState.Running)
@@ -198,14 +198,13 @@ namespace PathFinderGui
                     for (var i = 0; i < speed && solver.State == SolverState.Running; i++)
                     {
                         solver.Tick();
-                        var color = Color.Blend(GetColorForLevel(solver.Current.Z), Color.FromArgb(255, 255, 255, 100));
                         ticks[i] = solver.Current;
                     }
-                    map.DrawAll(ticks.AsPathPoints());
+                    map.DrawAll(ticks.AsSearchDrawPoints());
                 }
                 else
                 {
-                    map.DrawAll(solver.Path.Select(p => new DrawPoint { Color = Colors.White, X = p.X, Y = p.Y}));
+                    map.DrawAll(solver.Path.AsPathDrawPoints());
                     KillRunning();
                 }
             };
@@ -213,35 +212,40 @@ namespace PathFinderGui
             timer.Start();
             
         }
-
-        public static Color GetColorForLevel(int level)
-        {
-            switch (level)
-            {
-                case 1 : return Color.FromArgb(0, 255, 0);
-                case 2 : return Color.FromArgb(50, 255, 50);
-                case 3 : return Color.FromArgb(100, 255, 100);
-                case 4 : return Color.FromArgb(150, 255, 150);
-                case 5 : return Color.FromArgb(150, 200, 150);
-                case 6 : return Color.FromArgb(150, 150, 150);
-                case 7 : return Color.FromArgb(100, 100, 100);
-                case 8 : return Color.FromArgb(50, 50, 50);
-                case 9 : return Color.FromArgb(20, 20, 20);
-                default : return Color.FromArgb(0, 0, 0);
-            }
-        }
     }
 
     internal static class Ext
     {
-        internal static IEnumerable<DrawPoint> AsDrawPoints(this IEnumerable<Position> positions)
+        internal static Color GetColorForLevel(int level)
         {
-            return positions.Select(p => new DrawPoint {Color = MainForm.GetColorForLevel(p.Z), X = p.X, Y = p.Y});
+            var redStart = 0;
+            var redDiff = 164;
+            var greenStart = 105;
+            var greenDiff = -19;
+            var levelAmount = (level - 1) / 8d;
+
+            return Color.FromArgb(redStart + (int)(levelAmount * redDiff), greenStart + (int)(levelAmount * greenDiff), 0);
+            
+        }
+        
+        internal static Func<Position, DrawPoint> PositionToBlended(Color color)
+        {
+            return (p) => new DrawPoint {X = p.X, Y = p.Y, Color = Color.Blend(GetColorForLevel(p.Z), color)};
+        }
+        
+        internal static IEnumerable<DrawPoint> AsMapDrawPoints(this IEnumerable<Position> positions)
+        {
+            return positions.Select(p => new DrawPoint {Color = GetColorForLevel(p.Z), X = p.X, Y = p.Y});
         }
 
-        internal static IEnumerable<DrawPoint> AsPathPoints(this IEnumerable<Position> positions)
+        internal static IEnumerable<DrawPoint> AsSearchDrawPoints(this IEnumerable<Position> positions)
         {
-            return positions.Where(p => p != null).Select(p => new DrawPoint {Color = Color.Blend(MainForm.GetColorForLevel(p.Z), Color.FromArgb(255, 0, 0, 100)), X = p.X, Y = p.Y});
+            return positions.Where(p => p != null).Select(PositionToBlended(Color.FromArgb(255, 255, 255, 100)));
+        }
+        
+        internal static IEnumerable<DrawPoint> AsPathDrawPoints(this IEnumerable<Position> positions)
+        {
+            return positions.Where(p => p != null).Select(PositionToBlended(Color.FromArgb(0, 0, 255, 255)));
         }
     }
 }
