@@ -8,9 +8,12 @@ namespace PathFinder.Interfaces
     {
         SolverState State { get; }
         int Ticks { get; }
+        T Current { get; }
         T Origin { get; }
         T Destination { get; }
         [CanBeNull] IList<T> Path { get; }
+        IEnumerable<T> Open { get; }
+        IEnumerable<T> Closed { get; }
 
         void Tick();
         void Cancel();
@@ -19,7 +22,7 @@ namespace PathFinder.Interfaces
     public static class SolverExtensions
     {
         [CanBeNull]
-        public static IList<T> Solve<T>(this ISolver<T> solver) where T : INode
+        public static IList<T> Solve<T>([NotNull] this ISolver<T> solver)
         {
             while (solver.State == SolverState.Running) 
                 solver.Tick();

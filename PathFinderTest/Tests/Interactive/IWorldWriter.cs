@@ -10,6 +10,7 @@ namespace PathFinderTest.Tests.Interactive
         void DrawPosition(int x, int y, int testNumber);
         void DrawPosition(int x, int y, PositionType type);
         void DrawPosition(int x, int y, ConsoleColor background, ConsoleColor foreground);
+        void DrawSeed(int seed);
         void DrawWorld();
     }
 

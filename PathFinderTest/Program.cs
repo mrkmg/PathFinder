@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using PathFinder.Components;
 using PathFinderTest.Sequencer;
+using PathFinderTest.Tests.InsertCosting;
 using PathFinderTest.Tests.Interactive;
 using PathFinderTest.Tests.Many;
 
@@ -18,9 +20,14 @@ namespace PathFinderTest
             {
                 Console.ResetColor();
                 Console.Clear();
-                Console.WriteLine("I, M, Q");
+                Console.WriteLine("I, M, R, Q");
                 var key = Console.ReadKey().Key;
-                if (key == ConsoleKey.I)
+
+                if (key == ConsoleKey.R)
+                {
+                    InsertTesting.Run();
+                }
+                else if (key == ConsoleKey.I)
                 {
                     var interactiveTest = new InteractiveTest();
                     interactiveTest.Main();
@@ -45,14 +52,25 @@ namespace PathFinderTest
                     }
                     
                     
+                    var thoroughness = 
+                        SequenceBuilder
+                            .Build(0.8m, 0m, 0.1m)
+                            .ToList();
+                    var tStr = thoroughness
+                        .Select(s => s.ToString(CultureInfo.InvariantCulture))
+                        .Aggregate((p, a) => p + "," + a);
+                    
+                    Console.Write($"Thoroughness ({tStr})?");
+                    var tInput = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(tInput))
+                    {
+                        thoroughness = tInput.Split(',').Select(s => decimal.Parse(s.Trim())).ToList();
+                    }
+                    
                     var dateStr = DateTime.Now.ToString("yyyyMMdd-HHmm");
                     
                     foreach (var size in sizes)
                     {
-                        var thoroughness = 
-                            SequenceBuilder
-                                .Build(1m, 0m, 0.05m)
-                                .ToList();
 
                         var manyTest = new ManyTest
                         {

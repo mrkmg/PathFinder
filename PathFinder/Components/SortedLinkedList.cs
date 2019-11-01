@@ -8,6 +8,10 @@ namespace PathFinder.Components
     {
         private readonly Comparison<T> _comparer;
         private LinkedList<T> _list = new LinkedList<T>();
+
+        #if DEBUG
+        public List<PerformanceCounter> InsertCosts = new List<PerformanceCounter>();
+        #endif
         
         public SortedLinkedList(Comparison<T> comparer)
         {
@@ -19,30 +23,64 @@ namespace PathFinder.Components
             var first = _list.First;
             var last = _list.Last;
             
-            if (Count == 0 || _comparer(value, first.Value) <= 0)
+            #if DEBUG
+            var insertChecks = 0;
+            #endif
+            
+            #if DEBUG
+            insertChecks++;
+            #endif
+            
+            if (Count == 0 || _comparer(value, first.Value) < 0)
             {
                 _list.AddFirst(value);
+                #if DEBUG
+                InsertCosts.Add(new PerformanceCounter(Count, insertChecks));
+                #endif
                 return;
             }
+            
+            
+            #if DEBUG
+            insertChecks++;
+            #endif
 
-            if (_comparer(value, last.Value) >= 0)
+            if (_comparer(value, last.Value) > 0)
             {
                 _list.AddLast(value);
+                #if DEBUG
+                InsertCosts.Add(new PerformanceCounter(Count, insertChecks));
+                #endif
                 return;
             }
-
 
             while (true)
             {
+                
+                #if DEBUG
+                insertChecks++;
+                #endif
+                
                 if (_comparer(value, first.Value) <= 0)
                 {
                     _list.AddBefore(first, value);
+                    #if DEBUG
+                    InsertCosts.Add(new PerformanceCounter(Count, insertChecks));
+                    #endif
                     return;
                 }
+                
+                
+                #if DEBUG
+                insertChecks++;
+                #endif
 
                 if (_comparer(value, last.Value) >= 0)
                 {
                     _list.AddAfter(last, value);
+                    #if DEBUG
+                    InsertCosts.Add(new PerformanceCounter(Count, insertChecks));
+                    #endif
                     return;
                 }
 
@@ -91,4 +129,18 @@ namespace PathFinder.Components
             return ((IEnumerable) _list).GetEnumerator();
         }
     }
+    
+    #if DEBUG
+    public struct PerformanceCounter
+    {
+        public int Length;
+        public int Checks;
+
+        public PerformanceCounter(int l, int c)
+        {
+            Length = l;
+            Checks = c;
+        }
+    }
+    #endif
 }

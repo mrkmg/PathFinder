@@ -6,7 +6,7 @@ using SharpNoise;
 using SharpNoise.Builders;
 using SharpNoise.Modules;
 
-namespace PathFinderTest.Map
+namespace SimpleWorld.Map
 {
     public class World
     {

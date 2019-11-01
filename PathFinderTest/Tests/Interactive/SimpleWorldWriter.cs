@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.Globalization;
 using PathFinder.Solvers;
-using PathFinderTest.Map;
+using SimpleWorld.Map;
 
 namespace PathFinderTest.Tests.Interactive
 {
@@ -14,6 +15,7 @@ namespace PathFinderTest.Tests.Interactive
 
         public SimpleWorldWriter(World world, int totalTests)
         {
+            var a = new OrderedDictionary();
             _world = world;
             _totalTests = totalTests;
         }
@@ -38,6 +40,11 @@ namespace PathFinderTest.Tests.Interactive
                           Math.Ceiling(cost).ToString(CultureInfo.CurrentCulture).PadLeft(6) + " / " +
                           ticks.ToString().PadLeft(6) + " / " +
                           cpuCycles.ToString().PadLeft(12));
+        }
+
+        public void DrawSeed(int seed)
+        {
+            WriteInfo($"Seed: {seed}");
         }
 
         public void DrawPosition(int x, int y)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PathFinder.Interfaces;
 
-namespace PathFinderTest.Map
+namespace SimpleWorld.Map
 {
     public class Position : INode
     {
@@ -29,7 +29,7 @@ namespace PathFinderTest.Map
         public double EstimatedCostTo(INode other)
         {
             return other is Position otherNode
-                ? EstimateDistance(otherNode) * 3
+                ? EstimateDistance(otherNode) * 2
                 : double.MaxValue;
         }
 

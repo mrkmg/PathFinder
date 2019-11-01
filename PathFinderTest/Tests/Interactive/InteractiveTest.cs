@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using PathFinder.Interfaces;
 using PathFinder.Solvers;
-using PathFinderTest.Map;
+using SimpleWorld.Map;
 using PathFinderTest.Sequencer;
 
 namespace PathFinderTest.Tests.Interactive
@@ -14,8 +14,9 @@ namespace PathFinderTest.Tests.Interactive
     {
         private bool _bigJumps;
         private bool _canDiag;
-        private bool _showSearch = true;
+        private bool _showSearch;
         private bool _slowMode;
+        private int _seed;
 
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
@@ -28,39 +29,61 @@ namespace PathFinderTest.Tests.Interactive
         public InteractiveTest()
         {
             _thoroughnesses = 
-                SequenceBuilder.Build(0.3m, 0m, 0.1m)
-                .Concat(SequenceBuilder.Build(0.5m, 0.35m, 0.05m))
-                .Select(n => (double)n)
+                SequenceBuilder.Build(0.8m, 0m, 0.1m)
+                .ToDouble()
                 .ToList();
-            _thoroughnesses.Add(1);
         }
 
         private bool BigJumpCheck(Position a, Position b) => !_bigJumps || Math.Abs(a.Z - b.Z) <= 1;
 
         public void Main()
         {
-            var rnd = new Random();
 
             while (true)
             {
+                
+                _seed = (new Random().Next(10000000, 99999999));
+                
                 if (ShowMenu()) break;
 
-                MakeWorld();
+                var rnd = new Random(_seed);
+                MakeWorld(rnd);
                 
-                Position randomFromNode;
-                Position randomToNode;
+                var worldSize = Math.Sqrt(_world.XSize * _world.XSize + _world.YSize + _world.YSize);
+                var targetSize = (int)(worldSize * 0.95);
+                
+                Position randomFromNode = null;
+                Position randomToNode = null;
 
-                IList<Position> path;
-                do
+                IList<Position> path = null;
+
+                var tries = 0;
+                while (path == null)
                 {
-                    randomFromNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
-                    randomToNode = _world.GetAllNodes().OrderBy(n => rnd.Next()).First();
+                    tries++;
+
+                    if (tries > 2000) break;
+                    
+                    do randomFromNode = _world.GetNode(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
+                    while (randomFromNode == null);
+                    
+                    do randomToNode = _world.GetNode(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
+                    while (randomToNode == null);
+
+                    var x = Math.Abs(randomFromNode.X - randomToNode.X);
+                    var y = Math.Abs(randomFromNode.Y - randomToNode.Y);
+                    var dist = Math.Sqrt(x*x + y*y);
+                    
+                    if (dist < targetSize) continue;
                     path = AStar.Solve(randomFromNode, randomToNode, BigJumpCheck, 0.0);
-                } while (path == null || path.Count < 100);
+                }
                 
+                if (path == null) continue;
+
                 var aStars = new Dictionary<double, AStar<Position>>();
 
                 _worldWriter.DrawWorld();
+                _worldWriter.DrawSeed(_seed);
 
                 var i = 0;
                 foreach (var thoroughness in _thoroughnesses)
@@ -94,11 +117,11 @@ namespace PathFinderTest.Tests.Interactive
             }
         }
 
-        private void MakeWorld()
+        private void MakeWorld(Random rnd)
         {
-            _world = new World(Console.WindowWidth - 1, Console.WindowHeight)
+            _world = new World(Console.WindowWidth - 1, Console.WindowHeight, rnd)
             {
-                CanCutCorner = _canDiag
+                CanCutCorner = _canDiag,
             };
 
             _worldWriter = new SimpleWorldWriter(_world, _thoroughnesses.Count);
@@ -109,6 +132,7 @@ namespace PathFinderTest.Tests.Interactive
             foreach (var node in path)
             {
                 _worldWriter.DrawPosition(node.X, node.Y, testNumber);
+                Thread.Sleep(2);
             }
         }
 
@@ -130,6 +154,7 @@ namespace PathFinderTest.Tests.Interactive
                 Console.WriteLine("(s) Show Search: " + _showSearch);
                 Console.WriteLine("(l) Slow Mode: " + _slowMode);
                 Console.WriteLine("(j) Big Jumps: " + _bigJumps);
+                Console.WriteLine($"(v) Seed: {_seed}");
                 Console.WriteLine("(ENTER) Run");
                 Console.WriteLine("(q) Quit");
                 var key = Console.ReadKey();
@@ -152,6 +177,10 @@ namespace PathFinderTest.Tests.Interactive
                         break;
                     case ConsoleKey.J:
                         _bigJumps = !_bigJumps;
+                        break;
+                    case ConsoleKey.V:
+                        Console.WriteLine("\nNew Seed?");
+                        _seed = int.Parse(Console.ReadLine() ?? "0");
                         break;
                 }
             }
@@ -194,8 +223,11 @@ namespace PathFinderTest.Tests.Interactive
             else
             {
                 timer.Start();
-                aStar.Solve();
+                var path = aStar.Solve();
                 timer.Stop();
+                
+                DrawPath(path, 0);
+                ClearPath(path);
             }
             return aStar;
         }

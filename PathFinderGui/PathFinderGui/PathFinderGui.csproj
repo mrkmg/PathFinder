@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>PathFinderGui</RootNamespace>
+        <PackageVersion>1.0</PackageVersion>
+        <Title>PathFinderGui</Title>
+        <Copyright>Copyright © 2019</Copyright>
+        <Description>Description of PathFinderGui</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Eto.Forms" Version="2.4.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\PathFinder\PathFinder.csproj" />
+      <ProjectReference Include="..\..\SimpleWorld\SimpleWorld.csproj" />
+    </ItemGroup>
+
+</Project>

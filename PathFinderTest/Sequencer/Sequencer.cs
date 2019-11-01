@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace PathFinderTest.Sequencer
 {
@@ -9,7 +11,7 @@ namespace PathFinderTest.Sequencer
         {
             if (inc == 0) throw new InvalidOperationException("incrementor can not be 0");
             if (end < start) throw new InvalidOperationException("start must be higher than end");
-
+            
             var current = start;
 
             do
@@ -116,5 +118,7 @@ namespace PathFinderTest.Sequencer
                 current += inc;
             } while (current <= end);
         }
+
+        public static IEnumerable<double> ToDouble(this IEnumerable<decimal> list) => list.Select(n => (double) n);
     }
 }
