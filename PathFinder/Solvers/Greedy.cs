@@ -50,7 +50,7 @@ namespace PathFinder.Solvers
         public IList<T> Path => GetPath();
         private readonly HashSet<NodeMetaData> _closedNodes = new HashSet<NodeMetaData>();
         private readonly HashSet<NodeMetaData> _openNodes = new HashSet<NodeMetaData>();
-        private readonly SortedLinkedList<NodeMetaData> _openNodesSorted;
+        private readonly SortedLinkedListHash<NodeMetaData> _openNodesSorted;
         private readonly NodeMetas _nodeMetas = new NodeMetas();
         private readonly Func<T, T, bool> _nodeValidator = null;
         private IList<T> _path;
@@ -69,7 +69,7 @@ namespace PathFinder.Solvers
             Destination = destination;
             _current = _nodeMetas.Get(origin);
             _openNodes.Add(_current);
-            _openNodesSorted = new SortedLinkedList<NodeMetaData>(NodeComparer);
+            _openNodesSorted = new SortedLinkedListHash<NodeMetaData>();
         }
         
         /// <summary>
@@ -177,7 +177,7 @@ namespace PathFinder.Solvers
             }
         }
 
-        private class NodeMetaData : IEqualityComparer<NodeMetaData>, IEquatable<NodeMetaData>
+        private class NodeMetaData : IEqualityComparer<NodeMetaData>, IEquatable<NodeMetaData>, IComparable<NodeMetaData>
         {
             public readonly T Node;
             public T Parent;
@@ -190,6 +190,13 @@ namespace PathFinder.Solvers
             public override bool Equals(object obj) => obj is NodeMetaData n && Equals(n);
             public override int GetHashCode() => Node.GetHashCode();
             public override string ToString() => Node.ToString();
+
+            public int CompareTo(NodeMetaData other)
+            {
+                if (ReferenceEquals(this, other)) return 0;
+                if (ReferenceEquals(null, other)) return 1;
+                return ToCost.CompareTo(other.ToCost);
+            }
         }
     }
 }

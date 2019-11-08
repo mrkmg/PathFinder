@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -38,6 +39,20 @@ namespace PathFinderGui
             _bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppRgba, data);
         }
 
+        public void DrawMarker(int x, int y, int size, Color color)
+        {
+            var points = new List<DrawPoint>();
+            var ly = size;
+            for (var dx = x - size; dx < x + size; dx++)
+            {
+                points.Add(new DrawPoint {X = dx, Y = y + ly, Color = color});
+                points.Add(new DrawPoint {X = dx, Y = y - ly, Color = color});
+                ly -= 1;
+            }
+            
+            DrawAll(points.Where(p => p.X > 0 && p.X < MapWidth && p.Y > 0 && p.Y < MapHeight));
+        }
+
         public void DrawPoint(int x, int y, Color color)
         {
             var xMin = x * _scale;
@@ -57,6 +72,8 @@ namespace PathFinderGui
 
         public void DrawAll(IEnumerable<DrawPoint> points)
         {
+            var minPoint = new Point(int.MaxValue, int.MaxValue);
+            var maxPoint = new Point(0, 0);
             using (var bitmapData = _bitmap.Lock())
             {
                 foreach (var drawPoint in points)
@@ -65,6 +82,10 @@ namespace PathFinderGui
                     var yMin = drawPoint.Y * _scale;
                     var xMax = (drawPoint.X + 1) * _scale;
                     var yMax = (drawPoint.Y + 1) * _scale;
+                    if (xMin < minPoint.X) minPoint.X = xMin;
+                    if (yMin < minPoint.Y) minPoint.Y = yMin;
+                    if (xMax > maxPoint.X) maxPoint.X = xMax;
+                    if (yMax > maxPoint.Y) maxPoint.Y = yMax;
                     for (var ix = xMin; ix < xMax; ix++)
                     for (var iy = yMin; iy < yMax; iy++)
                     {
@@ -72,7 +93,7 @@ namespace PathFinderGui
                     }
                 }
             }
-            Invalidate();
+            Invalidate(new Rectangle(minPoint, maxPoint));
         }
     }
 

@@ -13,12 +13,12 @@ namespace PathFinder.Components
             }
         }
 
-        internal static void ForAllWhile<T>(this IEnumerable<T> iEnumerable, Func<T, bool> action) => ForAllWhile(iEnumerable, action, b => b);
-        internal static void ForAllWhile<T, TT>(this IEnumerable<T> iEnumerable, Func<T, TT> action, Func<TT, bool> check)
+        internal static IEnumerable<T> Tap<T>(this IEnumerable<T> iEnumerable, Action<T> action)
         {
             foreach (var item in iEnumerable)
             {
-                if (!check(action(item))) return;
+                action(item);
+                yield return item;
             }
         }
     }

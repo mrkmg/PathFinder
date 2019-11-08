@@ -22,14 +22,14 @@ namespace SimpleWorld.Map
         public double RealCostTo(INode other)
         {
             return other is Position otherNode 
-                ? EstimateDistance(otherNode) * Z
+                ? EstimateDistance(otherNode) + (Math.Abs(Z - otherNode.Z) * 50)
                 : double.MaxValue;
         }
 
         public double EstimatedCostTo(INode other)
         {
             return other is Position otherNode
-                ? EstimateDistance(otherNode) * 2
+                ? EstimateDistance(otherNode)
                 : double.MaxValue;
         }
 

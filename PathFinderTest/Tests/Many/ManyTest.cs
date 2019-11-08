@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -114,11 +113,6 @@ namespace PathFinderTest.Tests.Many
                 Checks = aStar.Ticks,
                 Ticks = timer.ElapsedTicks,
                 Time = Math.Round(timer.Elapsed.TotalMilliseconds, 4),
-                #if DEBUG
-                AverageInsertCost = Math.Round(aStar.AverageInsertCost, 3),
-                AverageInsertLen = Math.Round(aStar.AverageInsertLength, 3),
-                AverageInsertPerc = Math.Round(aStar.InsertCosts.Select(a => a.Checks / a.Length).Average() * 100, 3),
-                #endif
             };
         }
 
@@ -140,21 +134,12 @@ namespace PathFinderTest.Tests.Many
                     + "C".PadRight(8)
                     + "Ti".PadRight(12)
                     + "Tm".PadRight(12)
-                    #if DEBUG
-                    + "AIC".PadRight(8)
-                    + "AIL".PadRight(8)
-                    + "AIP".PadRight(8)
-                    #endif
                 );
             }
             
             lock (_fileLock)
             {
-                #if DEBUG
-                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,Thoroughness,BestCost,PathCost,Check,Ticks,Time,AverageInsertCost,AverageInsertLeng,AverageInsertPerc\n"); 
-                #else
                 File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,Thoroughness,BestCost,PathCost,Check,Ticks,Time\n");
-                #endif
             }
         }
 
@@ -162,11 +147,7 @@ namespace PathFinderTest.Tests.Many
         {
             lock (_fileLock)
             {
-                #if DEBUG
-                File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Thoroughness},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time},{result.AverageInsertCost},{result.AverageInsertPerc}\n");
-                #else
                 File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Thoroughness},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time}\n");
-                #endif
             }
             lock (Console.Out)
             {
@@ -182,11 +163,6 @@ namespace PathFinderTest.Tests.Many
                     + result.Checks.PadResult(8)
                     + result.Ticks.PadResult(12)
                     + result.Time.PadResult(12)
-                    #if DEBUG
-                    + result.AverageInsertCost.PadResult(8)
-                    + result.AverageInsertLen.PadResult(8)
-                    + result.AverageInsertPerc.PadResult(8)
-                    #endif
                 );
             }
         }
@@ -214,12 +190,7 @@ namespace PathFinderTest.Tests.Many
         public double PathCost;
         public int Checks;
         public long Ticks;
-        public double Time; 
-        #if DEBUG
-        public double AverageInsertCost;
-        public double AverageInsertLen;
-        public double AverageInsertPerc;
-#endif
+        public double Time;
     }
 
     internal static class TestFormats

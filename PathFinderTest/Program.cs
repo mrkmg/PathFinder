@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Linq;
 using PathFinder.Components;
 using PathFinderTest.Sequencer;
-using PathFinderTest.Tests.InsertCosting;
 using PathFinderTest.Tests.Interactive;
 using PathFinderTest.Tests.Many;
 
@@ -23,11 +22,7 @@ namespace PathFinderTest
                 Console.WriteLine("I, M, R, Q");
                 var key = Console.ReadKey().Key;
 
-                if (key == ConsoleKey.R)
-                {
-                    InsertTesting.Run();
-                }
-                else if (key == ConsoleKey.I)
+                if (key == ConsoleKey.I)
                 {
                     var interactiveTest = new InteractiveTest();
                     interactiveTest.Main();

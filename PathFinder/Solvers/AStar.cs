@@ -74,8 +74,8 @@ namespace PathFinder.Solvers
             Destination = destination;
             Thoroughness = thoroughness;
             _current = _nodeMetas.Get(origin);
+            _openNodes = new OpenNodeStoreSortedLinkedList<NodeMetaData>();
             _openNodes.Add(_current);
-            _openNodesSorted = new SortedLinkedList<NodeMetaData>(NodeComparer);
         }
 
         /// <summary>
@@ -91,8 +91,7 @@ namespace PathFinder.Solvers
         }
         
         private readonly HashSet<NodeMetaData> _closedNodes = new HashSet<NodeMetaData>();
-        private readonly HashSet<NodeMetaData> _openNodes = new HashSet<NodeMetaData>();
-        private readonly SortedLinkedList<NodeMetaData> _openNodesSorted;
+        private readonly IOpenNodeStore<NodeMetaData> _openNodes;
         private readonly NodeMetas _nodeMetas = new NodeMetas();
         private readonly Func<T, T, bool> _nodeValidator = null;
         private IList<T> _path;
@@ -108,6 +107,16 @@ namespace PathFinder.Solvers
         ///     A list of nodes which have already been checked
         /// </summary>
         public IEnumerable<T> Closed => _closedNodes.Select(n => n.Node);
+
+        /// <summary>
+        ///     Count of open nodes
+        /// </summary>
+        public int OpenCount => _openNodes.Count;
+        
+        /// <summary>
+        ///     Count of closed nodes
+        /// </summary>
+        public int ClosedCount => _closedNodes.Count;
 
         /// <summary>
         ///     The last node to be checked
@@ -156,12 +165,6 @@ namespace PathFinder.Solvers
         ///     The path from the Origin to the Destination
         /// </summary>
         public IList<T> Path => GetPath();
-        
-        #if DEBUG
-        public IList<PerformanceCounter> InsertCosts => _openNodesSorted.InsertCosts;
-        public double AverageInsertCost => _openNodesSorted.InsertCosts.Select(n => n.Checks).Average();
-        public double AverageInsertLength => _openNodesSorted.InsertCosts.Select(n => n.Length).Average();
-        #endif
 
         /// <summary>
         ///     Perform one tick
@@ -182,7 +185,7 @@ namespace PathFinder.Solvers
 
             if (Current.Equals(Destination))
                 State = SolverState.Success;
-            else if (_openNodesSorted.First == null)
+            else if (_openNodes.Count == 0)
                 State = SolverState.Failed;
             else
                 SetCurrentNode();
@@ -205,60 +208,55 @@ namespace PathFinder.Solvers
 
         private void SetCurrentNode()
         {
-            _current = _openNodesSorted.First.Value;
-            _openNodesSorted.RemoveFirst();
-            
-            _openNodes.Remove(_current);
+            _current = _openNodes.PopLowest();
             _closedNodes.Add(_current);
         }
 
         private void ProcessNeighbors()
         {
-            Current
+            
+            var neighborsEnumerable = Current
                 .GetNeighbors()
                 .Select(neighbor => _nodeMetas.Get((T)neighbor))
-                .Where(n => !_closedNodes.Contains(n))
-                .ForAll(ProcessNeighbor);
+                .Where(n => !_closedNodes.Contains(n));
+            if (_nodeValidator != null) 
+                neighborsEnumerable = neighborsEnumerable.Where(n => _nodeValidator(Current, n.Node));
+            neighborsEnumerable.ForAll(ProcessNeighbor);
         }
 
         private void ProcessNeighbor(NodeMetaData neighbor)
         {
-            if (_nodeValidator != null && !_nodeValidator(Current, neighbor.Node)) return;
-            
             var fromCost = _current.FromCost + Current.RealCostTo(neighbor.Node);
-            var toCost = neighbor.Node.EstimatedCostTo(Destination);
-            var totalCost = fromCost * Thoroughness + toCost * (1 - Thoroughness);
 
-            if (!_openNodes.Contains(neighbor))
+            if (_openNodes.Contains(neighbor))
             {
+                if (fromCost < neighbor.FromCost)
+                {
+                    var toCost = neighbor.Node.EstimatedCostTo(Destination);
+                    var totalCost = fromCost * Thoroughness + toCost * (1 - Thoroughness);
+                    neighbor.Parent = Current;
+                    neighbor.ToCost = toCost;
+                    neighbor.FromCost = fromCost;
+                    neighbor.TotalCost = totalCost;
+                    _openNodes.Resort(neighbor);
+                }
+            }
+            else
+            {
+                var toCost = neighbor.Node.EstimatedCostTo(Destination);
+                var totalCost = fromCost * Thoroughness + toCost * (1 - Thoroughness);
+                neighbor.Parent = Current;
+                neighbor.ToCost = toCost;
+                neighbor.FromCost = fromCost;
+                neighbor.TotalCost = totalCost;
                 _openNodes.Add(neighbor);
-                neighbor.Parent = Current;
-                neighbor.ToCost = toCost;
-                neighbor.FromCost = fromCost;
-                neighbor.TotalCost = totalCost;
-                _openNodesSorted.Add(neighbor);
             }
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
-            else if (fromCost == neighbor.FromCost && toCost < neighbor.ToCost || totalCost < neighbor.TotalCost)
-            {
-                neighbor.Parent = Current;
-                neighbor.ToCost = toCost;
-                neighbor.FromCost = fromCost;
-                neighbor.TotalCost = totalCost;
-                MoveNodeInOpenList(neighbor);
-            }
-        }
-
-        private void MoveNodeInOpenList(NodeMetaData node)
-        {
-            _openNodesSorted.Remove(node);
-            _openNodesSorted.Add(node);
         }
 
         private IList<T> GetPath()
         {
             if (State != SolverState.Success) return null;
-            return _path ?? (_path = BuildPath());
+            return _path ??= BuildPath();
         }
 
         private IList<T> BuildPath()
@@ -309,7 +307,7 @@ namespace PathFinder.Solvers
             }
         }
 
-        private class NodeMetaData : IEqualityComparer<NodeMetaData>, IEquatable<NodeMetaData>
+        private class NodeMetaData : IEqualityComparer<NodeMetaData>, IEquatable<NodeMetaData>, IComparable<NodeMetaData>
         {
             public readonly T Node;
             public double FromCost;
@@ -324,6 +322,13 @@ namespace PathFinder.Solvers
             public override bool Equals(object obj) => obj is NodeMetaData n && Equals(n);
             public override int GetHashCode() => Node.GetHashCode();
             public override string ToString() => Node.ToString();
+
+            public int CompareTo(NodeMetaData other)
+            {
+                if (ReferenceEquals(this, other)) return 0;
+                if (ReferenceEquals(null, other)) return 1;
+                return TotalCost.CompareTo(other.TotalCost);
+            }
         }
     }
 }

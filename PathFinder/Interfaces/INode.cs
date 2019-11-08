@@ -33,12 +33,12 @@ namespace PathFinder.Interfaces
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        double RealCostTo(INode other);
+        double RealCostTo(ISimpleNode other);
         
         /// <summary>
         ///     Get nodes that are accessible from this node.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<INode> GetNeighbors();
+        IEnumerable<ISimpleNode> GetNeighbors();
     }
 }
