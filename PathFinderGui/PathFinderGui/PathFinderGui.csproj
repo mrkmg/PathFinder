@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>PathFinderGui</RootNamespace>
         <PackageVersion>1.0</PackageVersion>
         <Title>PathFinderGui</Title>

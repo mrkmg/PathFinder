@@ -1,31 +1,54 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using PathFinder.Interfaces;
+using PathFinder.Solvers;
 using SimpleWorld.Map;
 
 namespace PathFinderGui
 {
-    public class SolverRunnerThread
+
+    public interface SolverRunner
     {
-        public ConcurrentBag<Position> CheckedPositions = new ConcurrentBag<Position>();
-        public ISolver<Position> Solver;
-        public bool kill;
+        AStar<Position> Solver { get; set; }
+        bool kill { get; set; }
+        void Run();
+        IReadOnlyCollection<Position> GetCheckedPositions();
+    }
+    
+    public class SolverRunnerThread : SolverRunner
+    {
+        private Collection<Position> CheckedPositions = new Collection<Position>();
+        public AStar<Position> Solver { get; set; }
+        public bool kill { get; set; }
+        private readonly object _lock = new object();
 
         public void Run()
         {
             while (Solver.State == SolverState.Running && !kill)
             {
-                Solver.Tick();
-                CheckedPositions.Add(Solver.Current);
+                    Solver.Tick();
+                    lock (_lock)
+                    {
+                        CheckedPositions.Add(Solver.Current);
+                    }
             }
         }
 
-        public Position[] GetCheckedPositions()
+        public IReadOnlyCollection<Position> GetCheckedPositions()
         {
-            var positions = CheckedPositions.ToArray();
-            CheckedPositions.Clear();
-            return positions;
+            lock (_lock)
+            {
+                try
+                {
+                    return CheckedPositions;
+                }
+                finally
+                {
+                    CheckedPositions = new Collection<Position>();
+                }
+            }
         }
     }
 }

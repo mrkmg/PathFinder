@@ -36,7 +36,7 @@ namespace SimpleWorld.Map
                 _allNodes[x] = new Position[YSize];
                 for (var y = 0; y < YSize; y++)
                 {
-//                    if (wallNoiseMap.GetValue(x, y) > 0.3) continue;
+                    if (wallNoiseMap.GetValue(x, y) > 0.3) continue;
 
                     var point = (hillsNoiseMap.GetValue(x, y) + 1f) / 2;
                     point *= 8f;
@@ -78,22 +78,15 @@ namespace SimpleWorld.Map
                 {
                     LowerBound = -1,
                     UpperBound = 1,
-                    Source0 = new ScaleBias
+                    Source0 = new Perlin
                     {
-                        Scale = 0.5,
-                            // overall Slope
-                        Source0 = new ScaleBias
-                        {
-                            Scale = 2,
-                            Source0 = new Perlin
-                            {
-                                Frequency = 0.5,
-                                Lacunarity = 3,
-                                Seed = _random.Next()
-                            }
-                        },
+                        Frequency = 1,
+                        Lacunarity = 3,
+                        Quality = NoiseQuality.Best,
+                        Persistence = 0.25,
+                        Seed = _random.Next()
                     }
-                }
+                },
             };
             noiseMapBuilder.SetDestSize(XSize, YSize);
             noiseMapBuilder.SetBounds(-3, 3, -2, 2);

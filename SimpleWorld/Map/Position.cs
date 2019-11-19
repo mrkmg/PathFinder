@@ -22,15 +22,20 @@ namespace SimpleWorld.Map
         public double RealCostTo(INode other)
         {
             return other is Position otherNode 
-                ? EstimateDistance(otherNode) + (Math.Abs(Z - otherNode.Z) * 50)
+                ? EstimateDistanceTo(otherNode) + ZLevelCostTo(otherNode)
                 : double.MaxValue;
         }
 
         public double EstimatedCostTo(INode other)
         {
-            return other is Position otherNode
-                ? EstimateDistance(otherNode)
-                : double.MaxValue;
+            if (other is Position node)
+            {
+                var dist = EstimateDistanceTo(node);
+                if (dist == 0) return 0;
+                return dist + ZLevelCostTo(node) / dist;
+            }
+
+            return double.MaxValue;
         }
 
         public IEnumerable<INode> GetNeighbors()
@@ -62,24 +67,16 @@ namespace SimpleWorld.Map
             return other is Position n && X == n.X && Y == n.Y;
         }
 
-//        private double EstimateDistanceToAbs(Position n)
-//        {
-//            return Math.Abs(n.X - X) + Math.Abs(n.Y - Y);
-//        }
-
-        private double EstimateDistance(Position n)
+        private double EstimateDistanceTo(Position n)
         {
             var dX = Math.Abs(n.X - X);
             var dY = Math.Abs(n.Y - Y);
-//            if (World.CanCutCorner)
-//            {
-                return Math.Sqrt(dX * dX + dY * dY);
-//            }
-//            else
-//            {
+            return Math.Sqrt(dX * dX + dY * dY);
+        }
 
-//                return dX + dY;
-//            }
+        private double ZLevelCostTo(Position n)
+        {
+            return Z > n.Z ? (Z - n.Z) * 2 : (n.Z - Z) * 10;
         }
 
         public override string ToString()

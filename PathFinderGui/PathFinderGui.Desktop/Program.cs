@@ -1,4 +1,5 @@
 ﻿using System;
+using Eto;
 using Eto.Forms;
 using Eto.Drawing;
 
@@ -9,7 +10,7 @@ namespace PathFinderGui.Desktop
         [STAThread]
         static void Main(string[] args)
         {
-            new Application(Eto.Platform.Detect).Run(new MainForm());
+            new Application(Eto.Platform.Get(Platforms.Gtk)).Run(new MainForm());
         }
     }
 }
