@@ -3,3 +3,4 @@ obj/
 .vs
 *.psess
 *.vspx
+.vscode

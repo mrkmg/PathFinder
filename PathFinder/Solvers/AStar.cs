@@ -74,8 +74,7 @@ namespace PathFinder.Solvers
             Destination = destination;
             Thoroughness = thoroughness;
             _current = _nodeMetas.Get(origin);
-            _openNodes = new OpenNodeStoreSortedLinkedList<NodeMetaData>();
-            _openNodes.Add(_current);
+            _openNodes = new OpenNodeStoreSortedLinkedList<NodeMetaData> {_current};
         }
 
         /// <summary>

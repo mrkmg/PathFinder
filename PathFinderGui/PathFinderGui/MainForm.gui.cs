@@ -28,6 +28,9 @@ namespace PathFinderGui
         private Button _go;
         private Button _newWorld;
         private Button _newPoints;
+        private Button _newSeed;
+        private TextBox _worldSeed;
+        private TextBox _pointsSeed;
 
         private void InitUi()
         {
@@ -35,6 +38,8 @@ namespace PathFinderGui
             ClientSize = new Size(750, 550);
             WindowStyle = WindowStyle.None;
 
+            _worldSeed = new TextBox() {Text = (new Random()).Next(10000, 99999).ToString()};
+            _pointsSeed = new TextBox() {Text = (new Random()).Next(10000, 99999).ToString()};
 
             _thoroughnessSlider = new Slider
             {
@@ -61,6 +66,11 @@ namespace PathFinderGui
             _go = new Button
             {
                 Text = "Go"
+            };
+
+            _newSeed = new Button
+            {
+                Text = "R"
             };
 
             _newWorld = new Button
@@ -94,6 +104,15 @@ namespace PathFinderGui
                             new StackLayoutItem { Control = "Path Finder Testing", HorizontalAlignment = HorizontalAlignment.Stretch},
                             new StackLayoutItem { Control = "Scale", HorizontalAlignment = HorizontalAlignment.Stretch},
                             new StackLayoutItem { Control = _scaleSlider, HorizontalAlignment = HorizontalAlignment.Stretch},
+                            new StackLayoutItem { Control = "World Seed", HorizontalAlignment = HorizontalAlignment.Stretch},
+                            new StackLayout
+                            {
+                                Orientation = Orientation.Horizontal,
+                                Items = { _worldSeed, _newSeed}
+                            },
+                            new StackLayoutItem { Control = _worldSeed, HorizontalAlignment = HorizontalAlignment.Stretch},
+                            new StackLayoutItem { Control = "Points Testing", HorizontalAlignment = HorizontalAlignment.Stretch},
+                            new StackLayoutItem { Control = _pointsSeed, HorizontalAlignment = HorizontalAlignment.Stretch},
                             new StackLayout
                             {
                                 Orientation =  Orientation.Horizontal, 
@@ -114,14 +133,6 @@ namespace PathFinderGui
                         }
                     }
                 },
-            };
-
-            Load += (sender, args) => Content.Height = Height;
-            SizeChanged += (sender, args) =>
-            {
-                KillRunning();
-                MakeWorld();
-                Content.Height = Height;
             };
         }
 

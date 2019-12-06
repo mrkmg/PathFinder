@@ -29,8 +29,7 @@ namespace SimpleWorld.Map
 
             var wallNoiseMap = MakeSimpleNoiseMap();
             var hillsNoiseMap = MakeTestNoiseMap();
-
-
+            
             for (var x = 0; x < XSize; x++)
             {
                 _allNodes[x] = new Position[YSize];

@@ -29,10 +29,27 @@ namespace PathFinderGui
         {
             InitUi();
             
+            Load += (sender, args) => Content.Height = Height;
+            SizeChanged += (sender, args) =>
+            {
+                KillRunning();
+                MakeWorld();
+                Content.Height = Height;
+            };
+            
             Closed += (sender, args) => KillRunning();
-            KeyUp += (sender, args) => Close();
+            KeyUp += (sender, args) =>
+            {
+                if (args.Key == Keys.Q) Close();
+            };
+            _newSeed.Click += (sender, args) =>
+            {
+                _map.ChangeScale(_scaleSlider.Value);
+                MakeWorld();
+            };
             _newWorld.Click += (sender, args) =>
             {
+                _worldSeed.Text = (new Random()).Next(10000, 99999).ToString();
                 _map.ChangeScale(_scaleSlider.Value);
                 MakeWorld();
             };
@@ -52,7 +69,7 @@ namespace PathFinderGui
         
         private bool SetRandomPoints()
         {
-            var rnd = new Random();
+            var rnd = new Random(int.Parse(_pointsSeed.Text));
             
             var worldSize = Math.Sqrt(_world.XSize * _world.XSize + _world.YSize * _world.YSize);
             var targetSize = (int)(worldSize * 0.75);
@@ -116,7 +133,7 @@ namespace PathFinderGui
         private void MakeWorld()
         {
             KillRunning();
-            _world = new World(_map.MapWidth, _map.MapHeight, new Random());
+            _world = new World(_map.MapWidth, _map.MapHeight, new Random(int.Parse(_worldSeed.Text)));
             if (SetRandomPoints())
             {
                 DrawEntireWorld();
