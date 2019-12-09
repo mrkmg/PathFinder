@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Drawing;
 using System.Globalization;
-using PathFinder.Solvers;
 using SimpleWorld.Map;
 
 namespace PathFinderTest.Tests.Interactive
@@ -15,7 +12,6 @@ namespace PathFinderTest.Tests.Interactive
 
         public SimpleWorldWriter(World world, int totalTests)
         {
-            var a = new OrderedDictionary();
             _world = world;
             _totalTests = totalTests;
         }

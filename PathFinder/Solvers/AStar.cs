@@ -92,7 +92,7 @@ namespace PathFinder.Solvers
         private readonly HashSet<NodeMetaData> _closedNodes = new HashSet<NodeMetaData>();
         private readonly IOpenNodeStore<NodeMetaData> _openNodes;
         private readonly NodeMetas _nodeMetas = new NodeMetas();
-        private readonly Func<T, T, bool> _nodeValidator = null;
+        private readonly Func<T, T, bool> _nodeValidator;
         private IList<T> _path;
         private NodeMetaData _current;
         private double _thoroughness = 0.5;
@@ -198,13 +198,6 @@ namespace PathFinder.Solvers
             State = SolverState.Failed;
         }
 
-        private static int NodeComparer(NodeMetaData x, NodeMetaData y)
-        {
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (x.TotalCost == y.TotalCost) return 0;
-            return x.TotalCost > y.TotalCost ? 1 : -1;
-        }
-
         private void SetCurrentNode()
         {
             _current = _openNodes.PopLowest();
@@ -231,10 +224,8 @@ namespace PathFinder.Solvers
             {
                 if (fromCost < neighbor.FromCost)
                 {
-                    var toCost = neighbor.Node.EstimatedCostTo(Destination);
-                    var totalCost = fromCost * Thoroughness + toCost * (1 - Thoroughness);
+                    var totalCost = fromCost * Thoroughness + neighbor.ToCost * (1 - Thoroughness);
                     neighbor.Parent = Current;
-                    neighbor.ToCost = toCost;
                     neighbor.FromCost = fromCost;
                     neighbor.TotalCost = totalCost;
                     _openNodes.Resort(neighbor);

@@ -1,15 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using Eto.Forms;
 using Eto.Drawing;
-using Eto.Threading;
-using PathFinder.Interfaces;
-using PathFinder.Solvers;
-using SimpleWorld.Map;
-using Thread = System.Threading.Thread;
 
 namespace PathFinderGui
 {

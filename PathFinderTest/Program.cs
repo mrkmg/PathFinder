@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using PathFinder.Components;
 using PathFinderTest.Sequencer;
 using PathFinderTest.Tests.Interactive;
 using PathFinderTest.Tests.Many;

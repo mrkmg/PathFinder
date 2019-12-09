@@ -1,7 +1,5 @@
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using PathFinder.Interfaces;
 using PathFinder.Solvers;
 using SimpleWorld.Map;
@@ -9,29 +7,29 @@ using SimpleWorld.Map;
 namespace PathFinderGui
 {
 
-    public interface SolverRunner
+    public interface ISolverRunner
     {
         AStar<Position> Solver { get; set; }
-        bool kill { get; set; }
+        bool Kill { get; set; }
         void Run();
         IReadOnlyCollection<Position> GetCheckedPositions();
     }
     
-    public class SolverRunnerThread : SolverRunner
+    public class SolverRunnerThread : ISolverRunner
     {
-        private Collection<Position> CheckedPositions = new Collection<Position>();
+        private Collection<Position> _checkedPositions = new Collection<Position>();
         public AStar<Position> Solver { get; set; }
-        public bool kill { get; set; }
+        public bool Kill { get; set; }
         private readonly object _lock = new object();
 
         public void Run()
         {
-            while (Solver.State == SolverState.Running && !kill)
+            while (Solver.State == SolverState.Running && !Kill)
             {
                     Solver.Tick();
                     lock (_lock)
                     {
-                        CheckedPositions.Add(Solver.Current);
+                        _checkedPositions.Add(Solver.Current);
                     }
             }
         }
@@ -42,11 +40,11 @@ namespace PathFinderGui
             {
                 try
                 {
-                    return CheckedPositions;
+                    return _checkedPositions;
                 }
                 finally
                 {
-                    CheckedPositions = new Collection<Position>();
+                    _checkedPositions = new Collection<Position>();
                 }
             }
         }

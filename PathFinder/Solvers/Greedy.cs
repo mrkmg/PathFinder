@@ -62,7 +62,6 @@ namespace PathFinder.Solvers
         /// </summary>
         /// <param name="origin">The origin</param>
         /// <param name="destination">The destination</param>
-        /// <param name="thoroughness">How thorough the search should be. Should be a value between 0 and 1.</param>
         public Greedy(T origin, T destination)
         {
             Origin = origin;
@@ -131,12 +130,6 @@ namespace PathFinder.Solvers
         public void Cancel()
         {
             State = SolverState.Failed;
-        }
-
-        private int NodeComparer(NodeMetaData x, NodeMetaData y)
-        {
-            if (Math.Abs(x.ToCost - y.ToCost) < 0.01d) return 0;
-            return x.ToCost > y.ToCost ? 1 : -1;
         }
         
         private IList<T> GetPath()

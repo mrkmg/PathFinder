@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eto.Drawing;
@@ -19,7 +18,8 @@ namespace PathFinderGui
             _scale = scale;
             Paint += (sender, args) =>
             {
-                args.Graphics.DrawImage(_bitmap, args.ClipRectangle, args.ClipRectangle);
+                if (_bitmap != null)
+                    args.Graphics.DrawImage(_bitmap, args.ClipRectangle, args.ClipRectangle);
             };
             LoadComplete += (sender, args) => MakeBitmap();
             SizeChanged += (sender, args) => MakeBitmap();
@@ -34,6 +34,8 @@ namespace PathFinderGui
 
         private void MakeBitmap()
         {
+            _bitmap = null;
+            if (Width == 0 || Height == 0) return;
             var data = new Color[Width * Height];
             for (var i = 0; i < data.Length; i++) data[i] = Colors.Black;
             _bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppRgba, data);

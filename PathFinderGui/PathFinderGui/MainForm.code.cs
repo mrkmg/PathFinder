@@ -13,7 +13,7 @@ namespace PathFinderGui
 {
     public partial class MainForm
     {
-        private SolverRunner _runnerThread;
+        private ISolverRunner _runnerThread;
         private World _world;
         private Position _randomStartPoint;
         private Position _randomEndPoint;
@@ -32,8 +32,8 @@ namespace PathFinderGui
             Load += (sender, args) => Content.Height = Height;
             SizeChanged += (sender, args) =>
             {
+                if (Height == 0 || Width == 0) return;
                 KillRunning();
-                MakeWorld();
                 Content.Height = Height;
             };
             
@@ -118,7 +118,7 @@ namespace PathFinderGui
 
             if (_runnerThread != null)
             {
-                _runnerThread.kill = true;
+                _runnerThread.Kill = true;
                 _runnerThread = null;
             }
         }
@@ -133,6 +133,7 @@ namespace PathFinderGui
         private void MakeWorld()
         {
             KillRunning();
+            if (_map.MapHeight == 0 || _map.MapWidth == 0) return;
             _world = new World(_map.MapWidth, _map.MapHeight, new Random(int.Parse(_worldSeed.Text)));
             if (SetRandomPoints())
             {
@@ -232,7 +233,7 @@ namespace PathFinderGui
         
         internal static IEnumerable<DrawPoint> AsPathDrawPoints(this IEnumerable<Position> positions)
         {
-            return positions.Where(p => p != null).Select(PositionToBlended(Color.FromArgb(0, 0, 255, 255)));
+            return positions.Where(p => p != null).Select(PositionToBlended(Color.FromArgb(0, 0, 255)));
         }
     }
 }
