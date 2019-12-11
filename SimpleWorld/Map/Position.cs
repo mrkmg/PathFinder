@@ -11,6 +11,9 @@ namespace SimpleWorld.Map
         public readonly int Y;
         public readonly int Z;
         public World World;
+        public int MoveCost = 1;
+        public int ZUpCost = 50;
+        public int ZDownCost = 10;
 
         public Position(int x, int y, int z)
         {
@@ -22,20 +25,17 @@ namespace SimpleWorld.Map
         public double RealCostTo(INode other)
         {
             return other is Position otherNode 
-                ? EstimateDistanceTo(otherNode) + ZLevelCostTo(otherNode)
+                ? EstimateCostTo(otherNode) + ZLevelCostTo(otherNode)
                 : double.MaxValue;
         }
 
         public double EstimatedCostTo(INode other)
         {
-            if (other is Position node)
-            {
-                var dist = EstimateDistanceTo(node);
-                if (dist == 0) return 0;
-                return dist + ZLevelCostTo(node) / dist;
-            }
-
-            return double.MaxValue;
+            // if (!(other is Position node)) return double.MaxValue;
+            //
+            // var dist = EstimateCostTo(node);
+            // return dist + ZLevelCostTo(node);
+            return RealCostTo(other);
         }
 
         public IEnumerable<INode> GetNeighbors()
@@ -67,16 +67,16 @@ namespace SimpleWorld.Map
             return other is Position n && X == n.X && Y == n.Y;
         }
 
-        private double EstimateDistanceTo(Position n)
+        private double EstimateCostTo(Position n)
         {
             var dX = Math.Abs(n.X - X);
             var dY = Math.Abs(n.Y - Y);
-            return Math.Sqrt(dX * dX + dY * dY);
+            return Math.Sqrt(dX * dX + dY * dY) * MoveCost;
         }
 
         private double ZLevelCostTo(Position n)
         {
-            return Z > n.Z ? (Z - n.Z) * 2 : (n.Z - Z) * 10;
+            return Z > n.Z ? (Z - n.Z) * ZUpCost : (n.Z - Z) * ZDownCost;
         }
 
         public override string ToString()

@@ -134,7 +134,7 @@ namespace PathFinderGui
         {
             KillRunning();
             if (_map.MapHeight == 0 || _map.MapWidth == 0) return;
-            _world = new World(_map.MapWidth, _map.MapHeight, new Random(int.Parse(_worldSeed.Text)));
+            _world = new World(_map.MapWidth, _map.MapHeight, new Random(int.Parse(_worldSeed.Text)), int.Parse(_zUpCost.Text), int.Parse(_zDownCost.Text), int.Parse(_moveCost.Text));
             if (SetRandomPoints())
             {
                 DrawEntireWorld();

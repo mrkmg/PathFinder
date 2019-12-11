@@ -18,7 +18,7 @@ namespace SimpleWorld.Map
 
         private readonly Random _random;
 
-        public World(int xSize, int ySize, Random random = null)
+        public World(int xSize, int ySize, Random random = null, int zUpCost = 50, int zDownCost = 10, int moveCost = 1)
         {
             XSize = xSize;
             YSize = ySize;
@@ -39,7 +39,13 @@ namespace SimpleWorld.Map
 
                     var point = (hillsNoiseMap.GetValue(x, y) + 1f) / 2;
                     point *= 8f;
-                    _allNodes[x][y] = new Position(x, y, (int) Math.Round(point) + 1) {World = this};
+                    _allNodes[x][y] = new Position(x, y, (int) Math.Round(point) + 1)
+                    {
+                        World = this,
+                        ZUpCost = zUpCost,
+                        ZDownCost = zDownCost,
+                        MoveCost = moveCost
+                    };
                 }
             }
         }

@@ -22,16 +22,23 @@ namespace PathFinderGui
         private Button _newSeed;
         private TextBox _worldSeed;
         private TextBox _pointsSeed;
+        private TextBox _zUpCost;
+        private TextBox _zDownCost;
+        private TextBox _moveCost;
 
         private void InitUi()
         {
             Title = "Path Finder Tester";
             ClientSize = new Size(750, 550);
-            WindowStyle = WindowStyle.None;
+            // WindowStyle = WindowStyle.None;
 
             _worldSeed = new TextBox() {Text = (new Random()).Next(10000, 99999).ToString()};
             _pointsSeed = new TextBox() {Text = (new Random()).Next(10000, 99999).ToString()};
 
+            _zUpCost = new TextBox() {Text = "50", Width = 50};
+            _zDownCost = new TextBox() {Text = "10", Width = 50};
+            _moveCost = new TextBox() {Text = "1", Width = 50};
+            
             _thoroughnessSlider = new Slider
             {
                 MinValue = 0,
@@ -102,7 +109,18 @@ namespace PathFinderGui
                                 Items = { _worldSeed, _newSeed}
                             },
                             new StackLayoutItem { Control = _worldSeed, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = "Points Testing", HorizontalAlignment = HorizontalAlignment.Stretch},
+                            new StackLayout
+                            {
+                                Orientation = Orientation.Horizontal,
+                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                Items =
+                                {
+                                    new StackLayoutItem { Control = _zUpCost, HorizontalAlignment = HorizontalAlignment.Stretch },
+                                    new StackLayoutItem { Control = _zDownCost, HorizontalAlignment = HorizontalAlignment.Stretch },
+                                    new StackLayoutItem { Control = _moveCost, HorizontalAlignment = HorizontalAlignment.Stretch }
+                                }
+                            },
+                            new StackLayoutItem { Control = "Points", HorizontalAlignment = HorizontalAlignment.Stretch},
                             new StackLayoutItem { Control = _pointsSeed, HorizontalAlignment = HorizontalAlignment.Stretch},
                             new StackLayout
                             {
