@@ -1,14 +1,43 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using JetBrains.Annotations;
 
 namespace PathFinder.Components
 {
-    internal class SortedLinkedListHash<T> : ICollection<T> where T : IComparable<T>
+    internal class SortedLinkedList<T> : ICollection<T> where T : IComparable<T>
     {
-        private readonly LinkedList<T> _list = new LinkedList<T>();
-        private readonly Dictionary<T, LinkedListNode<T>> _listNodes = new Dictionary<T, LinkedListNode<T>>(); 
+        private readonly LinkedList<T> _list = new();
+        private readonly Dictionary<T, LinkedListNode<T>> _listNodes = new();
 
+        public void Resort([CanBeNull] T value)
+        {
+            if (value == null) return;
+            if (!_listNodes.ContainsKey(value)) return;
+
+            var node = _listNodes[value];
+
+            if (node.Previous != null && value.CompareTo(node.Previous.Value) < 0)
+            {
+                var cNode = node.Previous;
+                while (cNode.Previous != null && value.CompareTo(cNode.Previous.Value) < 0)
+                {
+                    cNode = cNode.Previous;
+                }
+                _list.MoveBefore(cNode, node);
+            }
+            else if (node.Next != null && value.CompareTo(node.Next.Value) > 0)
+            {
+                var cNode = node.Next;
+                while (cNode.Next != null && value.CompareTo(cNode.Next.Value) > 0)
+                {
+                    cNode = cNode.Next;
+                }
+                _list.MoveAfter(cNode, node);
+            }
+        }
+        
         public void Add(T value)
         {
             if (value == null) return;
@@ -16,12 +45,16 @@ namespace PathFinder.Components
             var first = _list.First;
             var last = _list.Last;
             
+            // ReSharper disable once PossibleNullReferenceException
+            // Count == 0 prevents first from being null
             if (Count == 0 || value.CompareTo(first.Value) < 0)
             {
                 AddFirst(value);
                 return;
             }
 
+            // ReSharper disable once PossibleNullReferenceException
+            // Count == 0 prevents first from being null
             if (value.CompareTo(last.Value) > 0)
             {
                 AddLast(value);
@@ -82,6 +115,22 @@ namespace PathFinder.Components
         {
             _list.CopyTo(array, arrayIndex);
         }
+        
+        public T PopFirst()
+        {
+            Debug.Assert(_list.First != null);
+            var value = _list.First.Value;
+            RemoveFirst();
+            return value;
+        }
+
+        public T PopLast()
+        {
+            Debug.Assert(_list.Last != null);
+            var value = _list.Last.Value;
+            RemoveLast();
+            return value;
+        }
 
         public bool Remove(T item)
         {
@@ -95,18 +144,20 @@ namespace PathFinder.Components
 
         public void RemoveFirst()
         {
+            Debug.Assert(_list.First != null);
             _listNodes.Remove(_list.First.Value);
             _list.RemoveFirst();
         }
 
         public void RemoveLast()
         {
+            Debug.Assert(_list.Last != null);
             _listNodes.Remove(_list.Last.Value);
             _list.RemoveLast();
         }
 
-        public LinkedListNode<T> First => _list.First;
-        public LinkedListNode<T> Last => _list.Last;
+        [CanBeNull] public LinkedListNode<T> First => _list.First;
+        [CanBeNull] public LinkedListNode<T> Last => _list.Last;
 
         public int Count => _list.Count;
 

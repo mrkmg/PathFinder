@@ -18,7 +18,7 @@ namespace PathFinderTest
             {
                 Console.ResetColor();
                 Console.Clear();
-                Console.WriteLine("I, M, R, Q");
+                Console.WriteLine("I, M, Q");
                 var key = Console.ReadKey().Key;
 
                 if (key == ConsoleKey.I)

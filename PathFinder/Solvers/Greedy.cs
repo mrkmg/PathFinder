@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using PathFinder.Components;
 using PathFinder.Interfaces;
@@ -48,10 +49,13 @@ namespace PathFinder.Solvers
         ///     The path from the Origin to the Destination
         /// </summary>
         public IList<T> Path => GetPath();
-        private readonly HashSet<NodeMetaData> _closedNodes = new HashSet<NodeMetaData>();
-        private readonly HashSet<NodeMetaData> _openNodes = new HashSet<NodeMetaData>();
-        private readonly SortedLinkedListHash<NodeMetaData> _openNodesSorted;
-        private readonly NodeMetas _nodeMetas = new NodeMetas();
+
+        public IList<T> CurrentBestPath => BuildPath(Current);
+        
+        private readonly HashSet<NodeMetaData> _closedNodes = new();
+        private readonly HashSet<NodeMetaData> _openNodes = new();
+        private readonly SortedLinkedList<NodeMetaData> _openNodesSorted;
+        private readonly NodeMetas _nodeMetas = new();
         private readonly Func<T, T, bool> _nodeValidator = null;
         private IList<T> _path;
         private NodeMetaData _current;
@@ -68,7 +72,7 @@ namespace PathFinder.Solvers
             Destination = destination;
             _current = _nodeMetas.Get(origin);
             _openNodes.Add(_current);
-            _openNodesSorted = new SortedLinkedListHash<NodeMetaData>();
+            _openNodesSorted = new SortedLinkedList<NodeMetaData>();
         }
         
         /// <summary>
@@ -98,6 +102,7 @@ namespace PathFinder.Solvers
         
         private void SetCurrentNode()
         {
+            Debug.Assert(_openNodesSorted.First != null, "_openNodesSorted.First != null");
             _current = _openNodesSorted.First.Value;
             _openNodesSorted.RemoveFirst();
             _openNodes.Remove(_current);
@@ -106,11 +111,12 @@ namespace PathFinder.Solvers
 
         private void ProcessNeighbors()
         {
-            Current
-                .GetNeighbors()
-                .Select(neighbor => _nodeMetas.Get((T)neighbor))
-                .Where(n => !_closedNodes.Contains(n))
-                .ForAll(ProcessNeighbor);
+            foreach (var neighbor in Current.GetReachableNodes())
+            {
+                var node = _nodeMetas.Get((T) neighbor);
+                if (_closedNodes.Contains(node)) continue;
+                ProcessNeighbor(node);
+            }
         }
 
         private void ProcessNeighbor(NodeMetaData neighbor)
@@ -135,14 +141,12 @@ namespace PathFinder.Solvers
         private IList<T> GetPath()
         {
             if (State != SolverState.Success) return null;
-            return _path ?? (_path = BuildPath());
+            return _path ??= BuildPath(Destination);
         }
 
-        private IList<T> BuildPath()
+        private IList<T> BuildPath(T cNode)
         {
-            var path = new List<T> {Destination};
-            var cNode = Destination;
-
+            var path = new List<T> {cNode};
             do
             {
                 cNode = _nodeMetas.Get(cNode).Parent;
@@ -155,12 +159,10 @@ namespace PathFinder.Solvers
         
         private class NodeMetas
         {
-            private readonly Dictionary<T, NodeMetaData> _nodeMetaData = new Dictionary<T, NodeMetaData>();
+            private readonly Dictionary<T, NodeMetaData> _nodeMetaData = new();
 
-            public NodeMetaData Get(T node)
-            {
-                return _nodeMetaData.ContainsKey(node) ? _nodeMetaData[node] : BuildNewNodeMeta(node);
-            }
+            public NodeMetaData Get(T node) => 
+                _nodeMetaData.ContainsKey(node) ? _nodeMetaData[node] : BuildNewNodeMeta(node);
 
             private NodeMetaData BuildNewNodeMeta(T node)
             {

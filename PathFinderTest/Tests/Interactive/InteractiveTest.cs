@@ -62,7 +62,7 @@ namespace PathFinderTest.Tests.Interactive
                 {
                     tries++;
 
-                    if (tries > 2000) break;
+                    if (tries > 5000) break;
                     
                     do randomFromNode = _world.GetNode(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
                     while (randomFromNode == null);
@@ -75,7 +75,8 @@ namespace PathFinderTest.Tests.Interactive
                     var dist = Math.Sqrt(x*x + y*y);
                     
                     if (dist < targetSize) continue;
-                    path = AStar.Solve(randomFromNode, randomToNode, BigJumpCheck, 0.0);
+                    
+                    path = AStar.Solve(randomFromNode, randomToNode, 0.0d);
                 }
                 
                 if (path == null) continue;
@@ -132,7 +133,7 @@ namespace PathFinderTest.Tests.Interactive
             foreach (var node in path)
             {
                 _worldWriter.DrawPosition(node.X, node.Y, testNumber);
-                Thread.Sleep(2);
+                Thread.Sleep(1);
             }
         }
 
@@ -193,7 +194,7 @@ namespace PathFinderTest.Tests.Interactive
             if (_bigJumps)
                 aStar = new AStar<Position>(origin, dest, thoroughness);
             else
-                aStar = new AStar<Position>(origin, dest, BigJumpCheck, thoroughness);
+                aStar = new AStar<Position>(origin, dest, thoroughness);
             
             _seenClosed = new HashSet<Position> {origin};
             _seenOpen = new HashSet<Position> {origin};

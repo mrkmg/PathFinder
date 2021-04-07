@@ -9,7 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SharpNoise" Version="0.12.0" />
+      <PackageReference Include="SharpNoise" Version="0.12.1.1" />
     </ItemGroup>
 
 </Project>

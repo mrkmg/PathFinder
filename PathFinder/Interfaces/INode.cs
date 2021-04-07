@@ -23,7 +23,7 @@ namespace PathFinder.Interfaces
         ///     Get nodes that are accessible from this node.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<INode> GetNeighbors();
+        IEnumerable<INode> GetReachableNodes();
     }
 
     public interface ISimpleNode : IEquatable<ISimpleNode>, IEqualityComparer<ISimpleNode>

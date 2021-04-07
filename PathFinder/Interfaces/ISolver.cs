@@ -10,6 +10,7 @@ namespace PathFinder.Interfaces
         T Current { get; }
         T Origin { get; }
         T Destination { get; }
+        [CanBeNull] IList<T> CurrentBestPath { get; }
         [CanBeNull] IList<T> Path { get; }
         IEnumerable<T> Open { get; }
         IEnumerable<T> Closed { get; }

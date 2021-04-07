@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -13,6 +16,8 @@ namespace PathFinderGui
         private Bitmap _bitmap;
         private int _scale;
 
+        public event EventHandler IsReady;
+
         public MapWidget(int scale)
         {
             _scale = scale;
@@ -21,24 +26,37 @@ namespace PathFinderGui
                 if (_bitmap != null)
                     args.Graphics.DrawImage(_bitmap, args.ClipRectangle, args.ClipRectangle);
             };
-            LoadComplete += (sender, args) => MakeBitmap();
-            SizeChanged += (sender, args) => MakeBitmap();
+            LoadComplete += (sender, args) =>
+            {
+                MakeBitmap();
+                OnIsReady();
+            };
+            SizeChanged += (sender, args) =>
+            {
+                MakeBitmap();
+                OnIsReady();
+                Invalidate();
+            };
         }
 
         public void ChangeScale(int scale)
         {
             _scale = scale;
             MakeBitmap();
+            OnIsReady();
             Invalidate();
+        }
+
+        public void Clear()
+        {
+            MakeBitmap();
         }
 
         private void MakeBitmap()
         {
             _bitmap = null;
             if (Width == 0 || Height == 0) return;
-            var data = new Color[Width * Height];
-            for (var i = 0; i < data.Length; i++) data[i] = Colors.Black;
-            _bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppRgba, data);
+            _bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppRgba, Enumerable.Repeat(Colors.Black, Width * Height - 1));
         }
 
         public void DrawMarker(int x, int y, int size, Color color)
@@ -96,6 +114,11 @@ namespace PathFinderGui
                 }
             }
             Invalidate(new Rectangle(minPoint, maxPoint));
+        }
+
+        protected virtual void OnIsReady()
+        {
+            IsReady?.Invoke(this, EventArgs.Empty);
         }
     }
 

@@ -18,7 +18,7 @@ namespace PathFinder.Solvers
         [CanBeNull]
         public static IList<T> Solve<T>(T origin, T destination, double thoroughness = 0.5) where T : INode 
         {
-            return (new AStar<T>(origin, destination, thoroughness)).Solve();
+            return new AStar<T>(origin, destination, thoroughness).Solve();
         }
         
         /// <summary>
@@ -31,7 +31,7 @@ namespace PathFinder.Solvers
         [CanBeNull]
         public static IList<T> Solve<T>(T origin, T destination, Func<T, T, bool> nodeValidator, double thoroughness = 0.5) where T : INode 
         {
-            return (new AStar<T>(origin, destination, nodeValidator, thoroughness)).Solve();
+            return new AStar<T>(origin, destination, nodeValidator, thoroughness).Solve();
         }
     }
     
@@ -46,7 +46,7 @@ namespace PathFinder.Solvers
         [CanBeNull]
         public static IList<T> Solve(T origin, T destination, double thoroughness = 0.5)
         {
-            return (new AStar<T>(origin, destination, thoroughness)).Solve();
+            return new AStar<T>(origin, destination, thoroughness).Solve();
         }
         
         /// <summary>
@@ -59,7 +59,7 @@ namespace PathFinder.Solvers
         [CanBeNull]
         public static IList<T> Solve(T origin, T destination, Func<T, T, bool> nodeValidator, double thoroughness = 0.5)
         {
-            return (new AStar<T>(origin, destination, nodeValidator, thoroughness)).Solve();
+            return new AStar<T>(origin, destination, nodeValidator, thoroughness).Solve();
         }
         
         /// <summary>
@@ -74,7 +74,9 @@ namespace PathFinder.Solvers
             Destination = destination;
             Thoroughness = thoroughness;
             _current = _nodeMetas.Get(origin);
-            _openNodes = new OpenNodeStoreSortedLinkedList<NodeMetaData> {_current};
+            _current.ToCost = origin.EstimatedCostTo(Destination);
+            _closest = _current;
+            _openNodes = new SortedLinkedList<NodeMetaData> {_current};
         }
 
         /// <summary>
@@ -89,13 +91,14 @@ namespace PathFinder.Solvers
             _nodeValidator = nodeValidator;
         }
         
-        private readonly HashSet<NodeMetaData> _closedNodes = new HashSet<NodeMetaData>();
-        private readonly IOpenNodeStore<NodeMetaData> _openNodes;
-        private readonly NodeMetas _nodeMetas = new NodeMetas();
+        private readonly HashSet<NodeMetaData> _closedNodes = new();
+        private readonly SortedLinkedList<NodeMetaData> _openNodes;
+        private readonly NodeMetas _nodeMetas = new();
         private readonly Func<T, T, bool> _nodeValidator;
         private IList<T> _path;
         private NodeMetaData _current;
         private double _thoroughness = 0.5;
+        private NodeMetaData _closest;
         
         /// <summary>
         ///     A List of nodes which still need to be checked
@@ -130,7 +133,7 @@ namespace PathFinder.Solvers
             get => _thoroughness;
             set
             {
-                if (value < 0 || value > 1) throw new Exception("Invalid Value");
+                if (value is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(value));
                 _thoroughness = value;
             }
         }
@@ -164,6 +167,11 @@ namespace PathFinder.Solvers
         ///     The path from the Origin to the Destination
         /// </summary>
         public IList<T> Path => GetPath();
+
+        /// <summary>
+        ///     The current best path to get as close as possible to the Destination
+        /// </summary>
+        public IList<T> CurrentBestPath => BuildPath(_closest.Node);
 
         /// <summary>
         ///     Perform one tick
@@ -200,20 +208,24 @@ namespace PathFinder.Solvers
 
         private void SetCurrentNode()
         {
-            _current = _openNodes.PopLowest();
+            _current = _openNodes.PopFirst();
+            
+            if (_current.ToCost < _closest.ToCost)
+                _closest = _current;
+            
             _closedNodes.Add(_current);
         }
 
         private void ProcessNeighbors()
         {
-            
-            var neighborsEnumerable = Current
-                .GetNeighbors()
-                .Select(neighbor => _nodeMetas.Get((T)neighbor))
-                .Where(n => !_closedNodes.Contains(n));
-            if (_nodeValidator != null) 
-                neighborsEnumerable = neighborsEnumerable.Where(n => _nodeValidator(Current, n.Node));
-            neighborsEnumerable.ForAll(ProcessNeighbor);
+            var neighbors = Current.GetReachableNodes();
+            foreach (var neighbor in neighbors)
+            {
+                var node = _nodeMetas.Get((T) neighbor);
+                if (_closedNodes.Contains(node)) continue;
+                if (_nodeValidator != null && _nodeValidator(Current, node.Node)) continue;
+                ProcessNeighbor(node);
+            }
         }
 
         private void ProcessNeighbor(NodeMetaData neighbor)
@@ -222,14 +234,13 @@ namespace PathFinder.Solvers
 
             if (_openNodes.Contains(neighbor))
             {
-                if (fromCost < neighbor.FromCost)
-                {
-                    var totalCost = fromCost * Thoroughness + neighbor.ToCost * (1 - Thoroughness);
-                    neighbor.Parent = Current;
-                    neighbor.FromCost = fromCost;
-                    neighbor.TotalCost = totalCost;
-                    _openNodes.Resort(neighbor);
-                }
+                if (fromCost >= neighbor.FromCost) return;
+                
+                var totalCost = fromCost * Thoroughness + neighbor.ToCost * (1 - Thoroughness);
+                neighbor.Parent = Current;
+                neighbor.FromCost = fromCost;
+                neighbor.TotalCost = totalCost;
+                _openNodes.Resort(neighbor);
             }
             else
             {
@@ -246,19 +257,21 @@ namespace PathFinder.Solvers
         private IList<T> GetPath()
         {
             if (State != SolverState.Success) return null;
-            return _path ??= BuildPath();
+            return _path ??= BuildPath(Destination);
         }
 
-        private IList<T> BuildPath()
+        private IList<T> BuildPath(T cNode)
         {
-            var path = new List<T> {Destination};
-            var cNode = Destination;
+            if (Origin.Equals(cNode)) return new List<T> {cNode};
+            
+            var path = new List<T>();
 
-            do
+            while (true)
             {
-                cNode = _nodeMetas.Get(cNode).Parent;
                 path.Add(cNode);
-            } while (!cNode.Equals(Origin));
+                cNode = _nodeMetas.Get(cNode).Parent;
+                if (Origin.Equals(cNode) || cNode == null) break;
+            }
 
             path.Reverse();
             return path;
@@ -267,7 +280,7 @@ namespace PathFinder.Solvers
         private double CalcCost()
         {
             if (Path == null) return 0;
-
+            
             var cost = 0d;
             var last = Path.First();
 
@@ -282,7 +295,7 @@ namespace PathFinder.Solvers
 
         private class NodeMetas
         {
-            private readonly Dictionary<T, NodeMetaData> _nodeMetaData = new Dictionary<T, NodeMetaData>();
+            private readonly Dictionary<T, NodeMetaData> _nodeMetaData = new();
 
             public NodeMetaData Get(T node)
             {
@@ -312,13 +325,8 @@ namespace PathFinder.Solvers
             public override bool Equals(object obj) => obj is NodeMetaData n && Equals(n);
             public override int GetHashCode() => Node.GetHashCode();
             public override string ToString() => Node.ToString();
-
-            public int CompareTo(NodeMetaData other)
-            {
-                if (ReferenceEquals(this, other)) return 0;
-                if (ReferenceEquals(null, other)) return 1;
-                return TotalCost.CompareTo(other.TotalCost);
-            }
+            // public int CompareTo([NotNull] NodeMetaData other) => TotalCost.CompareTo(other.TotalCost);
+            public int CompareTo([NotNull] NodeMetaData other) => TotalCost > other.TotalCost ? 1 : -1;
         }
     }
 }
