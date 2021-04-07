@@ -6,10 +6,16 @@ using JetBrains.Annotations;
 
 namespace PathFinder.Components
 {
-    internal class SortedLinkedList<T> : ICollection<T> where T : IComparable<T>
+    internal class SortedLinkedList<T> : ICollection<T>
     {
         private readonly LinkedList<T> _list = new();
         private readonly Dictionary<T, LinkedListNode<T>> _listNodes = new();
+        private readonly Comparer<T> _comparer;
+
+        public SortedLinkedList(Comparer<T> comparer)
+        {
+            _comparer = comparer;
+        }
 
         public void Resort([CanBeNull] T value)
         {
@@ -18,19 +24,19 @@ namespace PathFinder.Components
 
             var node = _listNodes[value];
 
-            if (node.Previous != null && value.CompareTo(node.Previous.Value) < 0)
+            if (node.Previous != null && _comparer.Compare(value, node.Previous.Value) < 0)
             {
                 var cNode = node.Previous;
-                while (cNode.Previous != null && value.CompareTo(cNode.Previous.Value) < 0)
+                while (cNode.Previous != null && _comparer.Compare(value, cNode.Previous.Value) < 0)
                 {
                     cNode = cNode.Previous;
                 }
                 _list.MoveBefore(cNode, node);
             }
-            else if (node.Next != null && value.CompareTo(node.Next.Value) > 0)
+            else if (node.Next != null && _comparer.Compare(value, node.Next.Value) > 0)
             {
                 var cNode = node.Next;
-                while (cNode.Next != null && value.CompareTo(cNode.Next.Value) > 0)
+                while (cNode.Next != null && _comparer.Compare(value, cNode.Next.Value) > 0)
                 {
                     cNode = cNode.Next;
                 }
@@ -47,7 +53,7 @@ namespace PathFinder.Components
             
             // ReSharper disable once PossibleNullReferenceException
             // Count == 0 prevents first from being null
-            if (Count == 0 || value.CompareTo(first.Value) < 0)
+            if (Count == 0 || _comparer.Compare(value, first.Value) < 0)
             {
                 AddFirst(value);
                 return;
@@ -55,7 +61,7 @@ namespace PathFinder.Components
 
             // ReSharper disable once PossibleNullReferenceException
             // Count == 0 prevents first from being null
-            if (value.CompareTo(last.Value) > 0)
+            if (_comparer.Compare(value, last.Value) > 0)
             {
                 AddLast(value);
                 return;
@@ -63,13 +69,13 @@ namespace PathFinder.Components
 
             while (true)
             {
-                if (value.CompareTo(first.Value) <= 0)
+                if (_comparer.Compare(value, first.Value) <= 0)
                 {
                     AddBefore(first, value);
                     return;
                 }
 
-                if (value.CompareTo(last.Value) >= 0)
+                if (_comparer.Compare(value, last.Value) >= 0)
                 {
                     AddAfter(last, value);
                     return;
