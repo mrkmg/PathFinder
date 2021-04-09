@@ -45,7 +45,7 @@ namespace PathFinderTest.Tests.Interactive
 
         public void DrawPosition(int x, int y)
         {
-            var node = _world.GetNode(x, y);
+            var node = _world.GetPosition(x, y);
             if (node != null)
             {
                 DrawPosition(x, y, GetWorldBackground(node.Z), GetWorldForeground(node.Z));
@@ -91,7 +91,7 @@ namespace PathFinderTest.Tests.Interactive
             Console.CursorTop = y;
             Console.BackgroundColor = background;
             Console.ForegroundColor = foreground;
-            var node = _world.GetNode(x, y);
+            var node = _world.GetPosition(x, y);
             if (node != null)
                 Console.Write(node.Z);
             else

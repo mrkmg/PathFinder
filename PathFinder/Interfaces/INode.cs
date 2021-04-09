@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace PathFinder.Interfaces
@@ -24,21 +25,5 @@ namespace PathFinder.Interfaces
         /// </summary>
         /// <returns></returns>
         IEnumerable<INode> GetReachableNodes();
-    }
-
-    public interface ISimpleNode : IEquatable<ISimpleNode>, IEqualityComparer<ISimpleNode>
-    {
-        /// <summary>
-        ///     Calculate the real cost to another node.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        double RealCostTo(ISimpleNode other);
-        
-        /// <summary>
-        ///     Get nodes that are accessible from this node.
-        /// </summary>
-        /// <returns></returns>
-        IEnumerable<ISimpleNode> GetNeighbors();
     }
 }

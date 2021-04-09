@@ -6,7 +6,7 @@
     <Title>PathFinder</Title>
     <Authors>Kevin Gravier</Authors>
     <Description>A generic, customizable A-Star path finding implementation.</Description>
-    <LangVersion>9</LangVersion>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />

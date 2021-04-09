@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
 using PathFinder.Interfaces;
 
 namespace SimpleWorld.Map
@@ -21,35 +19,25 @@ namespace SimpleWorld.Map
             Z = z;
         }
 
-        public double RealCostTo(INode other) =>
-            other is Position otherNode 
-                ? EstimateCostTo(otherNode) * Math.Pow(Z, World.MoveCost)
-                : double.MaxValue;
+        public double RealCostTo(INode other)
+        {
+            if (!(other is Position otherNode)) return double.MaxValue;
+            
+            var dX = otherNode.X - X;
+            var dY = otherNode.Y - Y;
+            return Math.Sqrt(dX * dX + dY * dY) * Math.Pow(Z, World.MoveCost);
 
-        public double EstimatedCostTo(INode other) => 
-            other is Position otherNode 
-                ? EstimateCostTo(otherNode)
-                : double.MaxValue;
+        }
 
-        // private IEnumerable<Xy> GetReachablePositions()
-        // {
-        //     yield return new Xy(X - 1, Y);
-        //     yield return new Xy(X, Y - 1);
-        //     yield return new Xy(X, Y + 1);
-        //     yield return new Xy(X + 1, Y);
-        //
-        //     if (!World.CanCutCorner) yield break;
-        //     
-        //     yield return new Xy(X + 1, Y - 1);
-        //     yield return new Xy(X - 1, Y - 1);
-        //     yield return new Xy(X - 1, Y + 1);
-        //     yield return new Xy(X + 1, Y + 1);
-        // }
-        //
-        // public IEnumerable<INode> GetReachableNodes() =>
-        //     GetReachablePositions()
-        //         .Select(World.GetNode)
-        //         .Where(l => l != null);
+        public double EstimatedCostTo(INode other)
+        {
+            if (!(other is Position otherNode)) return double.MaxValue;
+            
+            var dX = otherNode.X - X;
+            var dY = otherNode.Y - Y;
+            return Math.Sqrt(dX * dX + dY * dY);
+
+        }
 
         public IEnumerable<INode> GetReachableNodes()
         {
@@ -58,28 +46,16 @@ namespace SimpleWorld.Map
             {
                 if (!World.CanCutCorner && x != X && y != Y) continue;
                 
-                var node = World.GetNode(x, y);
+                var node = World.GetPosition(x, y);
                 if (node != null) yield return node;
             }
         }
 
-
         public bool Equals(INode other) => other is Position n && X == n.X && Y == n.Y;
-
-        private double EstimateCostTo(Position other)
-        {
-            var dX = other.X - X;
-            var dY = other.Y - Y;
-            return Math.Sqrt(dX * dX + dY * dY);
-        }
-
-        public override string ToString() => X + "::" + Y;
-
+        public override string ToString() => "Position: " + X + "::" + Y;
         public bool Equals(INode x, INode y) => x is Position xn && y is Position yn && xn.Equals(yn);
-
         public int GetHashCode(INode obj) => obj.GetHashCode();
-
-        public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (23 + Y.GetHashCode());
+        public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (1427 + Y.GetHashCode());
     }
 
     public readonly struct Xy

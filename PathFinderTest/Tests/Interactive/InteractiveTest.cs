@@ -20,7 +20,8 @@ namespace PathFinderTest.Tests.Interactive
 
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
-
+        
+        // TODO: Update to greed
         private readonly IList<double> _thoroughnesses;
 
         private World _world;
@@ -64,10 +65,10 @@ namespace PathFinderTest.Tests.Interactive
 
                     if (tries > 5000) break;
                     
-                    do randomFromNode = _world.GetNode(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
+                    do randomFromNode = _world.GetPosition(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
                     while (randomFromNode == null);
                     
-                    do randomToNode = _world.GetNode(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
+                    do randomToNode = _world.GetPosition(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
                     while (randomToNode == null);
 
                     var x = Math.Abs(randomFromNode.X - randomToNode.X);
@@ -75,8 +76,8 @@ namespace PathFinderTest.Tests.Interactive
                     var dist = Math.Sqrt(x*x + y*y);
                     
                     if (dist < targetSize) continue;
-                    
-                    path = AStar.Solve(randomFromNode, randomToNode, 0.0d);
+
+                    path = AStar<Position>.Solve(randomFromNode, randomToNode, 0d);
                 }
                 
                 if (path == null) continue;
@@ -92,7 +93,7 @@ namespace PathFinderTest.Tests.Interactive
                     var timer = new Stopwatch();
                     var aStar = RunPathFinder(randomFromNode, randomToNode, thoroughness, timer);
                     aStars.Add(thoroughness, aStar);
-                    _worldWriter.WriteResult(i, thoroughness, aStar.Cost, aStar.Ticks, timer.ElapsedTicks);
+                    _worldWriter.WriteResult(i, thoroughness, aStar.PathCost, aStar.Ticks, timer.ElapsedTicks);
                     i++;
                 }
 
@@ -213,7 +214,7 @@ namespace PathFinderTest.Tests.Interactive
                     
                     if (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.N) continue;
 
-                    aStar.Cancel();
+                    aStar.Stop();
                     break;
                 }
 

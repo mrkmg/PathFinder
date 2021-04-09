@@ -10,7 +10,7 @@ namespace SimpleWorld.Map
 {
     public class World
     {
-        public bool CanRun { get; set; }
+        public bool CornerIsFree { get; set; }
         public bool CanCutCorner { get; set; }
         public double MoveCost { get; set; }
 
@@ -40,21 +40,21 @@ namespace SimpleWorld.Map
                 {
                     if (deadSpaceNoiseMap.GetValue(x, y) > 0.5) continue;
 
-                    var point = (hillsNoiseMap.GetValue(x, y) + 1f) / 2;
-                    point *= 8f;
+                    var point = Math.Pow(hillsNoiseMap.GetValue(x, y) + 1f, 3) / 8;
+                    point *= 3f;
                     _allNodes[x][y] = new Position(this, x, y, (int) Math.Round(point) + 1);
                 }
             }
         }
 
         [CanBeNull]
-        public Position GetNode(int x, int y)
+        public Position GetPosition(int x, int y)
         {
             if (x < 0 || x >= XSize || y < 0 || y >= YSize) return null;
             return _allNodes[x][y];
         }
 
-        public Position GetNode(Xy xy) => GetNode(xy.X, xy.Y);
+        public Position GetPosition(Xy xy) => GetPosition(xy.X, xy.Y);
 
         public IEnumerable<Position> GetAllNodes()
         {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 namespace PathFinderBenchmark
 {
@@ -17,10 +14,12 @@ namespace PathFinderBenchmark
                     break;
                 case "profile":
                     var a = new AStarBenchmark();
-                    a.Size = 1000;
-                    a.Thoroughness = 0.5;
+                    a.Size = int.Parse(args[1]);
+                    a.Thoroughness = double.Parse(args[2]);
+                    a.Seed = 500;
+                    a.MoveFactor = 1.0;
                     a.Setup();
-                    a.Solve();
+                    a.Baseline();
                     break;                    
             }
         }

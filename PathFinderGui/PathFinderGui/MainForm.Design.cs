@@ -7,25 +7,25 @@ namespace PathFinderGui
     public partial class MainForm : Form
     {
         private UITimer _timer;
-        private MapWidget _map;
+        private BitmapWidget _bitmapWidget;
         private Label _tpf;
         private Label _fps;
         private Label _tps;
         private Label _openPoints;
         private Label _closedPoints;
         private Label _pathCost;
-        private Slider _thoroughnessSlider;
-        private Slider _scaleSlider;
-        private NumericStepper _delaySlider;
+        private NumericStepper _greedStepper;
+        private NumericStepper _scaleStepper;
+        private NumericStepper _delayStepper;
+        private NumericStepper _moveCostStepper;
         private CheckBox _canCornerCut;
-        private CheckBox _canRun;
+        private CheckBox _showSearchCheckbox;
+        private ComboBox _solverSelector;
         private Button _go;
         private Button _newWorld;
         private Button _newPoints;
-        private Button _newSeed;
         private TextBox _worldSeed;
         private TextBox _pointsSeed;
-        private NumericStepper _moveCost;
 
         private void InitUi()
         {
@@ -36,50 +36,53 @@ namespace PathFinderGui
             _worldSeed = new TextBox {Text = new Random().Next(10000, 99999).ToString(), Width = 90};
             _pointsSeed = new TextBox {Text = new Random().Next(10000, 99999).ToString(), Width = 90};
 
-            _moveCost = new NumericStepper()
+            _moveCostStepper = new NumericStepper()
             {
-                Value = 1.0, 
-                Width = 50, 
+                Value = 1.0,
+                Width = 60,
                 MinValue = 0.1,
                 MaxValue = 8,
                 Increment = 0.1,
                 DecimalPlaces = 1,
-                ToolTip = "Step level cost"
-            };
-            
-            _thoroughnessSlider = new Slider
-            {
-                MinValue = 0,
-                MaxValue = 100,
-                Value = 50,
-                ToolTip = "Thoroughness (50%)"                
             };
 
-            _scaleSlider = new Slider
+            _greedStepper = new NumericStepper
             {
+                Width = 60,
+                MinValue = 0,
+                Increment = 0.05,
+                DecimalPlaces = 2,
+                Value = 1,
+            };
+
+            _scaleStepper = new NumericStepper
+            {
+                Width = 60,
                 MinValue = 1,
                 MaxValue = 8,
                 Value = 1,
             };
 
-            _delaySlider = new NumericStepper()
+            _delayStepper = new NumericStepper()
             {
                 MinValue = 0,
                 MaxValue = 10000,
                 Value = 0,
                 ToolTip = "Max ticks per frame"
             };
-            
+
+            _solverSelector = new ComboBox();
+
             _tpf = new Label {Text = "TPF: N/A"};
             _tps = new Label {Text = "TPS: N/A"};
             _fps = new Label {Text = "FPS: N/A"};
             _openPoints = new Label {Text = "Open Points: N/A"};
             _closedPoints = new Label {Text = "Closed Points: N/A"};
-            _pathCost = new Label {Text = "Path Cost: N/A"};
-            _canCornerCut = new CheckBox {Checked = true };
-            _canRun = new CheckBox();
             
-            _map = new MapWidget( _scaleSlider.Value);
+            _canCornerCut = new CheckBox {Checked = true};
+            _showSearchCheckbox = new CheckBox {Checked = true};
+            
+            _bitmapWidget = new BitmapWidget(1);
             _go = new Button
             {
                 Text = "Go"
@@ -96,6 +99,9 @@ namespace PathFinderGui
                 Text = "New Points",
                 Width = 90
             };
+
+            StackLayoutItem HStretched(Control c) =>
+                new StackLayoutItem {Control = c, HorizontalAlignment = HorizontalAlignment.Stretch};
             
             Content = new StackLayout
             {
@@ -103,7 +109,7 @@ namespace PathFinderGui
                 Items =
                 {
                     new StackLayoutItem {
-                        Control = _map,
+                        Control = _bitmapWidget,
                         VerticalAlignment = VerticalAlignment.Stretch,
                         Expand = true
                     },
@@ -116,10 +122,8 @@ namespace PathFinderGui
                         Spacing = 10,
                         Items =
                         {
-                            new StackLayoutItem { Control = "Path Finder Testing", HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = "Scale", HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _scaleSlider, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = "Seeds", HorizontalAlignment = HorizontalAlignment.Stretch},
+                            HStretched("Path Finder Testing"),
+                            HStretched("Seeds"),
                             new StackLayout
                             {
                                 Orientation = Orientation.Horizontal,
@@ -130,21 +134,38 @@ namespace PathFinderGui
                                 Orientation =  Orientation.Horizontal, 
                                 Items = { _newWorld, _newPoints }
                             },
-                            new StackLayoutItem { Control = _moveCost },
-                            new StackLayoutItem { Control = "Thoroughness", HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _thoroughnessSlider, HorizontalAlignment = HorizontalAlignment.Stretch},
+                            new StackLayout
+                            {
+                                Orientation = Orientation.Horizontal,
+                                Items =
+                                {
+                                    new StackLayout { Items =
+                                    {
+                                        "Factor",
+                                        _moveCostStepper
+                                    }},new StackLayout { Items =
+                                    {
+                                        "Greed",
+                                        _greedStepper
+                                    }},new StackLayout { Items =
+                                    {
+                                        "Scale",
+                                        _scaleStepper
+                                    }}
+                                }
+                            },
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
-                                Items = {"Cornering", _canCornerCut, "Run", _canRun}
+                                Items = {"Cornering:", _canCornerCut, "Show Search:", _showSearchCheckbox}
                             },
-                            new StackLayoutItem { Control = _go, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _delaySlider, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _tpf, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _tps, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _fps, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _openPoints, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _closedPoints, HorizontalAlignment = HorizontalAlignment.Stretch},
-                            new StackLayoutItem { Control = _pathCost, HorizontalAlignment = HorizontalAlignment.Stretch},
+                            HStretched(_solverSelector),
+                            HStretched(_go),
+                            HStretched(_delayStepper),
+                            HStretched(_tpf),
+                            HStretched(_tps),
+                            HStretched(_fps),
+                            HStretched(_openPoints),
+                            HStretched(_closedPoints)
                         }
                     }
                 },

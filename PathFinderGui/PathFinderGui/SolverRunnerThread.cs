@@ -1,68 +1,58 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using PathFinder.Interfaces;
-using PathFinder.Solvers;
 using SimpleWorld.Map;
 
 namespace PathFinderGui
 {
-
-    public interface ISolverRunner
-    {
-        ISolver<Position> Solver { get; set; }
-        int Delay { get; set; }
-        void Kill();
-        void Run();
-        (IReadOnlyCollection<Position>, IList<Position>) GetFrameData();
-    }
-    
-    public class SolverRunnerThread : ISolverRunner
+    public class SolverRunnerThread
     {
         private Collection<Position> _checkedPositions = new Collection<Position>();
         public ISolver<Position> Solver { get; set; }
         public int Delay { get; set; }
         private readonly object _lock = new object();
         private bool _kill;
+        public bool Running => _thread != null;
+        private Thread _thread;
 
         public void Kill()
         {
             _kill = true;
         }
 
-        public void Run()
+        public void Start()
         {
+            if (Running) return;
+            _thread = new Thread(Main);
+            _thread.Start();
+        }
+
+        private void Main() {
             while (Solver.State == SolverState.Running && !_kill)
             {
-                if (Delay <= 0 || _checkedPositions.Count < Delay)
+                lock (_lock)
                 {
-                    lock (_lock)
+                    if (Delay <= 0 || _checkedPositions.Count < Delay)
                     {
                         Solver.Tick();
                         _checkedPositions.Add(Solver.Current);
+                        continue;
                     }
                 }
-                else
-                {
-                    Thread.Sleep(1);
-                }
                 
+                Thread.Sleep(5);
             }
+            _thread = null;
         }
 
         public (IReadOnlyCollection<Position>, IList<Position>)  GetFrameData()
         {
             lock (_lock)
             {
-                try
-                {
-                    return (_checkedPositions, Solver.CurrentBestPath);
-                }
-                finally
-                {
-                    _checkedPositions = new Collection<Position>();
-                }
+                var ret = (_checkedPositions, Solver.CurrentBestPath);
+                _checkedPositions = new Collection<Position>();
+                return ret;
             }
         }
     }

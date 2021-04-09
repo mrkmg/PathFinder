@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <LangVersion>8</LangVersion>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,6 +13,10 @@
     <ItemGroup>
       <ProjectReference Include="..\PathFinder\PathFinder.csproj" />
       <ProjectReference Include="..\SimpleWorld\SimpleWorld.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="TestingOverrides" />
     </ItemGroup>
 
 </Project>

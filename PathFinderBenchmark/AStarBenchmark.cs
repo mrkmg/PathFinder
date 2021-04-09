@@ -1,36 +1,55 @@
 ﻿using System;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
+using PathFinder.Interfaces;
 using PathFinder.Solvers;
 using SimpleWorld.Map;
 
 namespace PathFinderBenchmark
 {
-    [SimpleJob(RuntimeMoniker.CoreRt50)]
+    [SimpleJob(1, 2, 20, 1)]
     public class AStarBenchmark
     {
         private World _world;
         private Position _from;
         private Position _to;
 
-        [Params(100, 250, 500, 1000)] 
+        [Params(400)]
         public int Size;
         
-        [Params(0.1, 0.25, 0.5, 1)]
+        [Params(0.5)]
         public double Thoroughness;
+
+        // [Params(4967, 4969, 4973, 4987, 4993, 4999, 5003)]
+        [Params(111111, 222222, 333333)]
+        public int Seed;
+
+        [Params(0.1, 1.0, 3.0)]
+        public double MoveFactor;
         
         [IterationSetup]
         public void Setup()
         {
-            _world = new World(Size, Size, new Random(23));
-            _from = _world.GetNode(1, 1);
-            _to = _world.GetNode(Size-1, Size-1);
+            _world = new World(Size, Size, new Random(Seed), MoveFactor);
+            _from = _world.GetPosition(1, 1);
+            _to = _world.GetPosition(Size-1, Size-1);
         }
 
-        [Benchmark]
-        public void Solve()
+        [Benchmark(Baseline = true)]
+        public void Baseline()
         {
-            AStar.Solve(_from, _to, Thoroughness);
+            new AStar<Position>(_from, _to, Thoroughness).Solve();
         }
+
+        // [Benchmark]
+        // public void Test1()
+        // {
+        //     new AStarTest1<Position>(_from, _to, GreedFactor).Solve();
+        // }
+
+        // [Benchmark]
+        // public void Test2()
+        // {
+        //     new AStarTest2<Position>(_from, _to, GreedFactor).Solve();
+        // }
     }
 }

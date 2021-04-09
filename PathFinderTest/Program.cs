@@ -54,7 +54,7 @@ namespace PathFinderTest
                         .Select(s => s.ToString(CultureInfo.InvariantCulture))
                         .Aggregate((p, a) => p + "," + a);
                     
-                    Console.Write($"Thoroughness ({tStr})?");
+                    Console.Write($"GreedFactor ({tStr})?");
                     var tInput = Console.ReadLine();
                     if (!string.IsNullOrEmpty(tInput))
                     {

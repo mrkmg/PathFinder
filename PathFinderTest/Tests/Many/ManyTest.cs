@@ -68,9 +68,9 @@ namespace PathFinderTest.Tests.Many
                 
                 aStarSolver = new AStar<Position>(origin, destination, 1);
                 aStarSolver.Solve();
-            } while (aStarSolver.State == SolverState.Failed);
+            } while (aStarSolver.State == SolverState.Failure);
 
-            var bestCostTo = Math.Round(aStarSolver.Cost, 3);
+            var bestCostTo = Math.Round(aStarSolver.PathCost, 3);
             var estimatedCostTo = (int)origin.EstimatedCostTo(destination);
 
             var subTestNum = 0;
@@ -100,7 +100,7 @@ namespace PathFinderTest.Tests.Many
             aStar.Solve();
             timer.Stop();
 
-            if (aStar.State == SolverState.Failed) return null;
+            if (aStar.State == SolverState.Failure) return null;
 
             return new TestResult
             {
@@ -109,7 +109,7 @@ namespace PathFinderTest.Tests.Many
                 BestCostTo = test.BestCostTo,
                 EstimatedCostTo = test.EstimatedCostTo,
                 Thoroughness = test.Thoroughness,
-                PathCost = Math.Round(aStar.Cost, 3),
+                PathCost = Math.Round(aStar.PathCost, 3),
                 Checks = aStar.Ticks,
                 Ticks = timer.ElapsedTicks,
                 Time = Math.Round(timer.Elapsed.TotalMilliseconds, 4),
@@ -139,7 +139,7 @@ namespace PathFinderTest.Tests.Many
             
             lock (_fileLock)
             {
-                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,Thoroughness,BestCost,PathCost,Check,Ticks,Time\n");
+                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,GreedFactor,BestCost,PathCost,Check,Ticks,Time\n");
             }
         }
 
