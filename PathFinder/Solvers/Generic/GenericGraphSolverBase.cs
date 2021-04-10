@@ -11,11 +11,11 @@ namespace PathFinder.Solvers.Generic
     /// <summary>
     /// TODO
     /// </summary>
-    /// <typeparam name="T"><see cref="INode"/></typeparam>
-    public abstract class GenericSolverBase<T> : ISolver<T> where T : INode
+    /// <typeparam name="T"><see cref="IGraphNode"/></typeparam>
+    public abstract class GenericGraphSolverBase<T> : IGraphSolver<T> where T : IGraphNode
     {
 
-        protected GenericSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination)
+        protected GenericGraphSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination)
         {
             Origin = origin;
             Destination = destination;
@@ -26,7 +26,7 @@ namespace PathFinder.Solvers.Generic
             _openNodes = new SortedSet<NodeMetaData<T>>(comparer) {_currentMetaData};
         }
 
-        protected GenericSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination, NodeValidator nodeValidator) 
+        protected GenericGraphSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination, NodeValidator nodeValidator) 
             : this(comparer, origin, destination)
         {
             _nodeValidator = nodeValidator;
@@ -41,45 +41,45 @@ namespace PathFinder.Solvers.Generic
         private NodeMetaData<T> _closest;
         private double? _cost;
         
-        /// <inheritdoc cref="ISolver{T}.Open"/>
+        /// <inheritdoc cref="IGraphSolver{T}.Open"/>
         public IEnumerable<T> Open => _openNodes.Select(n => n.Node);
 
-        /// <inheritdoc cref="ISolver{T}.Closed"/>
+        /// <inheritdoc cref="IGraphSolver{T}.Closed"/>
         public IEnumerable<T> Closed => _meta
             .Where(n => n.Status == NodeStatus.Closed)
             .Select(n => n.Node);
 
-        /// <inheritdoc cref="ISolver{T}.OpenCount"/>
+        /// <inheritdoc cref="IGraphSolver{T}.OpenCount"/>
         public int OpenCount => _openNodes.Count;
         
-        /// <inheritdoc cref="ISolver{T}.ClosedCount"/>
+        /// <inheritdoc cref="IGraphSolver{T}.ClosedCount"/>
         public int ClosedCount { get; private set; }
         
-        /// <inheritdoc cref="ISolver{T}.Current"/>
+        /// <inheritdoc cref="IGraphSolver{T}.Current"/>
         public T Current => _currentMetaData.Node;
 
-        /// <inheritdoc cref="ISolver{T}.PathCost"/>
+        /// <inheritdoc cref="IGraphSolver{T}.PathCost"/>
         public double PathCost => GetCost();
 
-        /// <inheritdoc cref="ISolver{T}.State"/>
+        /// <inheritdoc cref="IGraphSolver{T}.State"/>
         public SolverState State { get; protected set; } = SolverState.Waiting;
 
-        /// <inheritdoc cref="ISolver{T}.Ticks"/>
+        /// <inheritdoc cref="IGraphSolver{T}.Ticks"/>
         public int Ticks { get; private set; }
 
-        /// <inheritdoc cref="ISolver{T}.Origin"/>
+        /// <inheritdoc cref="IGraphSolver{T}.Origin"/>
         public T Origin { get; }
 
-        /// <inheritdoc cref="ISolver{T}.Destination"/>
+        /// <inheritdoc cref="IGraphSolver{T}.Destination"/>
         public T Destination { get; }
         
-        /// <inheritdoc cref="ISolver{T}.Path"/>
+        /// <inheritdoc cref="IGraphSolver{T}.Path"/>
         public IList<T> Path => GetPath();
 
-        /// <inheritdoc cref="ISolver{T}.CurrentBestPath"/>
+        /// <inheritdoc cref="IGraphSolver{T}.CurrentBestPath"/>
         public IList<T> CurrentBestPath => BuildPath(_closest.Node);
 
-        /// <inheritdoc cref="ISolver{T}.MaxTicks"/>
+        /// <inheritdoc cref="IGraphSolver{T}.MaxTicks"/>
         public int MaxTicks { get; set; } = int.MaxValue;
 
         private int _remainingTicks;
@@ -106,22 +106,21 @@ namespace PathFinder.Solvers.Generic
         }
 
         
-        public void Stop()
-        {
-            State = SolverState.Waiting;
-        }
+        public void Stop() => _remainingTicks = 0;
 
-        public void Start(int numTicks = -1)
+        public SolverState Start(int numTicks = -1)
         {
             if (State != SolverState.Waiting)
                 throw new Exception("Not in a startable state");
+            if (numTicks == 0) return State;
             _remainingTicks = numTicks;
             State = SolverState.Running;
             while (State == SolverState.Running) 
                 Tick();
+            return State;
         }
 
-        public Task StartAsync(int ticks = -1) => new Task(() => Start(ticks));
+        public Task<SolverState> StartAsync(int ticks = -1) => new Task<SolverState>(() => Start(ticks));
 
         private void SetCurrentNode()
         {
@@ -130,7 +129,6 @@ namespace PathFinder.Solvers.Generic
             Debug.Assert(didRemove);
             ClosedCount++;
             _currentMetaData.Status = NodeStatus.Closed;
-            
             if (_currentMetaData.ToCost < _closest.ToCost)
                 _closest = _currentMetaData;
         }
@@ -143,7 +141,6 @@ namespace PathFinder.Solvers.Generic
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
                 var neighborMetaData = _meta.Get((T) neighbor);
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
-                if (neighborMetaData.Equals(_currentMetaData)) continue;
                 if (_nodeValidator != null && _nodeValidator(Current, neighborMetaData.Node)) continue;
                 ProcessNeighbor(neighborMetaData);
                 if (!neighbor.Equals(Destination)) continue;
@@ -205,7 +202,7 @@ namespace PathFinder.Solvers.Generic
         Closed
     }
 
-    public class NodeMetaData<T> : IEqualityComparer<NodeMetaData<T>>, IEquatable<NodeMetaData<T>> where T : INode
+    public class NodeMetaData<T> : IEqualityComparer<NodeMetaData<T>>, IEquatable<NodeMetaData<T>> where T : IGraphNode
     {
         public readonly T Node;
         public readonly long NodeId;
@@ -229,7 +226,7 @@ namespace PathFinder.Solvers.Generic
         public override string ToString() => Node.ToString();
     }
     
-    public class NodeMetaDataStore<T> : IEnumerable<NodeMetaData<T>> where T : INode
+    public class NodeMetaDataStore<T> : IEnumerable<NodeMetaData<T>> where T : IGraphNode
     {
         private readonly Dictionary<T, NodeMetaData<T>> _nodeMetaData = new Dictionary<T, NodeMetaData<T>>();
         private int currentNodeId;

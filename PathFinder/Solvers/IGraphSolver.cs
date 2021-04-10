@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace PathFinder.Solvers
 {
-    public interface ISolver<T>
+    public interface IGraphSolver<T>
     {
         /// <summary>
         ///     The current state of the solver. See <see cref="SolverState"/>
@@ -82,13 +82,13 @@ namespace PathFinder.Solvers
         /// Starts the solver. Will run until a path is found or failure.
         /// </summary>
         /// <param name="ticks">Number of ticks to run. Any number less than zero means run until <see cref="MaxTicks"/></param>
-        void Start(int ticks = -1);
+        SolverState Start(int ticks = -1);
 
         /// <summary>
         /// Async version of <see cref="Start"/>
         /// </summary> 
         /// <param name="ticks">Number of ticks to run. Any number less than zero means run until <see cref="MaxTicks"/></param>
-        Task StartAsync(int ticks = -1);
+        Task<SolverState> StartAsync(int ticks = -1);
     }
 
     public enum SolverState

@@ -1,31 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PathFinder.Solvers.Generic
 {
-    public sealed class AStar<T> : GenericSolverBase<T> where T : INode
+    /// <summary>
+    /// A* is a graph solver to find the cheapest path between two nodes which
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public sealed class AStar<T> : GenericGraphSolverBase<T> where T : IGraphNode
     {
         /// <summary>
         ///     Finds a path between the origin and destination node
         /// </summary>
-        /// <param name="origin"><see cref="GenericSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="nodeValidator"><see cref="NodeValidator"/></param>
         /// <param name="greedFactor"><see cref="GreedFactor"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         public static SolverState Solve(T origin, T destination, NodeValidator nodeValidator, double greedFactor, out IList<T> path)
         {
             var solver = new AStar<T>(origin, destination, nodeValidator, greedFactor);
-            solver.Start();
-            path = solver.State == SolverState.Success ? solver.Path : null;
+            path = solver.Start() == SolverState.Success ? solver.Path : null;
             return solver.State;
         }
 
         /// <summary>
         ///     Finds a path between the origin and destination node
         /// </summary>
-        /// <param name="origin"><see cref="GenericSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         public static SolverState Solve(T origin, T destination, out IList<T> path)
             => Solve(origin, destination, null, 1, out path);
@@ -33,8 +37,8 @@ namespace PathFinder.Solvers.Generic
         /// <summary>
         ///     Finds a path between the origin and destination node
         /// </summary>
-        /// <param name="origin"><see cref="GenericSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="nodeValidator"><see cref="NodeValidator"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         public static SolverState Solve(T origin, T destination, NodeValidator nodeValidator, out IList<T> path)
@@ -43,8 +47,8 @@ namespace PathFinder.Solvers.Generic
         /// <summary>
         ///     Finds a path between the origin and destination node
         /// </summary>
-        /// <param name="origin"><see cref="GenericSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="GreedFactor"/></param>
         public static SolverState Solve(T origin, T destination, double greedFactor, out IList<T> path)
             => Solve(origin, destination, null, greedFactor, out path);
@@ -52,8 +56,8 @@ namespace PathFinder.Solvers.Generic
         /// <summary>
         ///     Creates a solver using the A* method
         /// </summary>
-        /// <param name="origin"><see cref="GenericSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="GreedFactor"/></param>
         public AStar(T origin, T destination, double greedFactor = 0.5) 
             : base(new NodeMetaComparer(), origin, destination)
@@ -64,8 +68,8 @@ namespace PathFinder.Solvers.Generic
         /// <summary>
         ///     Creates a solver using the A* method
         /// </summary>
-        /// <param name="origin"><see cref="GenericSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="nodeValidator"><see cref="NodeValidator"/></param>
         /// <param name="greedFactor"><see cref="GreedFactor"/></param>
         public AStar(T origin, T destination, NodeValidator nodeValidator, double greedFactor = 0.5) 
@@ -85,7 +89,7 @@ namespace PathFinder.Solvers.Generic
             _openNodes = new SortedSet<NodeMetaData<T>>(_meta, _comparer) {_currentMetaData};
             State = SolverState.Waiting;
         }
-        
+
         /// <summary>
         /// <para>How thorough the search should be.</para>
         /// <para>Must be greater than or equal to 0.</para>
@@ -106,7 +110,7 @@ namespace PathFinder.Solvers.Generic
                 _greedFactor = value;
             }
         }
-        
+
         private double _greedFactor = 0.5;
 
         protected override void ProcessNeighbor(NodeMetaData<T> neighborMetaData)
