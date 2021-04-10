@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageVersion>0.1.0</PackageVersion>
     <Title>PathFinder</Title>
     <Authors>Kevin Gravier</Authors>
     <Description>A generic, customizable A-Star path finding implementation.</Description>
     <LangVersion>8</LangVersion>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
