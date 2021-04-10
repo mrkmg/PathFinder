@@ -113,22 +113,13 @@ namespace PathFinder.Solvers.Generic
         {
             var fromCost = _currentMetaData.FromCost + _currentMetaData.Node.RealCostTo(neighborMetaData.Node);
 
-            switch (neighborMetaData.Status)
+            if (neighborMetaData.Status == NodeStatus.Open)
             {
-                case NodeStatus.Open when fromCost >= neighborMetaData.FromCost:
-                    return;
-                case NodeStatus.Open:
-                    _openNodes.Remove(neighborMetaData);
-                    break;
-                case NodeStatus.New:
-                    neighborMetaData.ToCost = neighborMetaData.Node.EstimatedCostTo(Destination);
-                    neighborMetaData.Status = NodeStatus.Open;
-                    break;
-                case NodeStatus.Closed:
-                    throw new InvalidOperationException("Neighbor can not be closed in this process");
-                default:
-                    throw new ArgumentOutOfRangeException();
+                if (fromCost >= neighborMetaData.FromCost) return;
+                _openNodes.Remove(neighborMetaData);
             }
+            
+            Debug.Assert(neighborMetaData.Status != NodeStatus.Closed, "neighborMetaData.Status != NodeStatus.Closed");
             
             neighborMetaData.TotalCost = fromCost + neighborMetaData.ToCost * GreedFactor;
             neighborMetaData.Parent = Current;
