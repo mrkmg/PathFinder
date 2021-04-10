@@ -59,7 +59,7 @@ namespace PathFinder.Solvers.Generic
         /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="GreedFactor"/></param>
-        public AStar(T origin, T destination, double greedFactor = 0.5) 
+        public AStar(T origin, T destination, double greedFactor = 1) 
             : base(new NodeMetaComparer(), origin, destination)
         {
             GreedFactor = greedFactor;
