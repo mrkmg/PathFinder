@@ -4,7 +4,7 @@ using PathFinder.Solvers.Generic;
 
 namespace SimpleWorld.Map
 {
-    public class Position : INode
+    public class Position : IGraphNode
     {
         public readonly int X;
         public readonly int Y;
@@ -19,7 +19,7 @@ namespace SimpleWorld.Map
             Z = z;
         }
 
-        public double RealCostTo(INode other)
+        public double RealCostTo(IGraphNode other)
         {
             if (!(other is Position otherNode)) return double.MaxValue;
             
@@ -29,7 +29,7 @@ namespace SimpleWorld.Map
 
         }
 
-        public double EstimatedCostTo(INode other)
+        public double EstimatedCostTo(IGraphNode other)
         {
             if (!(other is Position otherNode)) return double.MaxValue;
             
@@ -39,22 +39,23 @@ namespace SimpleWorld.Map
 
         }
 
-        public IEnumerable<INode> GetReachableNodes()
+        public IEnumerable<IGraphNode> GetReachableNodes()
         {
             for (var x = X-1; x <= X+1; x++)
             for (var y = Y-1; y <= Y+1; y++)
             {
                 if (!World.CanCutCorner && x != X && y != Y) continue;
-                
+                if (x == X && x == y) continue;
+
                 var node = World.GetPosition(x, y);
                 if (node != null) yield return node;
             }
         }
 
-        public bool Equals(INode other) => other is Position n && X == n.X && Y == n.Y;
+        public bool Equals(IGraphNode other) => other is Position n && X == n.X && Y == n.Y;
         public override string ToString() => "Position: " + X + "::" + Y;
-        public bool Equals(INode x, INode y) => x is Position xn && y is Position yn && xn.Equals(yn);
-        public int GetHashCode(INode obj) => obj.GetHashCode();
+        public bool Equals(IGraphNode x, IGraphNode y) => x is Position xn && y is Position yn && xn.Equals(yn);
+        public int GetHashCode(IGraphNode obj) => obj.GetHashCode();
         public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (1427 + Y.GetHashCode());
     }
 

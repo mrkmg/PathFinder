@@ -23,7 +23,7 @@ namespace PathFinderGui
         private double _lastFps;
         private Stopwatch _frameStopwatch;
         private Stopwatch _overallStopwatch;
-        private ISolver<Position> _solver;
+        private IGraphSolver<Position> _graphSolver;
         private IList<Position> _lastBestPath;
 
         private UiEventDebouncer<EventArgs> _scaleSelectorChangedDebounce;
@@ -120,7 +120,7 @@ namespace PathFinderGui
         private void KillRunning()
         {
             _lastBestPath = null;
-            _solver = null;
+            _graphSolver = null;
             
             if (_timer != null)
             {
@@ -197,7 +197,7 @@ namespace PathFinderGui
         private void Go()
         {
             if (_world == null) return;
-            if (_solver == null)
+            if (_graphSolver == null)
             {
                 Reset();
                 _world.CanCutCorner = _canCornerCut.Checked ?? false;
@@ -206,21 +206,21 @@ namespace PathFinderGui
                 switch (_solverSelector.Text)
                 {
                     case "AStar":
-                        _solver = new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value);
+                        _graphSolver = new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value);
                         break;
                     case "Greedy":
-                        _solver = new Greedy<Position>(_startPoint, _endPoint);
+                        _graphSolver = new Greedy<Position>(_startPoint, _endPoint);
                         break;
                     case "Breadth First":
-                        _solver = new BreadthFirst<Position>(_startPoint, _endPoint);
+                        _graphSolver = new BreadthFirst<Position>(_startPoint, _endPoint);
                         break;
                     default:
-                        throw new ArgumentException("Unknown Solver");
+                        throw new ArgumentException("Unknown GraphSolver");
                 }
 
                 _frameStopwatch = new Stopwatch();
                 _overallStopwatch = new Stopwatch();
-                _runnerThread = new SolverRunnerThread {Solver = _solver, Delay = (int) _delayStepper.Value};
+                _runnerThread = new SolverRunnerThread {GraphSolver = _graphSolver, Delay = (int) _delayStepper.Value};
                 _lastFps = 0;
                 _lastTpf = 0;
                 _lastTps = 0;
@@ -235,18 +235,18 @@ namespace PathFinderGui
 
         private void ProcessFrame()
         {
-            switch (_solver.State)
+            switch (_graphSolver.State)
             {
                 case SolverState.Waiting:
                 case SolverState.Running:
                     var frameTime = _frameStopwatch.Elapsed.TotalSeconds;
                     _lastFps = (1 / frameTime) * 0.1d + _lastFps * 0.9d;
-                    _lastTps = _solver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds;
-                    _tpf.Text = _solver.State == SolverState.Waiting ? "Waiting" : $"TPF: {_lastTpf:N0}";
+                    _lastTps = _graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds;
+                    _tpf.Text = _graphSolver.State == SolverState.Waiting ? "Waiting" : $"TPF: {_lastTpf:N0}";
                     _tps.Text = $"TPS: {_lastTps:N0}";
                     _fps.Text = $"FPS: {_lastFps:N0}";
-                    _openPoints.Text = $"Open Points: {_solver.OpenCount:N0}";
-                    _closedPoints.Text = $"Closed Points: {_solver.ClosedCount:N0}";
+                    _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
+                    _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
                     
                     // Break early if not doing any retrieval from the runner thread data
                     if (_showSearchCheckbox.Checked == null || !_showSearchCheckbox.Checked.Value) break;
@@ -258,19 +258,19 @@ namespace PathFinderGui
                     _overallStopwatch.Stop();
                     _tpf.Text = "Path Found";
                     _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-                    _tps.Text = $"TPS: {_solver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2} ({_solver.ClosedCount:N0})";
-                    _openPoints.Text = $"Path Length {_runnerThread.Solver.Path.Count:N0}";
-                    _closedPoints.Text = $"Path Cost: {_solver.PathCost:N2}";
+                    _tps.Text = $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2} ({_graphSolver.ClosedCount:N0})";
+                    _openPoints.Text = $"Path Length {_runnerThread.GraphSolver.Path.Count:N0}";
+                    _closedPoints.Text = $"Path Cost: {_graphSolver.PathCost:N2}";
                     DrawEntireWorld();
-                    _bitmapWidget.DrawAll(_runnerThread.Solver.Path.AsPathDrawPoints());
+                    _bitmapWidget.DrawAll(_runnerThread.GraphSolver.Path.AsPathDrawPoints());
                     KillRunning();
                     break;
                 case SolverState.Failure:
                     _tpf.Text = $"Failed to find a path";
                     _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-                    _tps.Text = $"TPS: {_solver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2}";
-                    _openPoints.Text = $"Open Points: {_solver.OpenCount:N0}";
-                    _closedPoints.Text = $"Closed Points: {_solver.ClosedCount:N0}";
+                    _tps.Text = $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2}";
+                    _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
+                    _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
                     KillRunning();
                     break;
                 default:
@@ -328,13 +328,13 @@ namespace PathFinderGui
 
         private void OnResetButtonClick(object sender, EventArgs e)
         {
-            if (_solver is AStar<Position> solver)
+            if (_graphSolver is AStar<Position> solver)
                 solver.Reset();
         }
 
         private void OnStopButtonClick(object sender, EventArgs e)
         {
-            _solver?.Stop();
+            _graphSolver?.Stop();
             if (_runnerThread != null)
             {
                 _runnerThread.Kill();
@@ -393,7 +393,7 @@ namespace PathFinderGui
 
         private void OnGreedSelectorChanged(object sender, EventArgs args)
         {
-            if (_solver != null && _solver is AStar<Position> solver)
+            if (_graphSolver != null && _graphSolver is AStar<Position> solver)
                 solver.GreedFactor = _greedStepper.Value;
         }
 

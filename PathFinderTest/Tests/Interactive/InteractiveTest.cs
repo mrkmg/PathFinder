@@ -254,7 +254,7 @@ namespace PathFinderTest.Tests.Interactive
             _worldWriter.DrawPosition(astar.Current.X, astar.Current.Y, PositionType.Current);
         }
 
-        private void PrintEndPoints(ISolver<Position> astar)
+        private void PrintEndPoints(IGraphSolver<Position> astar)
         {
             _worldWriter.DrawPosition(astar.Origin.X, astar.Origin.Y, PositionType.End);
             _worldWriter.DrawPosition(astar.Destination.X, astar.Destination.Y, PositionType.End);

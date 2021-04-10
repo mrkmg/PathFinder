@@ -8,7 +8,7 @@ namespace PathFinderGui
     public class SolverRunnerThread
     {
         private LinkedList<Position> _checkedPositions = new LinkedList<Position>();
-        public ISolver<Position> Solver { get; set; }
+        public IGraphSolver<Position> GraphSolver { get; set; }
         public int Delay { get; set; }
         private readonly object _lock = new object();
         private bool _kill;
@@ -33,7 +33,7 @@ namespace PathFinderGui
         {
             while (!_kill)
             {
-                if (Solver.State != SolverState.Waiting)
+                if (GraphSolver.State != SolverState.Waiting)
                     break;
                 
                 lock (_lock)
@@ -41,11 +41,11 @@ namespace PathFinderGui
                     if (Delay <= 0 || _checkedPositions.Count < Delay)
                     {
                         if (RunToSolve)
-                            Solver.Start();
+                            GraphSolver.Start();
                         else
                         {
-                            Solver.Start(1);
-                            _checkedPositions.AddLast(Solver.Current);
+                            GraphSolver.Start(1);
+                            _checkedPositions.AddLast(GraphSolver.Current);
                         }
                         continue;
                     }
@@ -60,7 +60,7 @@ namespace PathFinderGui
         {
             lock (_lock)
             {
-                var ret = (_checkedPositions, Solver.CurrentBestPath);
+                var ret = (_checkedPositions, GraphSolver.CurrentBestPath);
                 _checkedPositions = new LinkedList<Position>();
                 return ret;
             }

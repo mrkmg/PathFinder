@@ -60,17 +60,17 @@ namespace PathFinderTest.Tests.Many
             Position origin;
             Position destination;
 
-            ISolver<Position> aStarSolver;
+            IGraphSolver<Position> aStarGraphSolver;
             do
             {
                 origin = map.GetAllNodes().OrderBy(n => Random.Next()).First();
                 destination = map.GetAllNodes().OrderBy(n => Random.Next()).First();
                 
-                aStarSolver = new Greedy<Position>(origin, destination);
-                aStarSolver.Start();
-            } while (aStarSolver.State == SolverState.Failure);
+                aStarGraphSolver = new Greedy<Position>(origin, destination);
+                aStarGraphSolver.Start();
+            } while (aStarGraphSolver.State == SolverState.Failure);
 
-            var bestCostTo = Math.Round(aStarSolver.PathCost, 3);
+            var bestCostTo = Math.Round(aStarGraphSolver.PathCost, 3);
             var estimatedCostTo = (int)origin.EstimatedCostTo(destination);
 
             var subTestNum = 0;

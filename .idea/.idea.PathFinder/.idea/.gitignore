@@ -7,5 +7,5 @@
 /.idea.PathFinder.iml
 /projectSettingsUpdater.xml
 # Datasource local storage ignored files
-/../../../../../../../../../:\Users\kevin\source\repos\PathFinder\.idea\.idea.PathFinder\.idea/dataSources/
+/dataSources/
 /dataSources.local.xml
