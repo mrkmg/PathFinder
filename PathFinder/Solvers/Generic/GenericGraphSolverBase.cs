@@ -213,18 +213,18 @@ namespace PathFinder.Solvers.Generic
         public T Parent;
         public double ToCost;
         public double TotalCost;
-        public NodeStatus Status = NodeStatus.New;
+        public NodeStatus Status;
 
         public NodeMetaData(T obj, int nodeId)
         {
-            NodeId = nodeId;
             Node = obj;
+            NodeId = nodeId;
+            Status = NodeStatus.New;
         }
-
-        public bool Equals(NodeMetaData<T> x, NodeMetaData<T> y) => y != null && x != null && Node.Equals(x.Node, y.Node);
         public int GetHashCode(NodeMetaData<T> obj) => Node.GetHashCode(obj.Node);
-        public bool Equals(NodeMetaData<T> other) => Equals(this, other);
+        public bool Equals(NodeMetaData<T> x, NodeMetaData<T> y) => y != null && x != null && x.Equals(y);
         public override bool Equals(object obj) => obj is NodeMetaData<T> n && Equals(n);
+        public bool Equals(NodeMetaData<T> other) => other != null && Node.Equals(other.Node);
         public override int GetHashCode() => Node.GetHashCode();
         public override string ToString() => Node.ToString();
     }
