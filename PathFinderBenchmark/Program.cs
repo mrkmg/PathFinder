@@ -15,7 +15,7 @@ namespace PathFinderBenchmark
                 case "profile":
                     var a = new AStarBenchmark();
                     a.Size = int.Parse(args[1]);
-                    a.Thoroughness = double.Parse(args[2]);
+                    a.Greed = double.Parse(args[2]);
                     a.Seed = 500;
                     a.MoveFactor = 1.0;
                     a.Setup();

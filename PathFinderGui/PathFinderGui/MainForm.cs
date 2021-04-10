@@ -6,8 +6,8 @@ using System.Threading;
 using System.Timers;
 using Eto.Drawing;
 using Eto.Forms;
-using PathFinder.Interfaces;
 using PathFinder.Solvers;
+using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
 namespace PathFinderGui
@@ -26,15 +26,18 @@ namespace PathFinderGui
         private ISolver<Position> _solver;
         private IList<Position> _lastBestPath;
 
-        private UiEventDebouncer<EventArgs> _greedSelectorChangedDebounce;
         private UiEventDebouncer<EventArgs> _scaleSelectorChangedDebounce;
         private UiEventDebouncer<EventArgs> _moveCostSelectorChangedDebounce;
 
         public MainForm()
         {
+            WindowState = WindowState.Maximized;
             InitUi();
+            Thread.Sleep(1);
+
+            _timer = new UITimer {Interval = 1d / 20};
+            _timer.Elapsed += (sender, args) => ProcessFrame();
             
-            _greedSelectorChangedDebounce = new UiEventDebouncer<EventArgs>(250);
             _scaleSelectorChangedDebounce = new UiEventDebouncer<EventArgs>(250);
             _moveCostSelectorChangedDebounce = new UiEventDebouncer<EventArgs>(250);
             
@@ -55,15 +58,17 @@ namespace PathFinderGui
             _newWorld.Click += OnNewWorldClick;
             _newPoints.Click += OnNewPointsClick;
             _go.Click += OnGoClick;
+            _stopButton.Click += OnStopButtonClick;
+            _resetSolverButton.Click += OnResetButtonClick;
             
             _delayStepper.ValueChanged += OnDelayStepperChanged;
-            _greedStepper.ValueChanged += _greedSelectorChangedDebounce.Handle;
+            _greedStepper.ValueChanged += OnGreedSelectorChanged;
             _scaleStepper.ValueChanged += _scaleSelectorChangedDebounce.Handle;
             _moveCostStepper.ValueChanged += _moveCostSelectorChangedDebounce.Handle;
             
-            _greedSelectorChangedDebounce.Fired += OnGreedSelectorChanged;
             _scaleSelectorChangedDebounce.Fired += OnScaleSelectorChanged;
             _moveCostSelectorChangedDebounce.Fired += OnMoveCostSelectorChanged;
+            _showSearchCheckbox.CheckedChanged += OnShowSearchCheckboxChanged;
             
 
             Closed += OnClosed;
@@ -120,8 +125,6 @@ namespace PathFinderGui
             if (_timer != null)
             {
                 _timer.Stop();
-                _timer.Dispose();
-                _timer = null;
             }
 
             if (_runnerThread != null)
@@ -131,11 +134,15 @@ namespace PathFinderGui
             }
         }
 
+        private ICollection<DrawPoint> _cachedEntireMap;
+
         private void DrawEntireWorld()
         {
             if (_world == null) return;
             _bitmapWidget.Clear();
-            _bitmapWidget.DrawAll(_world.GetAllNodes().AsMapDrawPoints());
+            if (_cachedEntireMap == null)
+                _cachedEntireMap = _world.GetAllNodes().AsMapDrawPoints().ToArray();
+            _bitmapWidget.DrawAll(_cachedEntireMap);
             DrawMarkers();
         }
 
@@ -182,6 +189,7 @@ namespace PathFinderGui
             KillRunning();
             if (_bitmapWidget.BitmapHeight == 0 || _bitmapWidget.BitmapWidth == 0) return;
             _world = new World(_bitmapWidget.BitmapWidth, _bitmapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), _moveCostStepper.Value);
+            _cachedEntireMap = null;
             SetRandomPoints();
             DrawEntireWorld();
         }
@@ -189,57 +197,52 @@ namespace PathFinderGui
         private void Go()
         {
             if (_world == null) return;
-            
-            Reset();
-            _world.CanCutCorner = _canCornerCut.Checked ?? false;
-            _world.CornerIsFree = _showSearchCheckbox.Checked ?? false;
-            
-            switch (_solverSelector.Text)
+            if (_solver == null)
             {
-                case "AStar":
-                    _solver = new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value);
-                    break;
-                case "Greedy":
-                    _solver = new Greedy<Position>(_startPoint, _endPoint);
-                    break;
-                case "Breadth First":
-                    _solver = new BreadthFirst<Position>(_startPoint, _endPoint);
-                    break;
-                default:
-                    throw new ArgumentException("Unknown Solver");
+                Reset();
+                _world.CanCutCorner = _canCornerCut.Checked ?? false;
+                _world.CornerIsFree = _showSearchCheckbox.Checked ?? false;
+
+                switch (_solverSelector.Text)
+                {
+                    case "AStar":
+                        _solver = new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value);
+                        break;
+                    case "Greedy":
+                        _solver = new Greedy<Position>(_startPoint, _endPoint);
+                        break;
+                    case "Breadth First":
+                        _solver = new BreadthFirst<Position>(_startPoint, _endPoint);
+                        break;
+                    default:
+                        throw new ArgumentException("Unknown Solver");
+                }
+
+                _frameStopwatch = new Stopwatch();
+                _overallStopwatch = new Stopwatch();
+                _runnerThread = new SolverRunnerThread {Solver = _solver, Delay = (int) _delayStepper.Value};
+                _lastFps = 0;
+                _lastTpf = 0;
+                _lastTps = 0;
             }
 
-            _frameStopwatch = new Stopwatch();
-            _overallStopwatch = new Stopwatch();
+            _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
             _frameStopwatch.Start();
             _overallStopwatch.Start();
-            _lastFps = 0;
-            _lastTpf = 0;
-            _lastTps = 0;
-            
-            _runnerThread = new SolverRunnerThread { Solver = _solver, Delay = (int)_delayStepper.Value};
-
             _runnerThread.Start();
-            
-            _timer = new UITimer { Interval = 1d / 20 };
-            _timer.Elapsed += (sender, args) => ProcessTick();
             _timer.Start();
         }
 
-        private void ProcessTick()
+        private void ProcessFrame()
         {
-            switch (_runnerThread.Solver.State)
+            switch (_solver.State)
             {
+                case SolverState.Waiting:
                 case SolverState.Running:
-                    if (!_runnerThread.Running)
-                    {
-                        KillRunning();
-                        return;
-                    }
                     var frameTime = _frameStopwatch.Elapsed.TotalSeconds;
-                    _frameStopwatch.Restart();
                     _lastFps = (1 / frameTime) * 0.1d + _lastFps * 0.9d;
-                    _tpf.Text = $"TPF: {_lastTpf:N0}";
+                    _lastTps = _solver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds;
+                    _tpf.Text = _solver.State == SolverState.Waiting ? "Waiting" : $"TPF: {_lastTpf:N0}";
                     _tps.Text = $"TPS: {_lastTps:N0}";
                     _fps.Text = $"FPS: {_lastFps:N0}";
                     _openPoints.Text = $"Open Points: {_solver.OpenCount:N0}";
@@ -248,22 +251,14 @@ namespace PathFinderGui
                     // Break early if not doing any retrieval from the runner thread data
                     if (_showSearchCheckbox.Checked == null || !_showSearchCheckbox.Checked.Value) break;
                     
-                    var (recentlyCheckedPoints, currentBestPath) = _runnerThread.GetFrameData();
-                    _lastTpf = recentlyCheckedPoints.Count * 0.1d + _lastTpf * 0.9d;
-                    _lastTps = (recentlyCheckedPoints.Count / frameTime) * 0.1d + _lastTps * 0.9d;
-                    _bitmapWidget.DrawAll(recentlyCheckedPoints.AsSearchDrawPoints());
-                    _bitmapWidget.DrawAll(_lastBestPath != null
-                        ? BestPathDiff(currentBestPath)
-                        : currentBestPath.AsPathDrawPoints());
-                    DrawMarkers();
-                    _lastBestPath = currentBestPath;
+                    ProcessThreadFrameData();
                     break;
                 case SolverState.Success:
                     _frameStopwatch.Stop();
                     _overallStopwatch.Stop();
                     _tpf.Text = "Path Found";
                     _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-                    _tps.Text = $"TPS: {_solver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2}";
+                    _tps.Text = $"TPS: {_solver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2} ({_solver.ClosedCount:N0})";
                     _openPoints.Text = $"Path Length {_runnerThread.Solver.Path.Count:N0}";
                     _closedPoints.Text = $"Path Cost: {_solver.PathCost:N2}";
                     DrawEntireWorld();
@@ -278,20 +273,24 @@ namespace PathFinderGui
                     _closedPoints.Text = $"Closed Points: {_solver.ClosedCount:N0}";
                     KillRunning();
                     break;
-                case SolverState.Stopped:
-                    _overallStopwatch.Stop();
-                    _frameStopwatch.Stop();
-                    _tpf.Text = $"Searching is stopped";
-                    _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-                    _tps.Text = $"TPS: {_solver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2}";
-                    _openPoints.Text = $"Open Points: {_solver.OpenCount:N0}";
-                    _closedPoints.Text = $"Closed Points: {_solver.ClosedCount:N0}";
-                    break;
                 default:
                     KillRunning();
                     throw new ArgumentOutOfRangeException();
             }
-            
+            _frameStopwatch.Restart();
+        }
+
+        private void ProcessThreadFrameData()
+        {
+            var frameTime = _frameStopwatch.Elapsed.TotalSeconds;
+            var (recentlyCheckedPoints, currentBestPath) = _runnerThread.GetFrameData();
+            _lastTpf = recentlyCheckedPoints.Count * 0.1d + _lastTpf * 0.9d;
+            _bitmapWidget.DrawAll(recentlyCheckedPoints.AsSearchDrawPoints());
+            _bitmapWidget.DrawAll(_lastBestPath != null
+                ? BestPathDiff(currentBestPath)
+                : currentBestPath.AsPathDrawPoints());
+            DrawMarkers();
+            _lastBestPath = currentBestPath;
         }
 
         private IEnumerable<DrawPoint> BestPathDiff(IEnumerable<Position> newBestPath)
@@ -321,10 +320,35 @@ namespace PathFinderGui
 
         #region EventHandlers
 
+        private void OnShowSearchCheckboxChanged(object sender, EventArgs e)
+        {
+            if (_runnerThread != null)
+                _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
+        }
+
+        private void OnResetButtonClick(object sender, EventArgs e)
+        {
+            if (_solver is AStar<Position> solver)
+                solver.Reset();
+        }
+
+        private void OnStopButtonClick(object sender, EventArgs e)
+        {
+            _solver?.Stop();
+            if (_runnerThread != null)
+            {
+                _runnerThread.Kill();
+                ProcessThreadFrameData();
+            }
+            _timer.Stop();
+            _frameStopwatch.Stop();
+            _overallStopwatch.Stop();
+        }
+
         private void OnClosed(object sender, EventArgs args)
         {
             KillRunning();
-            _greedSelectorChangedDebounce.Dispose();
+            _timer.Dispose();
             _moveCostSelectorChangedDebounce.Dispose();
             _scaleSelectorChangedDebounce.Dispose();
         }
@@ -335,10 +359,12 @@ namespace PathFinderGui
             {
                 case "AStar":
                     _greedStepper.Enabled = true;
+                    _resetSolverButton.Enabled = true;
                     break;
                 case "Greedy":
                 case "Breadth First":
                     _greedStepper.Enabled = false;
+                    _resetSolverButton.Enabled = false;
                     break;
             }
         }
@@ -367,8 +393,8 @@ namespace PathFinderGui
 
         private void OnGreedSelectorChanged(object sender, EventArgs args)
         {
-            KillRunning();
-            Reset();
+            if (_solver != null && _solver is AStar<Position> solver)
+                solver.GreedFactor = _greedStepper.Value;
         }
 
         private void OnGoClick(object sender, EventArgs args) => Go();

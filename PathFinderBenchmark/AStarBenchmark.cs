@@ -1,7 +1,6 @@
 ﻿using System;
 using BenchmarkDotNet.Attributes;
-using PathFinder.Interfaces;
-using PathFinder.Solvers;
+using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
 namespace PathFinderBenchmark
@@ -16,8 +15,8 @@ namespace PathFinderBenchmark
         [Params(400)]
         public int Size;
         
-        [Params(0.5)]
-        public double Thoroughness;
+        [Params(1)]
+        public double Greed;
 
         // [Params(4967, 4969, 4973, 4987, 4993, 4999, 5003)]
         [Params(111111, 222222, 333333)]
@@ -37,7 +36,7 @@ namespace PathFinderBenchmark
         [Benchmark(Baseline = true)]
         public void Baseline()
         {
-            new AStar<Position>(_from, _to, Thoroughness).Solve();
+            AStar<Position>.Solve(_from, _to, Greed, out _);
         }
 
         // [Benchmark]

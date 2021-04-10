@@ -30,6 +30,34 @@ namespace SimpleWorld.Map
 
             _random = random ?? new Random();
 
+            Standard();
+        }
+
+        [CanBeNull]
+        public Position GetPosition(int x, int y)
+        {
+            if (x < 0 || x >= XSize || y < 0 || y >= YSize) return null;
+            return _allNodes[x][y];
+        }
+
+        public Position GetPosition(Xy xy) => GetPosition(xy.X, xy.Y);
+
+        public IEnumerable<Position> GetAllNodes()
+        {
+            return _allNodes.SelectMany(a => a).Where(a => a != null);
+        }
+
+        private void Maze(int cellSize = 5, int wallSize = 1)
+        {
+            var width = XSize / cellSize;
+            var height = YSize / cellSize;
+
+            var cx = _random.Next(width);
+            var cy = _random.Next(height);
+        }
+
+        private void Standard()
+        {
             var deadSpaceNoiseMap = DeadSpaceNoiseMap();
             var hillsNoiseMap = HillsNoiseMap();
             
@@ -45,20 +73,6 @@ namespace SimpleWorld.Map
                     _allNodes[x][y] = new Position(this, x, y, (int) Math.Round(point) + 1);
                 }
             }
-        }
-
-        [CanBeNull]
-        public Position GetPosition(int x, int y)
-        {
-            if (x < 0 || x >= XSize || y < 0 || y >= YSize) return null;
-            return _allNodes[x][y];
-        }
-
-        public Position GetPosition(Xy xy) => GetPosition(xy.X, xy.Y);
-
-        public IEnumerable<Position> GetAllNodes()
-        {
-            return _allNodes.SelectMany(a => a).Where(a => a != null);
         }
 
         private NoiseMap DeadSpaceNoiseMap()
@@ -87,7 +101,7 @@ namespace SimpleWorld.Map
                         Source0 = new Perlin
                         {
                             Frequency = 1,
-                            Lacunarity = 1.5,
+                            Lacunarity = 3,
                             Quality = NoiseQuality.Best,
                             Persistence = 0.25,
                             Seed = _random.Next()
@@ -99,14 +113,14 @@ namespace SimpleWorld.Map
                         UpperBound = 1,
                         Source0 = new Perlin
                         {
-                            Frequency = 2,
+                            Frequency = 3,
                             Lacunarity = 3.5,
                             Quality = NoiseQuality.Best,
                             Persistence = 0.25,
                             Seed = _random.Next()
                         }
                     },
-                    Control = new Constant {ConstantValue = -0.3}
+                    Control = new Constant {ConstantValue = 0}
                 }
             };
             noiseMapBuilder.SetDestSize(XSize, YSize);

@@ -46,11 +46,11 @@ namespace PathFinderTest
                     }
                     
                     
-                    var thoroughness = 
+                    var greedyFactors = 
                         SequenceBuilder
-                            .Build(0.8m, 0m, 0.1m)
+                            .Build(2d, 0d, 0.25d)
                             .ToList();
-                    var tStr = thoroughness
+                    var tStr = greedyFactors
                         .Select(s => s.ToString(CultureInfo.InvariantCulture))
                         .Aggregate((p, a) => p + "," + a);
                     
@@ -58,23 +58,21 @@ namespace PathFinderTest
                     var tInput = Console.ReadLine();
                     if (!string.IsNullOrEmpty(tInput))
                     {
-                        thoroughness = tInput.Split(',').Select(s => decimal.Parse(s.Trim())).ToList();
+                        greedyFactors = tInput.Split(',').Select(s => double.Parse(s.Trim())).ToList();
                     }
                     
                     var dateStr = DateTime.Now.ToString("yyyyMMdd-HHmm");
                     
                     foreach (var size in sizes)
                     {
-
                         var manyTest = new ManyTest
                         {
                             NumberOfTests = numTests,
                             CanDiag = true,
                             MapHeight = size,
                             MapWidth = size,
-                            MaxSearchSpace = int.MaxValue,
                             OutputFile = $"~/Documents/AStarTests/{dateStr}/{size}x{size} {numTests}.csv",
-                            Thoroughnesses = thoroughness
+                            GreedyFactors = greedyFactors
                         };
 
                         manyTest.Run();

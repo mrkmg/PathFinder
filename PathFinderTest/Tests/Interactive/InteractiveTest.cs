@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using PathFinder.Interfaces;
 using PathFinder.Solvers;
+using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 using PathFinderTest.Sequencer;
 
@@ -21,17 +21,15 @@ namespace PathFinderTest.Tests.Interactive
         private HashSet<Position> _seenClosed;
         private HashSet<Position> _seenOpen;
         
-        // TODO: Update to greed
-        private readonly IList<double> _thoroughnesses;
+        private readonly IList<double> _greedyFactors;
 
         private World _world;
         private IWorldWriter _worldWriter;
 
         public InteractiveTest()
         {
-            _thoroughnesses = 
-                SequenceBuilder.Build(0.8m, 0m, 0.1m)
-                .ToDouble()
+            _greedyFactors = 
+                SequenceBuilder.Build(2d, 0d, 0.25d)
                 .ToList();
         }
 
@@ -77,7 +75,7 @@ namespace PathFinderTest.Tests.Interactive
                     
                     if (dist < targetSize) continue;
 
-                    path = AStar<Position>.Solve(randomFromNode, randomToNode, 0d);
+                    Greedy<Position>.Solve(randomFromNode, randomToNode, out path);
                 }
                 
                 if (path == null) continue;
@@ -88,12 +86,12 @@ namespace PathFinderTest.Tests.Interactive
                 _worldWriter.DrawSeed(_seed);
 
                 var i = 0;
-                foreach (var thoroughness in _thoroughnesses)
+                foreach (var greedyFactor in _greedyFactors)
                 {
                     var timer = new Stopwatch();
-                    var aStar = RunPathFinder(randomFromNode, randomToNode, thoroughness, timer);
-                    aStars.Add(thoroughness, aStar);
-                    _worldWriter.WriteResult(i, thoroughness, aStar.PathCost, aStar.Ticks, timer.ElapsedTicks);
+                    var aStar = RunPathFinder(randomFromNode, randomToNode, greedyFactor, timer);
+                    aStars.Add(greedyFactor, aStar);
+                    _worldWriter.WriteResult(i, greedyFactor, aStar.PathCost, aStar.Ticks, timer.ElapsedTicks);
                     i++;
                 }
 
@@ -104,13 +102,13 @@ namespace PathFinderTest.Tests.Interactive
 
                     if (key.Key == ConsoleKey.Q || key.Key == ConsoleKey.Enter) break;
 
-                    if (!int.TryParse(key.KeyChar.ToString(), out var num) && num < _thoroughnesses.Count && aStars[_thoroughnesses[num]].State == SolverState.Success) continue;
+                    if (!int.TryParse(key.KeyChar.ToString(), out var num) && num < _greedyFactors.Count && aStars[_greedyFactors[num]].State == SolverState.Success) continue;
 
                     if (previous != null) ClearPath(previous);
                     
-                    if (num < _thoroughnesses.Count)
+                    if (num < _greedyFactors.Count)
                     {
-                        previous = aStars[_thoroughnesses[num]].Path;
+                        previous = aStars[_greedyFactors[num]].Path;
                         if (previous != null)
                             DrawPath(previous, num);
                     }
@@ -126,7 +124,7 @@ namespace PathFinderTest.Tests.Interactive
                 CanCutCorner = _canDiag,
             };
 
-            _worldWriter = new SimpleWorldWriter(_world, _thoroughnesses.Count);
+            _worldWriter = new SimpleWorldWriter(_world, _greedyFactors.Count);
         }
 
         private void DrawPath(IEnumerable<Position> path, int testNumber)
@@ -206,7 +204,7 @@ namespace PathFinderTest.Tests.Interactive
                 while (aStar.State == SolverState.Running)
                 {
                     timer.Start();
-                    aStar.Tick();
+                    aStar.Start(1);
                     timer.Stop();
 
                     if (_slowMode) Thread.Sleep(20);
@@ -225,11 +223,11 @@ namespace PathFinderTest.Tests.Interactive
             else
             {
                 timer.Start();
-                var path = aStar.Solve();
+                aStar.Start();
                 timer.Stop();
                 
-                DrawPath(path, 0);
-                ClearPath(path);
+                DrawPath(aStar.Path, 0);
+                ClearPath(aStar.Path);
             }
             return aStar;
         }

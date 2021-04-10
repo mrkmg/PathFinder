@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using PathFinder.Interfaces;
 using PathFinder.Solvers;
+using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 using PathFinderTest.Sequencer;
 
@@ -13,7 +13,8 @@ namespace PathFinderTest.Tests.Many
 {
     internal class ManyTest
     {
-        public IList<decimal> Thoroughnesses = new List<decimal> { 0.25m, 0.5m };
+        public IList<double> GreedyFactors = SequenceBuilder.Build(2, 0, 0.25d).ToList();
+        
         public string OutputFile
         {
             get => _outputFile;
@@ -32,8 +33,7 @@ namespace PathFinderTest.Tests.Many
         public int NumberOfTests = 100;
         public int MapHeight = 400;
         public int MapWidth = 400;
-        public int MaxSearchSpace = int.MaxValue;
-        public Random Random = new Random();
+        public readonly Random Random = new ();
         private string _outputFile = "./test.csv";
         private readonly object _fileLock = new { };
 
@@ -60,21 +60,21 @@ namespace PathFinderTest.Tests.Many
             Position origin;
             Position destination;
 
-            AStar<Position> aStarSolver;
+            ISolver<Position> aStarSolver;
             do
             {
                 origin = map.GetAllNodes().OrderBy(n => Random.Next()).First();
                 destination = map.GetAllNodes().OrderBy(n => Random.Next()).First();
                 
-                aStarSolver = new AStar<Position>(origin, destination, 1);
-                aStarSolver.Solve();
+                aStarSolver = new Greedy<Position>(origin, destination);
+                aStarSolver.Start();
             } while (aStarSolver.State == SolverState.Failure);
 
             var bestCostTo = Math.Round(aStarSolver.PathCost, 3);
             var estimatedCostTo = (int)origin.EstimatedCostTo(destination);
 
             var subTestNum = 0;
-            foreach (var thoroughness in Thoroughnesses)
+            foreach (var greed in GreedyFactors)
             {
                 yield return new Test
                 {
@@ -84,8 +84,7 @@ namespace PathFinderTest.Tests.Many
                     Destination = destination,
                     EstimatedCostTo = estimatedCostTo,
                     BestCostTo = bestCostTo,
-                    Thoroughness = thoroughness,
-                    World = map,
+                    Greed = greed,
                 };
 
                 subTestNum++;
@@ -94,10 +93,10 @@ namespace PathFinderTest.Tests.Many
 
         private TestResult RunTest(Test test)
         {
-            var aStar = new AStar<Position>(test.Origin, test.Destination, (double)test.Thoroughness);
+            var aStar = new AStar<Position>(test.Origin, test.Destination, (double)test.Greed);
             var timer = new Stopwatch();
             timer.Start();
-            aStar.Solve();
+            aStar.Start();
             timer.Stop();
 
             if (aStar.State == SolverState.Failure) return null;
@@ -108,7 +107,7 @@ namespace PathFinderTest.Tests.Many
                 SubId = test.SubId,
                 BestCostTo = test.BestCostTo,
                 EstimatedCostTo = test.EstimatedCostTo,
-                Thoroughness = test.Thoroughness,
+                Greed = test.Greed,
                 PathCost = Math.Round(aStar.PathCost, 3),
                 Checks = aStar.Ticks,
                 Ticks = timer.ElapsedTicks,
@@ -147,7 +146,7 @@ namespace PathFinderTest.Tests.Many
         {
             lock (_fileLock)
             {
-                File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Thoroughness},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time}\n");
+                File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Greed},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time}\n");
             }
             lock (Console.Out)
             {
@@ -156,7 +155,7 @@ namespace PathFinderTest.Tests.Many
                 Console.WriteLine(
                     result.TestId.PadResult(5)
                     + result.SubId.PadResult(5)
-                    + result.Thoroughness.PadResult(6)
+                    + result.Greed.PadResult(6)
                     + result.EstimatedCostTo.PadResult(8)
                     + result.BestCostTo.PadResult(12)
                     + result.PathCost.PadResult(12)
@@ -172,12 +171,11 @@ namespace PathFinderTest.Tests.Many
     {
         public int Id;
         public int SubId;
-        public World World;
         public int EstimatedCostTo;
         public double BestCostTo;
         public Position Origin;
         public Position Destination;
-        public decimal Thoroughness;
+        public double Greed;
     }
 
     internal class TestResult
@@ -186,7 +184,7 @@ namespace PathFinderTest.Tests.Many
         public int SubId;
         public int EstimatedCostTo;
         public double BestCostTo;
-        public decimal Thoroughness;
+        public double Greed;
         public double PathCost;
         public int Checks;
         public long Ticks;

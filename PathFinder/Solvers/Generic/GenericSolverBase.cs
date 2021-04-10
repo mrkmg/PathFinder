@@ -1,35 +1,43 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using JetBrains.Annotations;
-using PathFinder.Components;
-using PathFinder.Interfaces;
+using System.Threading.Tasks;
 
-namespace PathFinder.Solvers
+namespace PathFinder.Solvers.Generic
 {
-    public abstract class AStarCore<T> : ISolver<T> where T : INode
+    
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <typeparam name="T"><see cref="INode"/></typeparam>
+    public abstract class GenericSolverBase<T> : ISolver<T> where T : INode
     {
-        public AStarCore(IComparer<NodeMetaData<T>> comparer, T origin, T destination)
+
+        protected GenericSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination)
         {
             Origin = origin;
             Destination = destination;
             _currentMetaData = _meta.Get(origin);
             _currentMetaData.ToCost = origin.EstimatedCostTo(Destination);
             _closest = _currentMetaData;
+            _comparer = comparer;
             _openNodes = new SortedSet<NodeMetaData<T>>(comparer) {_currentMetaData};
         }
-        
-        public AStarCore(IComparer<NodeMetaData<T>> comparer, T origin, T destination, Func<T, T, bool> nodeValidator) : this(comparer, origin, destination)
+
+        protected GenericSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination, NodeValidator nodeValidator) 
+            : this(comparer, origin, destination)
         {
-            _nodeValidator = nodeValidator;Origin = origin;
+            _nodeValidator = nodeValidator;
         }
         
-        protected readonly SortedSet<NodeMetaData<T>> _openNodes;
+        protected SortedSet<NodeMetaData<T>> _openNodes;
         protected readonly NodeMetaDataStore<T> _meta = new NodeMetaDataStore<T>();
-        private readonly Func<T, T, bool> _nodeValidator;
+        private readonly NodeValidator _nodeValidator;
         private IList<T> _path;
         protected NodeMetaData<T> _currentMetaData;
+        protected readonly IComparer<NodeMetaData<T>> _comparer;
         private NodeMetaData<T> _closest;
         private double? _cost;
         
@@ -54,7 +62,7 @@ namespace PathFinder.Solvers
         public double PathCost => GetCost();
 
         /// <inheritdoc cref="ISolver{T}.State"/>
-        public SolverState State { get; private set; } = SolverState.Running;
+        public SolverState State { get; protected set; } = SolverState.Waiting;
 
         /// <inheritdoc cref="ISolver{T}.Ticks"/>
         public int Ticks { get; private set; }
@@ -71,38 +79,49 @@ namespace PathFinder.Solvers
         /// <inheritdoc cref="ISolver{T}.CurrentBestPath"/>
         public IList<T> CurrentBestPath => BuildPath(_closest.Node);
 
-        /// <summary>
-        /// The Maximum number of ticks to run until failing.
-        /// </summary>
-        public int MaxTicks { get; set; } = 0x1111111;
+        /// <inheritdoc cref="ISolver{T}.MaxTicks"/>
+        public int MaxTicks { get; set; } = int.MaxValue;
+
+        private int _remainingTicks;
         
-        public void Tick()
+        private void Tick()
         {
-            if (State != SolverState.Running) throw new Exception("Not running");
+            if (_openNodes.Count == 0)
+                State = SolverState.Failure;
+            else if (_remainingTicks == 0)
+                State = SolverState.Waiting;
+            else if (Ticks > MaxTicks)
+                State = SolverState.Failure;
 
-            if (_openNodes.Count == 0 || Ticks > MaxTicks)
-            {
-                State = SolverState.Stopped;
+            if (State != SolverState.Running)
                 return;
-            }
 
+            if (_remainingTicks > 0)
+                _remainingTicks--;
+            
             Ticks++;
 
+            SetCurrentNode();
             ProcessNeighbors();
-
-            if (Current.Equals(Destination))
-                State = SolverState.Success;
-            else if (_openNodes.Count == 0)
-                State = SolverState.Failure;
-            else
-                SetCurrentNode();
         }
 
         
         public void Stop()
         {
-            State = SolverState.Stopped;
+            State = SolverState.Waiting;
         }
+
+        public void Start(int numTicks = -1)
+        {
+            if (State != SolverState.Waiting)
+                throw new Exception("Not in a startable state");
+            _remainingTicks = numTicks;
+            State = SolverState.Running;
+            while (State == SolverState.Running) 
+                Tick();
+        }
+
+        public Task StartAsync(int ticks = -1) => new Task(() => Start(ticks));
 
         private void SetCurrentNode()
         {
@@ -127,6 +146,9 @@ namespace PathFinder.Solvers
                 if (neighborMetaData.Equals(_currentMetaData)) continue;
                 if (_nodeValidator != null && _nodeValidator(Current, neighborMetaData.Node)) continue;
                 ProcessNeighbor(neighborMetaData);
+                if (!neighbor.Equals(Destination)) continue;
+                State = SolverState.Success;
+                return;
             }
         }
 
@@ -173,6 +195,62 @@ namespace PathFinder.Solvers
             }
 
             return cost;
+        }
+    }
+    
+    public enum NodeStatus
+    {
+        New,
+        Open,
+        Closed
+    }
+
+    public class NodeMetaData<T> : IEqualityComparer<NodeMetaData<T>>, IEquatable<NodeMetaData<T>> where T : INode
+    {
+        public readonly T Node;
+        public readonly long NodeId;
+        public double FromCost;
+        public T Parent;
+        public double ToCost;
+        public double TotalCost;
+        public NodeStatus Status = NodeStatus.New;
+
+        public NodeMetaData(T obj, int nodeId)
+        {
+            NodeId = nodeId;
+            Node = obj;
+        }
+
+        public bool Equals(NodeMetaData<T> x, NodeMetaData<T> y) => y != null && x != null && Node.Equals(x.Node, y.Node);
+        public int GetHashCode(NodeMetaData<T> obj) => Node.GetHashCode(obj.Node);
+        public bool Equals(NodeMetaData<T> other) => Equals(this, other);
+        public override bool Equals(object obj) => obj is NodeMetaData<T> n && Equals(n);
+        public override int GetHashCode() => Node.GetHashCode();
+        public override string ToString() => Node.ToString();
+    }
+    
+    public class NodeMetaDataStore<T> : IEnumerable<NodeMetaData<T>> where T : INode
+    {
+        private readonly Dictionary<T, NodeMetaData<T>> _nodeMetaData = new Dictionary<T, NodeMetaData<T>>();
+        private int currentNodeId;
+
+        public NodeMetaData<T> Get(T node) => _nodeMetaData.ContainsKey(node) ? _nodeMetaData[node] : BuildNewNodeMeta(node);
+
+        private NodeMetaData<T> BuildNewNodeMeta(T node)
+        {
+            var nodeMeta = new NodeMetaData<T>(node, currentNodeId++);
+            _nodeMetaData.Add(node, nodeMeta);
+            return nodeMeta;
+        }
+
+        IEnumerator<NodeMetaData<T>> IEnumerable<NodeMetaData<T>>.GetEnumerator()
+        {
+            return (IEnumerator<NodeMetaData<T>>) GetEnumerator();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return ((IEnumerable) _nodeMetaData.Values).GetEnumerator();
         }
     }
 }

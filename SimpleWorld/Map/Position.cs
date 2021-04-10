@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using PathFinder.Interfaces;
+using PathFinder.Solvers.Generic;
 
 namespace SimpleWorld.Map
 {

@@ -111,10 +111,10 @@ namespace PathFinderTest.Tests.Interactive
         {
             switch (level)
             {
-                case 1: case 2: return ConsoleColor.Blue;
-                case 3: case 4: return ConsoleColor.Cyan;
-                case 5: case 6: return ConsoleColor.Magenta;
-                case 7: case 8: return ConsoleColor.Red;
+                case 1: return ConsoleColor.Blue;
+                case 2: return ConsoleColor.Cyan;
+                case 3: return ConsoleColor.Magenta;
+                case 4: return ConsoleColor.Red;
                 case 9: return ConsoleColor.Black;
                 default: return ConsoleColor.Gray;
             }

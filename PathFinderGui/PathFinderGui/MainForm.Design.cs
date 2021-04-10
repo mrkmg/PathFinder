@@ -24,6 +24,8 @@ namespace PathFinderGui
         private Button _go;
         private Button _newWorld;
         private Button _newPoints;
+        private Button _resetSolverButton;
+        private Button _stopButton;
         private TextBox _worldSeed;
         private TextBox _pointsSeed;
 
@@ -83,9 +85,11 @@ namespace PathFinderGui
             _showSearchCheckbox = new CheckBox {Checked = true};
             
             _bitmapWidget = new BitmapWidget(1);
-            _go = new Button
+
+            _newPoints = new Button
             {
-                Text = "Go"
+                Text = "New Points",
+                Width = 90
             };
 
             _newWorld = new Button
@@ -93,11 +97,23 @@ namespace PathFinderGui
                 Text = "New World",
                 Width = 90
             };
-
-            _newPoints = new Button
+            
+            _go = new Button
             {
-                Text = "New Points",
-                Width = 90
+                Text = "Start",
+                Width = 60
+            };
+
+            _resetSolverButton = new Button
+            {
+                Text = "Reset",
+                Width = 60
+            };
+
+            _stopButton = new Button
+            {
+                Text = "Stop",
+                Width = 60
             };
 
             StackLayoutItem HStretched(Control c) =>
@@ -159,7 +175,10 @@ namespace PathFinderGui
                                 Items = {"Cornering:", _canCornerCut, "Show Search:", _showSearchCheckbox}
                             },
                             HStretched(_solverSelector),
-                            HStretched(_go),
+                            new StackLayout { 
+                                Orientation = Orientation.Horizontal, 
+                                Items = {_go, _stopButton, _resetSolverButton}
+                            },
                             HStretched(_delayStepper),
                             HStretched(_tpf),
                             HStretched(_tps),

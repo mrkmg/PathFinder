@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace PathFinder.Interfaces
+namespace PathFinder.Solvers
 {
     public interface ISolver<T>
     {
@@ -14,6 +15,11 @@ namespace PathFinder.Interfaces
         ///     The number of ticks this solver has performed.
         /// </summary>
         int Ticks { get; }
+        
+        /// <summary>
+        ///     The maximum number of ticks this solver can perform before giving up.
+        /// </summary>
+        int MaxTicks { get; set; }
         
         /// <summary>
         ///     The last node to be checked
@@ -66,32 +72,28 @@ namespace PathFinder.Interfaces
         /// </summary>
         double PathCost { get; }
         
-        /// <summary>
-        ///     Perform one tick
-        /// </summary>
-        void Tick();
         
         /// <summary>
         ///     Stop the current solver.
         /// </summary>
         void Stop();
-    }
 
-    public static class SolverExtensions
-    {
-        [CanBeNull]
-        public static IList<T> Solve<T>([NotNull] this ISolver<T> solver)
-        {
-            while (solver.State == SolverState.Running) 
-                solver.Tick();
-            
-            return solver.State == SolverState.Success ? solver.Path : null;
-        }
+        /// <summary>
+        /// Starts the solver. Will run until a path is found or failure.
+        /// </summary>
+        /// <param name="ticks">Number of ticks to run. Any number less than zero means run until <see cref="MaxTicks"/></param>
+        void Start(int ticks = -1);
+
+        /// <summary>
+        /// Async version of <see cref="Start"/>
+        /// </summary> 
+        /// <param name="ticks">Number of ticks to run. Any number less than zero means run until <see cref="MaxTicks"/></param>
+        Task StartAsync(int ticks = -1);
     }
 
     public enum SolverState
     {
-        Stopped = 0,
+        Waiting = 0,
         Running = 1,
         Failure = 2,
         Success = 3
