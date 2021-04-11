@@ -124,7 +124,6 @@ namespace PathFinder.Solvers.Generic
 
         public void Reset()
         {
-            // Todo reset the closed count
             foreach (var nodeMetaData in Meta.Values)
             {
                 nodeMetaData.Status = NodeStatus.Open;
