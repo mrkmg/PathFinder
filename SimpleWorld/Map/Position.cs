@@ -54,8 +54,6 @@ namespace SimpleWorld.Map
 
         public bool Equals(IGraphNode other) => other is Position n && X == n.X && Y == n.Y;
         public override string ToString() => "Position: " + X + "::" + Y;
-        public bool Equals(IGraphNode x, IGraphNode y) => x is Position xn && y is Position yn && xn.Equals(yn);
-        public int GetHashCode(IGraphNode obj) => obj.GetHashCode();
         public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (1427 + Y.GetHashCode());
     }
 

@@ -4,6 +4,49 @@ using System.Diagnostics;
 
 namespace PathFinder.Solvers.Generic
 {
+    public static class AStar
+    {
+        /// <summary>
+        ///     Finds a path between the origin and destination node
+        /// </summary>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="nodeValidator"><see cref="NodeValidator"/></param>
+        /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
+        /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
+        public static SolverState Solve<T>(T origin, T destination, NodeValidator nodeValidator, double greedFactor, out IList<T> path) where T : IGraphNode 
+            => AStar<T>.Solve(origin, destination, nodeValidator, greedFactor, out path);
+
+        /// <summary>
+        ///     Finds a path between the origin and destination node
+        /// </summary>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
+        public static SolverState Solve<T>(T origin, T destination, out IList<T> path) where T : IGraphNode
+            => AStar<T>.Solve(origin, destination, 1, out path);
+
+        /// <summary>
+        ///     Finds a path between the origin and destination node
+        /// </summary>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="nodeValidator"><see cref="NodeValidator"/></param>
+        /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
+        public static SolverState Solve<T>(T origin, T destination, NodeValidator nodeValidator, out IList<T> path) where T : IGraphNode
+            => AStar<T>.Solve(origin, destination, nodeValidator, 1, out path);
+        
+        /// <summary>
+        ///     Finds a path between the origin and destination node
+        /// </summary>
+        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
+        /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
+        public static SolverState Solve<T>(T origin, T destination, double greedFactor, out IList<T> path) where T : IGraphNode
+            => AStar<T>.Solve(origin, destination, null, greedFactor, out path);
+    }
+    
     /// <summary>
     /// A* is a graph solver to find the cheapest path between two nodes which
     /// </summary>
@@ -50,6 +93,7 @@ namespace PathFinder.Solvers.Generic
         /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="GreedFactor"/></param>
+        /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         public static SolverState Solve(T origin, T destination, double greedFactor, out IList<T> path)
             => Solve(origin, destination, null, greedFactor, out path);
 
@@ -81,12 +125,12 @@ namespace PathFinder.Solvers.Generic
         public void Reset()
         {
             // Todo reset the closed count
-            foreach (NodeMetaData<T> nodeMetaData in _meta)
+            foreach (var nodeMetaData in Meta.Values)
             {
                 nodeMetaData.Status = NodeStatus.Open;
             }
-            _currentMetaData = _meta.Get(Origin);
-            _openNodes = new SortedSet<NodeMetaData<T>>(_meta, _comparer) {_currentMetaData};
+            CurrentMetaData = GetMeta(Origin);
+            OpenNodes = new SortedSet<GraphNodeMetaData<T>>(Meta.Values, Comparer) {CurrentMetaData};
             State = SolverState.Waiting;
         }
 
@@ -113,36 +157,36 @@ namespace PathFinder.Solvers.Generic
 
         private double _greedFactor = 0.5;
 
-        protected override void ProcessNeighbor(NodeMetaData<T> neighborMetaData)
+        protected override void ProcessNeighbor(GraphNodeMetaData<T> neighborMetaData)
         {
-            var fromCost = _currentMetaData.FromCost + _currentMetaData.Node.RealCostTo(neighborMetaData.Node);
-
+            
             if (neighborMetaData.Status == NodeStatus.Open)
             {
-                if (fromCost >= neighborMetaData.FromCost) return;
-                _openNodes.Remove(neighborMetaData);
+                var fromCost = CurrentMetaData.FromCost + CurrentMetaData.Node.RealCostTo(neighborMetaData.Node);
+                if (fromCost > neighborMetaData.FromCost) return;
+                neighborMetaData.Parent = CurrentMetaData;
+                OpenNodes.Remove(neighborMetaData);
             }
-            
-            Debug.Assert(neighborMetaData.Status != NodeStatus.Closed, "neighborMetaData.Status != NodeStatus.Closed");
-            
-            neighborMetaData.TotalCost = fromCost + neighborMetaData.ToCost * GreedFactor;
-            neighborMetaData.Parent = Current;
-            neighborMetaData.FromCost = fromCost;
-            _openNodes.Add(neighborMetaData);
+            neighborMetaData.Status = NodeStatus.Open;
+            neighborMetaData.TotalCost = neighborMetaData.FromCost + neighborMetaData.ToCost * _greedFactor;
+            var didAdd = OpenNodes.Add(neighborMetaData);
+            Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
         }
 
-        private class NodeMetaComparer : Comparer<NodeMetaData<T>>
+        private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
         {
-            public override int Compare(NodeMetaData<T> x, NodeMetaData<T> y)
+            public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
             {
-                if (ReferenceEquals(x, y)) return 0;
-                return x.TotalCost > y.TotalCost ? 1 
-                    : x.TotalCost < y.TotalCost ? -1 
-                    : x.ToCost > y.ToCost ? 1
-                    : x.ToCost < y.ToCost ? -1
-                    : x.NodeId == y.NodeId ? 0
-                    : x.NodeId > y.NodeId ? 1 
-                    : -1;
+                Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
+                return x.TotalCost >  y.TotalCost ?  1 
+                     : x.TotalCost <  y.TotalCost ? -1 
+                     : x.FromCost  >  y.FromCost  ?  1
+                     : x.FromCost  <  y.FromCost  ? -1
+                     : x.ToCost    >  y.ToCost    ?  1
+                     : x.ToCost    <  y.ToCost    ? -1
+                     : x.NodeId    == y.NodeId    ?  0
+                     : x.NodeId    >  y.NodeId    ?  1 
+                     :                              -1;
             }
         }
     }

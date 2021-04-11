@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using PathFinder.Solvers;
 using PathFinder.Solvers.Generic;
+using PathFinderConsole.Sequencer;
 using SimpleWorld.Map;
-using PathFinderTest.Sequencer;
 
-namespace PathFinderTest.Tests.Many
+namespace PathFinderConsole.Tests.Many
 {
     internal class ManyTest
     {
@@ -42,6 +42,7 @@ namespace PathFinderTest.Tests.Many
             WriteFileHeader();
 
             SequenceBuilder
+                // ReSharper disable once InconsistentlySynchronizedField
                 .Build(NumberOfTests)
                 .SelectMany(BuildTest)
                 .AsParallel()
@@ -52,6 +53,7 @@ namespace PathFinderTest.Tests.Many
 
         private IEnumerable<Test> BuildTest(int testId)
         {
+            // ReSharper disable twice InconsistentlySynchronizedField
             var map = new World(MapWidth, MapHeight)
             {
                 CanCutCorner = CanDiag
@@ -63,8 +65,9 @@ namespace PathFinderTest.Tests.Many
             IGraphSolver<Position> aStarGraphSolver;
             do
             {
-                origin = map.GetAllNodes().OrderBy(n => Random.Next()).First();
-                destination = map.GetAllNodes().OrderBy(n => Random.Next()).First();
+                var allNodes = map.GetAllNodes().ToList();
+                origin = allNodes[Random.Next(allNodes.Count - 1)];
+                destination = allNodes[Random.Next(allNodes.Count - 1)];
                 
                 aStarGraphSolver = new Greedy<Position>(origin, destination);
                 aStarGraphSolver.Start();
@@ -93,7 +96,7 @@ namespace PathFinderTest.Tests.Many
 
         private TestResult RunTest(Test test)
         {
-            var aStar = new AStar<Position>(test.Origin, test.Destination, (double)test.Greed);
+            var aStar = new AStar<Position>(test.Origin, test.Destination, test.Greed);
             var timer = new Stopwatch();
             timer.Start();
             aStar.Start();

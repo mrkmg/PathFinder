@@ -11,7 +11,7 @@ namespace SimpleWorld.Map
     public class World
     {
         public bool CornerIsFree { get; set; }
-        public bool CanCutCorner { get; set; }
+        public bool CanCutCorner { get; set; } = true;
         public double MoveCost { get; set; }
 
         public readonly int XSize;
@@ -47,6 +47,10 @@ namespace SimpleWorld.Map
             return _allNodes.SelectMany(a => a).Where(a => a != null);
         }
 
+        // TODO - Implement more types of world
+        // ReSharper disable UnusedMember.Local
+        // ReSharper disable UnusedParameter.Local
+        // ReSharper disable UnusedVariable
         private void Maze(int cellSize = 5, int wallSize = 1)
         {
             var width = XSize / cellSize;
@@ -55,6 +59,9 @@ namespace SimpleWorld.Map
             var cx = _random.Next(width);
             var cy = _random.Next(height);
         }
+        // ReSharper restore UnusedVariable
+        // ReSharper restore UnusedParameter.Local
+        // ReSharper enable UnusedMember.Local
 
         private void Standard()
         {

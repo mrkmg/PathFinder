@@ -2,7 +2,7 @@
 using System.Globalization;
 using SimpleWorld.Map;
 
-namespace PathFinderTest.Tests.Interactive
+namespace PathFinderConsole.Tests.Interactive
 {
     public class SimpleWorldWriter : IWorldWriter
     {

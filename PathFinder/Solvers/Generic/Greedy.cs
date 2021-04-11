@@ -45,23 +45,11 @@ namespace PathFinder.Solvers.Generic
         public Greedy(T origin, T destination, NodeValidator nodeValidator) 
             : base(new NodeMetaComparer(), origin, destination, nodeValidator) { }
 
-        protected override void ProcessNeighbor(NodeMetaData<T> neighborMetaData)
+        private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
         {
-            if (neighborMetaData.Status != NodeStatus.New) return;
-            
-            Debug.Assert(neighborMetaData.Parent == null);
-            neighborMetaData.Parent = _currentMetaData.Node;
-            neighborMetaData.FromCost = _currentMetaData.FromCost + neighborMetaData.Node.RealCostTo(_currentMetaData.Node);
-            neighborMetaData.ToCost = neighborMetaData.Node.EstimatedCostTo(Destination);
-            neighborMetaData.Status = NodeStatus.Open;
-            var didAdd = _openNodes.Add(neighborMetaData);
-            Debug.Assert(didAdd);
-        }
-
-        private class NodeMetaComparer : Comparer<NodeMetaData<T>>
-        {
-            public override int Compare(NodeMetaData<T> x, NodeMetaData<T> y)
+            public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
             {
+                Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
                 return x.ToCost   >  y.ToCost   ?  1
                      : x.ToCost   <  y.ToCost   ? -1
                      : x.FromCost >  y.FromCost ?  1

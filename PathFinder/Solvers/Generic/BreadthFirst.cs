@@ -45,28 +45,16 @@ namespace PathFinder.Solvers.Generic
         public BreadthFirst(T origin, T destination, NodeValidator nodeValidator) 
             : base(new NodeMetaComparer(), origin, destination, nodeValidator) { }
 
-        protected override void ProcessNeighbor(NodeMetaData<T> neighborMetaData)
+        private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
         {
-            if (neighborMetaData.Status != NodeStatus.New) return;
-            
-            Debug.Assert(neighborMetaData.Parent == null);
-            neighborMetaData.Parent = Current;
-            neighborMetaData.FromCost = _currentMetaData.FromCost + neighborMetaData.Node.RealCostTo(Destination);
-            neighborMetaData.Status = NodeStatus.Open;
-            _openNodes.Add(neighborMetaData);
-        }
-
-        private class NodeMetaComparer : Comparer<NodeMetaData<T>>
-        {
-            public override int Compare(NodeMetaData<T> x, NodeMetaData<T> y)
+            public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
             {
-                return x.FromCost > y.FromCost ? 1
-                    : x.FromCost < y.FromCost ? -1
-                    : x.ToCost < y.ToCost ? -1
-                    : x.ToCost > y.ToCost ? 1
-                    : x.NodeId == y.NodeId ? 0
-                    : x.NodeId > y.NodeId ? 1 
-                    : -1;
+                Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
+                return x.FromCost >  y.FromCost ?  1
+                     : x.FromCost <  y.FromCost ? -1
+                     : x.NodeId   == y.NodeId   ?  0
+                     : x.NodeId   >  y.NodeId   ?  1 
+                     :                            -1;
             }
         }
     }

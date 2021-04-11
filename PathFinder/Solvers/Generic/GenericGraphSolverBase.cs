@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace PathFinder.Solvers.Generic
 {
@@ -14,49 +14,39 @@ namespace PathFinder.Solvers.Generic
     /// <typeparam name="T"><see cref="IGraphNode"/></typeparam>
     public abstract class GenericGraphSolverBase<T> : IGraphSolver<T> where T : IGraphNode
     {
-
-        protected GenericGraphSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination)
+        protected GenericGraphSolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination)
         {
             Origin = origin;
             Destination = destination;
-            _currentMetaData = _meta.Get(origin);
-            _currentMetaData.ToCost = origin.EstimatedCostTo(Destination);
-            _closest = _currentMetaData;
-            _comparer = comparer;
-            _openNodes = new SortedSet<NodeMetaData<T>>(comparer) {_currentMetaData};
+            CurrentMetaData = new GraphNodeMetaData<T>(origin, 0) {ToCost = origin.EstimatedCostTo(Destination)};
+            _closest = CurrentMetaData;
+            _lastGraphNodeid = 1;
+            Comparer = comparer;
+            OpenNodes = new SortedSet<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
         }
 
-        protected GenericGraphSolverBase(IComparer<NodeMetaData<T>> comparer, T origin, T destination, NodeValidator nodeValidator) 
+        protected GenericGraphSolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination, NodeValidator nodeValidator) 
             : this(comparer, origin, destination)
         {
             _nodeValidator = nodeValidator;
         }
         
-        protected SortedSet<NodeMetaData<T>> _openNodes;
-        protected readonly NodeMetaDataStore<T> _meta = new NodeMetaDataStore<T>();
-        private readonly NodeValidator _nodeValidator;
-        private IList<T> _path;
-        protected NodeMetaData<T> _currentMetaData;
-        protected readonly IComparer<NodeMetaData<T>> _comparer;
-        private NodeMetaData<T> _closest;
-        private double? _cost;
-        
         /// <inheritdoc cref="IGraphSolver{T}.Open"/>
-        public IEnumerable<T> Open => _openNodes.Select(n => n.Node);
+        public IEnumerable<T> Open => OpenNodes.Select(n => n.Node);
 
         /// <inheritdoc cref="IGraphSolver{T}.Closed"/>
-        public IEnumerable<T> Closed => _meta
+        public IEnumerable<T> Closed => Meta.Values
             .Where(n => n.Status == NodeStatus.Closed)
             .Select(n => n.Node);
 
         /// <inheritdoc cref="IGraphSolver{T}.OpenCount"/>
-        public int OpenCount => _openNodes.Count;
+        public int OpenCount => OpenNodes.Count;
         
         /// <inheritdoc cref="IGraphSolver{T}.ClosedCount"/>
         public int ClosedCount { get; private set; }
         
         /// <inheritdoc cref="IGraphSolver{T}.Current"/>
-        public T Current => _currentMetaData.Node;
+        public T Current => CurrentMetaData.Node;
 
         /// <inheritdoc cref="IGraphSolver{T}.PathCost"/>
         public double PathCost => GetCost();
@@ -81,12 +71,23 @@ namespace PathFinder.Solvers.Generic
 
         /// <inheritdoc cref="IGraphSolver{T}.MaxTicks"/>
         public int MaxTicks { get; set; } = int.MaxValue;
+        
+        protected SortedSet<GraphNodeMetaData<T>> OpenNodes;
+        protected readonly Dictionary<T, GraphNodeMetaData<T>> Meta = new Dictionary<T, GraphNodeMetaData<T>>();
+        protected GraphNodeMetaData<T> CurrentMetaData;
+        protected readonly IComparer<GraphNodeMetaData<T>> Comparer;
+        
+        private readonly NodeValidator _nodeValidator;
+        private IList<T> _path;
+        private GraphNodeMetaData<T> _closest;
+        private double? _cost;
+        private long _lastGraphNodeid;
 
         private int _remainingTicks;
         
         private void Tick()
         {
-            if (_openNodes.Count == 0)
+            if (OpenNodes.Count == 0)
                 State = SolverState.Failure;
             else if (_remainingTicks == 0)
                 State = SolverState.Waiting;
@@ -104,15 +105,13 @@ namespace PathFinder.Solvers.Generic
             SetCurrentNode();
             ProcessNeighbors();
         }
-
         
         public void Stop() => _remainingTicks = 0;
 
         public SolverState Start(int numTicks = -1)
         {
             if (State != SolverState.Waiting)
-                throw new Exception("Not in a startable state");
-            if (numTicks == 0) return State;
+                throw new InvalidOperationException("Graph Solver is not in a startable state");
             _remainingTicks = numTicks;
             State = SolverState.Running;
             while (State == SolverState.Running) 
@@ -122,15 +121,37 @@ namespace PathFinder.Solvers.Generic
 
         public Task<SolverState> StartAsync(int ticks = -1) => new Task<SolverState>(() => Start(ticks));
 
+        protected virtual void ProcessNeighbor(GraphNodeMetaData<T> neighborMetaData)
+        {
+            if (neighborMetaData.Status != NodeStatus.New) return;
+            neighborMetaData.Status = NodeStatus.Open;
+            var didAdd = OpenNodes.Add(neighborMetaData);
+            Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
+        }
+
+        [NotNull]
+        protected GraphNodeMetaData<T> GetMeta(T node)
+        {
+            if (Meta.TryGetValue(node, out var meta)) return meta;
+            meta = new GraphNodeMetaData<T>(node, _lastGraphNodeid++)
+            {
+                ToCost = node.EstimatedCostTo(Destination),
+                FromCost = CurrentMetaData.FromCost + CurrentMetaData.Node.RealCostTo(node),
+                Parent = CurrentMetaData
+            };
+            Meta.Add(node, meta);
+            return meta;
+        }
+        
         private void SetCurrentNode()
         {
-            _currentMetaData = _openNodes.Min;
-            var didRemove = _openNodes.Remove(_currentMetaData);
+            CurrentMetaData = OpenNodes.Min;
+            var didRemove = OpenNodes.Remove(CurrentMetaData);
             Debug.Assert(didRemove);
             ClosedCount++;
-            _currentMetaData.Status = NodeStatus.Closed;
-            if (_currentMetaData.ToCost < _closest.ToCost)
-                _closest = _currentMetaData;
+            CurrentMetaData.Status = NodeStatus.Closed;
+            if (CurrentMetaData.ToCost < _closest.ToCost)
+                _closest = CurrentMetaData;
         }
 
         private void ProcessNeighbors()
@@ -139,8 +160,9 @@ namespace PathFinder.Solvers.Generic
             foreach (var neighbor in neighbors)
             {
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
-                var neighborMetaData = _meta.Get((T) neighbor);
+                var neighborMetaData = GetMeta((T) neighbor);
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
+                if (CurrentMetaData.Equals(neighborMetaData)) continue;
                 if (_nodeValidator != null && _nodeValidator(Current, neighborMetaData.Node)) continue;
                 ProcessNeighbor(neighborMetaData);
                 if (!neighbor.Equals(Destination)) continue;
@@ -149,49 +171,47 @@ namespace PathFinder.Solvers.Generic
             }
         }
 
-        protected abstract void ProcessNeighbor(NodeMetaData<T> neighborMetaData);
-
         private IList<T> GetPath()
         {
             if (State != SolverState.Success) return null;
+            if (_path != null) return _path;
             return _path ??= BuildPath(Destination);
         }
 
         private double GetCost()
         {
             if (State != SolverState.Success) return 0;
-            return _cost ??= CalcCost();
-        }
-
-        private IList<T> BuildPath(T cNode)
-        {
-            if (Origin.Equals(cNode)) return new List<T> {cNode};
+            if (_cost.HasValue) return _cost.Value;
             
-            var path = new List<T>();
-
-            while (true)
-            {
-                path.Add(cNode);
-                cNode = _meta.Get(cNode).Parent;
-                if (Origin.Equals(cNode) || cNode == null) break;
-            }
-
-            path.Reverse();
-            return path;
-        }
-
-        private double CalcCost()
-        {
-            var cost = 0d;
+            _cost = 0d;
             var last = Path.First();
 
             foreach (var next in Path.Skip(1))
             {
-                cost += last.RealCostTo(next);
+                _cost += last.RealCostTo(next);
                 last = next;
             }
 
-            return cost;
+            return _cost.Value;
+        }
+
+        private IList<T> BuildPath(T node)
+        {
+            if (Origin.Equals(node)) return new List<T> {node};
+            
+            var path = new List<T>();
+
+            var cMeta = GetMeta(node);
+
+            while (true)
+            {
+                path.Add(cMeta.Node);
+                cMeta = cMeta.Parent;
+                if (cMeta == null || Origin.Equals(cMeta.Node)) break;
+            }
+
+            path.Reverse();
+            return path;
         }
     }
     
@@ -202,52 +222,26 @@ namespace PathFinder.Solvers.Generic
         Closed
     }
 
-    public class NodeMetaData<T> : IEqualityComparer<NodeMetaData<T>>, IEquatable<NodeMetaData<T>> where T : IGraphNode
+    public class GraphNodeMetaData<T> : IEquatable<GraphNodeMetaData<T>> where T : IGraphNode
     {
         public readonly T Node;
         public readonly long NodeId;
         public double FromCost;
-        public T Parent;
+        [CanBeNull]
+        public GraphNodeMetaData<T> Parent;
         public double ToCost;
         public double TotalCost;
         public NodeStatus Status;
 
-        public NodeMetaData(T obj, int nodeId)
+        public GraphNodeMetaData(T obj, long nodeId)
         {
             Node = obj;
             NodeId = nodeId;
             Status = NodeStatus.New;
         }
-        public int GetHashCode(NodeMetaData<T> obj) => Node.GetHashCode(obj.Node);
-        public bool Equals(NodeMetaData<T> x, NodeMetaData<T> y) => y != null && x != null && x.Equals(y);
-        public override bool Equals(object obj) => obj is NodeMetaData<T> n && Equals(n);
-        public bool Equals(NodeMetaData<T> other) => other != null && Node.Equals(other.Node);
+        public override bool Equals(object obj) => obj is GraphNodeMetaData<T> n && Equals(n);
+        public bool Equals(GraphNodeMetaData<T> other) => other != null && Node.Equals(other.Node);
         public override int GetHashCode() => Node.GetHashCode();
-        public override string ToString() => Node.ToString();
-    }
-    
-    public class NodeMetaDataStore<T> : IEnumerable<NodeMetaData<T>> where T : IGraphNode
-    {
-        private readonly Dictionary<T, NodeMetaData<T>> _nodeMetaData = new Dictionary<T, NodeMetaData<T>>();
-        private int currentNodeId;
-
-        public NodeMetaData<T> Get(T node) => _nodeMetaData.ContainsKey(node) ? _nodeMetaData[node] : BuildNewNodeMeta(node);
-
-        private NodeMetaData<T> BuildNewNodeMeta(T node)
-        {
-            var nodeMeta = new NodeMetaData<T>(node, currentNodeId++);
-            _nodeMetaData.Add(node, nodeMeta);
-            return nodeMeta;
-        }
-
-        IEnumerator<NodeMetaData<T>> IEnumerable<NodeMetaData<T>>.GetEnumerator()
-        {
-            return (IEnumerator<NodeMetaData<T>>) GetEnumerator();
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            return ((IEnumerable) _nodeMetaData.Values).GetEnumerator();
-        }
+        public override string ToString() => $"GraphNode[{Node.ToString()}]";
     }
 }

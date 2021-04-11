@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading;
 using PathFinder.Solvers;
 using PathFinder.Solvers.Generic;
+using PathFinderConsole.Sequencer;
 using SimpleWorld.Map;
-using PathFinderTest.Sequencer;
 
-namespace PathFinderTest.Tests.Interactive
+namespace PathFinderConsole.Tests.Interactive
 {
     internal class InteractiveTest
     {
@@ -32,8 +32,6 @@ namespace PathFinderTest.Tests.Interactive
                 SequenceBuilder.Build(2d, 0d, 0.25d)
                 .ToList();
         }
-
-        private bool BigJumpCheck(Position a, Position b) => !_bigJumps || Math.Abs(a.Z - b.Z) <= 1;
 
         public void Main()
         {

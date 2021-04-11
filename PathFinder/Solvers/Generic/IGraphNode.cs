@@ -14,7 +14,7 @@ namespace PathFinder.Solvers.Generic
     /// The interface needed for any nodes in a graph to be searched through
     /// in via any the <c>PathFinder.Solvers.Generic</c> namespace.
     /// </summary>
-    public interface IGraphNode : IEquatable<IGraphNode>, IEqualityComparer<IGraphNode>
+    public interface IGraphNode : IEquatable<IGraphNode>
     {
         /// <summary>
         ///     Calculate the real cost to another node.
