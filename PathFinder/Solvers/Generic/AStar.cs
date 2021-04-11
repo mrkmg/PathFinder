@@ -154,7 +154,7 @@ namespace PathFinder.Solvers.Generic
             }
         }
 
-        private double _greedFactor = 0.5;
+        private double _greedFactor = 1;
 
         protected override void ProcessNeighbor(GraphNodeMetaData<T> neighborMetaData)
         {
