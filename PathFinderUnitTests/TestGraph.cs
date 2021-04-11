@@ -7,18 +7,18 @@ namespace PathFinderUnitTests
 {
     public class TestGraph
     {
-        private int[][] World =
+        private readonly int[][] World =
         {
             new[] {1, 1, 1, 1, 1,  1,  1, 1, 1, 1},
             new[] {1, 1, 1, 1, 0,  1,  2, 2, 1, 1},
-            new[] {1, 1, 1, 1, 0,  1,  5, 5, 2, 1},
-            new[] {1, 1, 1, 1, 0,  1,  2, 2, 1, 1},
+            new[] {1, 1, 1, 1, 0,  10, 5, 5, 2, 1},
+            new[] {1, 1, 1, 1, 0,  8,  2, 2, 1, 1},
             new[] {1, 1, 1, 1, 0,  0,  1, 1, 1, 1},
             new[] {1, 1, 1, 1, 0,  0,  1, 1, 1, 1},
             new[] {1, 1, 1, 1, 10, 10, 1, 1, 1, 1},
             new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1},
             new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1},
-            new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1},
+            new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1}
         };
 
         public TestGraphNode GetNode(int x, int y) => new (x, y, World[x][y], this);
@@ -28,21 +28,21 @@ namespace PathFinderUnitTests
     {
         public readonly int X;
         public readonly int Y;
-        public readonly int Cost;
-        public readonly TestGraph TestGraph;
+        private readonly int _cost;
+        private readonly TestGraph _testGraph;
 
         public TestGraphNode(int x, int y, int cost, TestGraph testGraph)
         {
             X = x;
             Y = y;
-            Cost = cost;
-            TestGraph = testGraph;
+            _cost = cost;
+            _testGraph = testGraph;
         }
 
         public double RealCostTo(IGraphNode other)
         {
             if (other is not TestGraphNode node) return double.MaxValue;
-            return (Cost + node.Cost) / 2d;
+            return (_cost + node._cost) / 2d;
         }
 
         public double EstimatedCostTo(IGraphNode other)
@@ -61,8 +61,8 @@ namespace PathFinderUnitTests
             for (var y = Math.Max(0, Y - 1); y <= maxY; y++)
                 if (x != X || y != Y)
                 {
-                    var node = TestGraph.GetNode(x, y);
-                    if (node.Cost != 0) yield return node;
+                    var node = _testGraph.GetNode(x, y);
+                    if (node._cost != 0) yield return node;
                 }
         }
         
@@ -84,6 +84,16 @@ namespace PathFinderUnitTests
         public override int GetHashCode()
         {
             return HashCode.Combine(X, Y);
+        }
+
+        public static bool operator ==(TestGraphNode left, TestGraphNode right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TestGraphNode left, TestGraphNode right)
+        {
+            return !(left == right);
         }
     }
 }
