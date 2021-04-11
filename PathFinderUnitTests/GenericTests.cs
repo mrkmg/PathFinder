@@ -30,10 +30,10 @@ namespace PathFinderUnitTests
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
-                    new List<TestGraphNode> {_testGraph.GetNode(0,1), _testGraph.GetNode(0,2), _testGraph.GetNode(0,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(2,5), _testGraph.GetNode(3,6), _testGraph.GetNode(4,7), _testGraph.GetNode(5,8), _testGraph.GetNode(6,9), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
+                    new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(2,5), _testGraph.GetNode(3,5), _testGraph.GetNode(4,6), _testGraph.GetNode(5,7), _testGraph.GetNode(6,8), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
                     solver.Path
                 );
-                Assert.AreEqual(13.0d, solver.PathCost);
+                Assert.AreEqual(12.0d, solver.PathCost);
             });
         }
         
@@ -46,7 +46,7 @@ namespace PathFinderUnitTests
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
-                    new List<TestGraphNode> {_testGraph.GetNode(0,1), _testGraph.GetNode(0,2), _testGraph.GetNode(0,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(2,5), _testGraph.GetNode(3,5), _testGraph.GetNode(4,6), _testGraph.GetNode(5,6), _testGraph.GetNode(6,7), _testGraph.GetNode(7,8), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
+                    new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(2,5), _testGraph.GetNode(3,5), _testGraph.GetNode(4,6), _testGraph.GetNode(5,7), _testGraph.GetNode(6,8), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
                     solver.Path
                 );
                 Assert.AreEqual(12.0d, solver.PathCost);

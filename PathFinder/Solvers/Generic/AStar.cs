@@ -162,9 +162,10 @@ namespace PathFinder.Solvers.Generic
             if (neighborMetaData.Status == NodeStatus.Open)
             {
                 var fromCost = CurrentMetaData.FromCost + CurrentMetaData.Node.RealCostTo(neighborMetaData.Node);
-                if (fromCost > neighborMetaData.FromCost) return;
-                neighborMetaData.Parent = CurrentMetaData;
+                if (fromCost >= neighborMetaData.FromCost) return;
                 OpenNodes.Remove(neighborMetaData);
+                neighborMetaData.Parent = CurrentMetaData;
+                neighborMetaData.FromCost = fromCost;
             }
             neighborMetaData.Status = NodeStatus.Open;
             neighborMetaData.TotalCost = neighborMetaData.FromCost + neighborMetaData.ToCost * _greedFactor;
@@ -177,15 +178,15 @@ namespace PathFinder.Solvers.Generic
             public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
             {
                 Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
-                return x.TotalCost >  y.TotalCost ?  1 
-                     : x.TotalCost <  y.TotalCost ? -1 
-                     : x.FromCost  >  y.FromCost  ?  1
+                return x.TotalCost <  y.TotalCost ? -1 
+                     : x.TotalCost >  y.TotalCost ?  1 
                      : x.FromCost  <  y.FromCost  ? -1
-                     : x.ToCost    >  y.ToCost    ?  1
+                     : x.FromCost  >  y.FromCost  ?  1
                      : x.ToCost    <  y.ToCost    ? -1
+                     : x.ToCost    >  y.ToCost    ?  1
                      : x.NodeId    == y.NodeId    ?  0
-                     : x.NodeId    >  y.NodeId    ?  1 
-                     :                              -1;
+                     : x.NodeId    <  y.NodeId    ? -1 
+                     :                               1;
             }
         }
     }
