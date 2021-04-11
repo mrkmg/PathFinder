@@ -184,7 +184,7 @@ namespace PathFinder.Solvers.Generic
             if (_cost.HasValue) return _cost.Value;
             
             _cost = 0d;
-            var last = Path.First();
+            var last = Path!.First();
 
             foreach (var next in Path.Skip(1))
             {
