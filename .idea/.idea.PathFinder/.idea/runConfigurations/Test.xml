@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/PathFinderTest/bin/Release/net5.0/PathFinderTest.exe" />
+  <configuration default="false" name="Test" type="DotNetProject" factoryName=".NET Project" activateToolWindowBeforeRun="false">
+    <option name="EXE_PATH" value="$PROJECT_DIR$/PathFinderConsole/bin/Release/net5.0/PathFinderConsole.exe" />
     <option name="PROGRAM_PARAMETERS" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PathFinderTest/bin/Release/net5.0" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PathFinderConsole/bin/Release/net5.0" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="1" />
     <option name="USE_MONO" value="0" />
