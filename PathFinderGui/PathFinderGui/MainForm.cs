@@ -12,6 +12,13 @@ using SimpleWorld.Map;
 
 namespace PathFinderGui
 {
+    /**
+     * TODO - Separate into individual components (Map, Options, Stats)
+     *        MainForm - running the solver and delegating updates
+     *        Map - drawing the map
+     *        Options - all inputs
+     *        Stats - the stats
+     **/
     public partial class MainForm
     {
         private SolverRunnerThread _runnerThread;
@@ -33,7 +40,6 @@ namespace PathFinderGui
         {
             WindowState = WindowState.Maximized;
             InitUi();
-            Thread.Sleep(1);
 
             _timer = new UITimer {Interval = 1d / 20};
             _timer.Elapsed += (sender, args) => ProcessFrame();
@@ -74,7 +80,6 @@ namespace PathFinderGui
             
             _showSearchCheckbox.CheckedChanged += OnShowSearchCheckboxChanged;
             
-
             Closed += OnClosed;
         }
 
@@ -118,7 +123,8 @@ namespace PathFinderGui
         private void Reset()
         {
             KillRunning();
-            DrawEntireWorld();
+            ClearRunning();
+            ClearPath();
         }
 
         private void KillRunning()
@@ -138,64 +144,15 @@ namespace PathFinderGui
             }
         }
 
-        private ICollection<DrawPoint> _cachedEntireMap;
-
-        private void DrawEntireWorld()
-        {
-            if (_world == null) return;
-            _bitmapWidget.Clear();
-            if (_cachedEntireMap == null)
-                _cachedEntireMap = _world.GetAllNodes().AsMapDrawPoints().ToArray();
-            _bitmapWidget.DrawAll(_cachedEntireMap);
-            DrawMarkers();
-        }
-
-        private void ClearMarkers()
-        {
-            if (_startPoint != null)
-                _bitmapWidget.DrawAll(
-                    _startPoint
-                        .ToMarkerPoints(8)
-                        .Select(xy => _world.GetPosition(xy.x, xy.y))
-                        .Where(p => p != null)
-                        .AsMapDrawPoints()
-                    );
-            if (_endPoint != null)
-                _bitmapWidget.DrawAll(
-                    _endPoint
-                        .ToMarkerPoints(8)
-                        .Select(xy => _world.GetPosition(xy.x, xy.y))
-                        .Where(p => p != null)
-                        .AsMapDrawPoints()
-                    );
-        }
-
-        private void DrawMarkers()
-        {
-            _bitmapWidget.DrawAll(
-                _startPoint
-                    .ToMarkerPoints(8)
-                    .Where(xy => xy.x > 0 && xy.x < _bitmapWidget.BitmapWidth && xy.y > 0 && xy.y < _bitmapWidget.BitmapHeight)
-                    .Select(xy => xy.AsMarkerDrawPoint()
-                    )
-                );
-            _bitmapWidget.DrawAll(
-                _endPoint
-                    .ToMarkerPoints(8)
-                    .Where(xy => xy.x > 0 && xy.x < _bitmapWidget.BitmapWidth && xy.y > 0 && xy.y < _bitmapWidget.BitmapHeight)
-                    .Select(xy => xy.AsMarkerDrawPoint()
-                    )
-                );
-        }
-
         private void MakeWorld()
         {
             KillRunning();
             if (_bitmapWidget.BitmapHeight == 0 || _bitmapWidget.BitmapWidth == 0) return;
             _world = new World(_bitmapWidget.BitmapWidth, _bitmapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), _moveCostStepper.Value);
-            _cachedEntireMap = null;
             SetRandomPoints();
-            DrawEntireWorld();
+            ClearPath();
+            ClearRunning();
+            DrawWorld();
         }
 
         private void Go()
@@ -252,7 +209,8 @@ namespace PathFinderGui
                     _frameStopwatch.Stop();
                     _overallStopwatch.Stop();
                     UpdateSuccessStats();
-                    DrawSuccess();
+                    ClearRunning();
+                    DrawPath();
                     KillRunning();
                     break;
                 case SolverState.Failure:
@@ -298,24 +256,6 @@ namespace PathFinderGui
             _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
         }
 
-        private void DrawRunning()
-        {
-            var (recentlyCheckedPoints, currentBestPath) = _runnerThread.GetFrameData();
-            _lastTpf = recentlyCheckedPoints.Count * 0.1d + _lastTpf * 0.9d;
-            _bitmapWidget.DrawAll(recentlyCheckedPoints.AsSearchDrawPoints());
-            _bitmapWidget.DrawAll(_lastBestPath != null
-                ? BestPathDiff(currentBestPath)
-                : currentBestPath.AsPathDrawPoints());
-            DrawMarkers();
-            _lastBestPath = currentBestPath;
-        }
-
-        private void DrawSuccess()
-        {
-            DrawEntireWorld();
-            _bitmapWidget.DrawAll(_runnerThread.GraphSolver.Path.AsPathDrawPoints());
-        }
-
         private IEnumerable<DrawPoint> BestPathDiff(IEnumerable<Position> newBestPath)
         {
             var i = -1;
@@ -340,6 +280,90 @@ namespace PathFinderGui
             while (++i < _lastBestPath.Count)
                 yield return _lastBestPath[i].AsSearchDrawPoint();
         }
+
+        #region Drawing
+
+        private void ClearWorld()
+        {
+            _bitmapWidget.ClearLayer(0);
+        }
+        
+        private void DrawWorld()
+        {
+            if (_world == null) return;
+            _bitmapWidget.DrawAll(0, _world.GetAllNodes().AsMapDrawPoints());
+            DrawMarkers();
+        }
+
+        private void ClearRunning()
+        {
+            _bitmapWidget.ClearLayer(1);
+        }
+
+        private void DrawRunning()
+        {
+            var (recentlyCheckedPoints, currentBestPath) = _runnerThread.GetFrameData();
+            _lastTpf = recentlyCheckedPoints.Count * 0.1d + _lastTpf * 0.9d;
+            _bitmapWidget.DrawAll(1,recentlyCheckedPoints.AsSearchDrawPoints());
+            _bitmapWidget.DrawAll(1,_lastBestPath != null
+                ? BestPathDiff(currentBestPath)
+                : currentBestPath.AsPathDrawPoints());
+            _lastBestPath = currentBestPath;
+        }
+
+        private void ClearMarkers()
+        {
+            if (_startPoint != null)
+            {
+                var p = _startPoint
+                    .ToMarkerPoints(10 / _bitmapWidget.Scale)
+                    .Where(IsPointInBitmap)
+                    .Select(xy => new DrawPoint(xy.x, xy.y, Colors.Transparent));
+                _bitmapWidget.DrawAll(2, p);
+            }
+            if (_endPoint != null)
+            {
+                var p = _endPoint
+                    .ToMarkerPoints(10 / _bitmapWidget.Scale)
+                    .Where(IsPointInBitmap)
+                    .Select(xy => new DrawPoint(xy.x, xy.y, Colors.Transparent));
+                _bitmapWidget.DrawAll(2, p);
+            }
+        }
+
+        private void DrawMarkers()
+        {
+            var p1 = _startPoint
+                .ToMarkerPoints(10 / _bitmapWidget.Scale)
+                .Where(IsPointInBitmap)
+                .Select(xy => xy.AsMarkerDrawPoint());
+                    
+                _bitmapWidget.DrawAll(2, p1);
+                
+            var p2 = _endPoint
+                .ToMarkerPoints(10 / _bitmapWidget.Scale)
+                .Where(IsPointInBitmap)
+                .Select(xy => xy.AsMarkerDrawPoint());
+                
+            _bitmapWidget.DrawAll(2, p2);
+        }
+
+        private bool IsPointInBitmap((int x, int y) xy)
+        {
+            return xy.x > 0 && xy.x < _bitmapWidget.BitmapWidth && xy.y > 0 && xy.y < _bitmapWidget.BitmapHeight;
+        }
+
+        private void ClearPath()
+        {
+            _bitmapWidget.ClearLayer(3);
+        }
+        
+        private void DrawPath()
+        {
+            _bitmapWidget.DrawAll(3, _runnerThread.GraphSolver.Path.AsPathDrawPoints());
+        }
+
+        #endregion
 
         #region EventHandlers
 
@@ -455,7 +479,9 @@ namespace PathFinderGui
             _worldSeed.Text = (new Random()).Next(10000, 99999).ToString();
             _bitmapWidget.Clear();
             Application.Instance.RunIteration();
+            ClearMarkers();
             MakeWorld();
+            DrawMarkers();
         }
 
         private void CheckKeyupForExit(object sender, KeyEventArgs args)

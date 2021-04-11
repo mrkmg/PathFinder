@@ -6,12 +6,13 @@ using Eto.Forms;
 
 namespace PathFinderGui
 {
-    public class BitmapWidget : Drawable
+    public class LayeredBitmapWidget : Drawable
     {
         public int BitmapWidth => Width / _scale;
         public int BitmapHeight => Height / _scale;
-        
-        private Bitmap _bitmap;
+        public int Layers { get; private set; }
+
+        private readonly List<Bitmap> _bitmaps = new List<Bitmap>();
         private int _scale;
 
         public int Scale
@@ -29,12 +30,14 @@ namespace PathFinderGui
         public new EventHandler<BitmapMouseEventArgs> MouseDoubleClick;
         public new EventHandler<BitmapMouseEventArgs> MouseWheel;
 
-        public BitmapWidget(int scale)
+        public LayeredBitmapWidget(int scale, int layers = 1)
         {
+            Layers = layers;
             _scale = scale;
             Paint += OnPaint;
             LoadComplete += OnLoadComplete;
             SizeChanged += OnSizeChanged;
+            this.UnLoad += OnUnLoad;
 
             base.MouseUp += (sender, args) => MouseUp?.Invoke(this, new BitmapMouseEventArgs(args, new Point(args.Location / _scale)));
             base.MouseDown += (sender, args) => MouseDown?.Invoke(this, new BitmapMouseEventArgs(args, new Point(args.Location / _scale)));
@@ -44,6 +47,14 @@ namespace PathFinderGui
             base.MouseDoubleClick += (sender, args) => MouseDoubleClick?.Invoke(this, new BitmapMouseEventArgs(args, new Point(args.Location / _scale)));
             base.MouseMove += (sender, args) => MouseMove?.Invoke(this, new BitmapMouseEventArgs(args, new Point(args.Location / _scale)));
             base.MouseWheel += (sender, args) => MouseWheel?.Invoke(this, new BitmapMouseEventArgs(args, new Point(args.Location / _scale)));
+        }
+
+        private void OnUnLoad(object sender, EventArgs e)
+        {
+            foreach (var bitmap in _bitmaps)
+            {
+                bitmap.Dispose();
+            }
         }
 
         private void OnSizeChanged(object sender, EventArgs args)
@@ -60,7 +71,27 @@ namespace PathFinderGui
 
         private void OnPaint(object sender, PaintEventArgs args)
         {
-            if (_bitmap != null) args.Graphics.DrawImage(_bitmap, args.ClipRectangle, args.ClipRectangle);
+            foreach (var bitmap in _bitmaps)
+            {
+                args.Graphics.DrawImage(bitmap, args.ClipRectangle, args.ClipRectangle);
+            }
+        }
+
+        public void RemoveLayer(int layer)
+        {
+            if (layer < 1) throw new ArgumentException("You can not remove the background layer.");
+            if (layer >= Layers) throw new ArgumentException("No layer exists");
+            _bitmaps[layer].Dispose();
+            _bitmaps.RemoveAt(layer);
+            Layers--;
+            Invalidate();
+        }
+
+        public int AddLayer()
+        {
+            Layers++;
+            _bitmaps.Add(new Bitmap(Width, Height, PixelFormat.Format32bppRgba, Enumerable.Repeat(Colors.Transparent, Width * Height - 1)));
+            return Layers - 1;
         }
 
         public void ChangeScale(int scale)
@@ -72,33 +103,58 @@ namespace PathFinderGui
 
         public void Clear()
         {
-            MakeBitmap();
+            MakeBitmaps();
             Invalidate();
         }
 
-        private void MakeBitmap()
+        public void ClearLayer(int layer)
         {
-            _bitmap = null;
-            if (Width == 0 || Height == 0) return;
-            _bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppRgba, Enumerable.Repeat(BackgroundColor, Width * Height - 1));
+            if (layer < 0) throw new ArgumentException("Layers start at 0");
+            if (layer >= Layers) throw new ArgumentException("No layer exists");
+            using (var bd = _bitmaps[layer].Lock())
+            {
+                bd.SetPixels(Enumerable.Repeat(Colors.Transparent, Width * Height - 1));
+            }
+            Invalidate();
         }
 
-        public void DrawPoint(DrawPoint point) => DrawPoint(point.X, point.Y, point.Color);
-        public void DrawPoint(int x, int y, Color color)
+        private void MakeBitmaps()
         {
-            using (var bitmapData = _bitmap.Lock())
+            if (Width == 0 || Height == 0) return;
+            
+            foreach (var bitmap in _bitmaps)
+            {
+                bitmap.Dispose();
+            }
+            _bitmaps.Clear();
+            for (var i = 0; i < Layers; i++)
+            {
+                _bitmaps.Add(i == 0
+                    ? new Bitmap(Width, Height, PixelFormat.Format32bppRgba,
+                        Enumerable.Repeat(BackgroundColor, Width * Height - 1))
+                    : new Bitmap(Width, Height, PixelFormat.Format32bppRgba,
+                        Enumerable.Repeat(Colors.Transparent, Width * Height - 1)));
+            }
+        }
+
+        public void DrawPoint(int layer, DrawPoint point) => DrawPoint(layer, point.X, point.Y, point.Color);
+        public void DrawPoint(int layer, int x, int y, Color color)
+        {
+            if (layer >= Layers || layer < 0) throw new ArgumentException("layer must be between 0 and Layers");
+            using (var bitmapData = _bitmaps[layer].Lock())
             {
                 var space = InternalDrawPoint(x, y, color, bitmapData);
                 Invalidate(space);
             }
         }
 
-        public void DrawAll(IEnumerable<DrawPoint> points)
+        public void DrawAll(int layer, IEnumerable<DrawPoint> points)
         {
-            var isFirstPass = true;
-            Rectangle invalidation = default;
-            using (var bitmapData = _bitmap.Lock())
+            if (layer >= Layers || layer < 0) throw new ArgumentException("layer must be between 0 and Layers");
+            using (var bitmapData = _bitmaps[layer].Lock())
             {
+                var isFirstPass = true;
+                Rectangle invalidation = default;
                 foreach (var drawPoint in points)
                 {
                     var space = InternalDrawPoint(drawPoint.X, drawPoint.Y, drawPoint.Color, bitmapData);
@@ -111,10 +167,10 @@ namespace PathFinderGui
 
                     invalidation.Union(space);
                 }
-            }
             
-            if (!isFirstPass)
-                Invalidate(invalidation);
+                if (!isFirstPass)
+                    Invalidate(invalidation);
+            }
         }
 
         private Rectangle InternalDrawPoint(int x, int y, Color color, BitmapData bitmapData)
@@ -140,6 +196,13 @@ namespace PathFinderGui
         public int X;
         public int Y;
         public Color Color;
+
+        public DrawPoint(int x, int y, Color color)
+        {
+            X = x;
+            Y = y;
+            Color = color;
+        }
     }
 
     public class BitmapMouseEventArgs : MouseEventArgs

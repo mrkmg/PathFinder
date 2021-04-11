@@ -7,7 +7,7 @@ namespace PathFinderGui
     public partial class MainForm : Form
     {
         private readonly UITimer _timer;
-        private BitmapWidget _bitmapWidget;
+        private LayeredBitmapWidget _bitmapWidget;
         private Label _tpf;
         private Label _fps;
         private Label _tps;
@@ -83,7 +83,7 @@ namespace PathFinderGui
             _canCornerCut = new CheckBox {Checked = true};
             _showSearchCheckbox = new CheckBox {Checked = true};
             
-            _bitmapWidget = new BitmapWidget(1);
+            _bitmapWidget = new LayeredBitmapWidget(1, 4);
 
             _newPoints = new Button
             {
