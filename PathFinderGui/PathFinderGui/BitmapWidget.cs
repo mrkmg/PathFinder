@@ -48,14 +48,13 @@ namespace PathFinderGui
 
         private void OnSizeChanged(object sender, EventArgs args)
         {
-            MakeBitmap();
+            Clear();
             OnIsReady();
-            Invalidate();
         }
 
         private void OnLoadComplete(object sender, EventArgs args)
         {
-            MakeBitmap();
+            Clear();
             OnIsReady();
         }
 
@@ -67,14 +66,14 @@ namespace PathFinderGui
         public void ChangeScale(int scale)
         {
             _scale = scale;
-            MakeBitmap();
+            Clear();
             OnIsReady();
-            Invalidate();
         }
 
         public void Clear()
         {
             MakeBitmap();
+            Invalidate();
         }
 
         private void MakeBitmap()

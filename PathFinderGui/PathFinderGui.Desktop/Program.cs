@@ -5,6 +5,7 @@ namespace PathFinderGui.Desktop
 {
     class Program
     {
+        // ReSharper disable once UnusedParameter.Local
         [STAThread]
         static void Main(string[] args)
         {

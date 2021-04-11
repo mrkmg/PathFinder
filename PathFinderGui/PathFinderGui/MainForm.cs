@@ -66,8 +66,12 @@ namespace PathFinderGui
             _scaleStepper.ValueChanged += _scaleSelectorChangedDebounce.Handle;
             _moveCostStepper.ValueChanged += _moveCostSelectorChangedDebounce.Handle;
             
+            _worldSeed.KeyUp += OnWorldSeedChanged;
+            _pointsSeed.KeyUp += OnPointsSeedChanged;
+            
             _scaleSelectorChangedDebounce.Fired += OnScaleSelectorChanged;
             _moveCostSelectorChangedDebounce.Fired += OnMoveCostSelectorChanged;
+            
             _showSearchCheckbox.CheckedChanged += OnShowSearchCheckboxChanged;
             
 
@@ -239,50 +243,63 @@ namespace PathFinderGui
             {
                 case SolverState.Waiting:
                 case SolverState.Running:
-                    var frameTime = _frameStopwatch.Elapsed.TotalSeconds;
-                    _lastFps = (1 / frameTime) * 0.1d + _lastFps * 0.9d;
-                    _lastTps = _graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds;
-                    _tpf.Text = _graphSolver.State == SolverState.Waiting ? "Waiting" : $"TPF: {_lastTpf:N0}";
-                    _tps.Text = $"TPS: {_lastTps:N0}";
-                    _fps.Text = $"FPS: {_lastFps:N0}";
-                    _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
-                    _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
-                    
-                    // Break early if not doing any retrieval from the runner thread data
-                    if (_showSearchCheckbox.Checked == null || !_showSearchCheckbox.Checked.Value) break;
-                    
-                    ProcessThreadFrameData();
+                    UpdateRunningStats();
+                    if (_showSearchCheckbox.Checked != null && _showSearchCheckbox.Checked.Value)
+                        DrawRunning();
+                    _frameStopwatch.Restart();
                     break;
                 case SolverState.Success:
                     _frameStopwatch.Stop();
                     _overallStopwatch.Stop();
-                    _tpf.Text = "Path Found";
-                    _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-                    _tps.Text = $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2} ({_graphSolver.ClosedCount:N0})";
-                    _openPoints.Text = $"Path Length {_runnerThread.GraphSolver.Path.Count:N0}";
-                    _closedPoints.Text = $"Path Cost: {_graphSolver.PathCost:N2}";
-                    DrawEntireWorld();
-                    _bitmapWidget.DrawAll(_runnerThread.GraphSolver.Path.AsPathDrawPoints());
+                    UpdateSuccessStats();
+                    DrawSuccess();
                     KillRunning();
                     break;
                 case SolverState.Failure:
-                    _tpf.Text = $"Failed to find a path";
-                    _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-                    _tps.Text = $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2}";
-                    _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
-                    _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
+                    UpdateFailureStats();
                     KillRunning();
                     break;
                 default:
                     KillRunning();
                     throw new ArgumentOutOfRangeException();
             }
-            _frameStopwatch.Restart();
         }
 
-        private void ProcessThreadFrameData()
+        private void UpdateRunningStats()
         {
             var frameTime = _frameStopwatch.Elapsed.TotalSeconds;
+            _lastFps = (1 / frameTime) * 0.1d + _lastFps * 0.9d;
+            _lastTps = _graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds;
+            _tpf.Text = _graphSolver.State == SolverState.Waiting ? "Waiting" : $"TPF: {_lastTpf:N0}";
+            _tps.Text = $"TPS: {_lastTps:N0}";
+            _fps.Text = $"FPS: {_lastFps:N0}";
+            _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
+            _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
+        }
+
+        private void UpdateSuccessStats()
+        {
+            _tpf.Text = "Path Found";
+            _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
+            _tps.Text =
+                $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2} ({_graphSolver.ClosedCount:N0})";
+            // SolverState.Success ensures this is set
+            // ReSharper disable once PossibleNullReferenceException
+            _openPoints.Text = $"Path Length {_runnerThread.GraphSolver.Path.Count:N0}";
+            _closedPoints.Text = $"Path Cost: {_graphSolver.PathCost:N2}";
+        }
+
+        private void UpdateFailureStats()
+        {
+            _tpf.Text = $"Failed to find a path";
+            _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
+            _tps.Text = $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2}";
+            _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
+            _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
+        }
+
+        private void DrawRunning()
+        {
             var (recentlyCheckedPoints, currentBestPath) = _runnerThread.GetFrameData();
             _lastTpf = recentlyCheckedPoints.Count * 0.1d + _lastTpf * 0.9d;
             _bitmapWidget.DrawAll(recentlyCheckedPoints.AsSearchDrawPoints());
@@ -291,6 +308,12 @@ namespace PathFinderGui
                 : currentBestPath.AsPathDrawPoints());
             DrawMarkers();
             _lastBestPath = currentBestPath;
+        }
+
+        private void DrawSuccess()
+        {
+            DrawEntireWorld();
+            _bitmapWidget.DrawAll(_runnerThread.GraphSolver.Path.AsPathDrawPoints());
         }
 
         private IEnumerable<DrawPoint> BestPathDiff(IEnumerable<Position> newBestPath)
@@ -320,6 +343,25 @@ namespace PathFinderGui
 
         #region EventHandlers
 
+        private void OnPointsSeedChanged(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Keys.Enter && e.Key != Keys.Tab) return;
+            if (!int.TryParse(_pointsSeed.Text, out _)) return;
+            KillRunning();
+            ClearMarkers();
+            SetRandomPoints();
+            DrawMarkers();
+        }
+
+        private void OnWorldSeedChanged(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Keys.Enter && e.Key != Keys.Tab) return;
+            if (!int.TryParse(_worldSeed.Text, out _)) return;
+            _bitmapWidget.Clear();
+            Application.Instance.RunIteration();
+            MakeWorld();
+        }
+
         private void OnShowSearchCheckboxChanged(object sender, EventArgs e)
         {
             if (_runnerThread != null)
@@ -338,7 +380,7 @@ namespace PathFinderGui
             if (_runnerThread != null)
             {
                 _runnerThread.Kill();
-                ProcessThreadFrameData();
+                DrawRunning();
             }
             _timer.Stop();
             _frameStopwatch.Stop();
@@ -401,21 +443,18 @@ namespace PathFinderGui
 
         private void OnNewPointsClick(object sender, EventArgs args)
         {
-            KillRunning();
             _pointsSeed.Text = (new Random()).Next(10000, 99999).ToString();
-            if (!SetRandomPoints())
-            {
-                _world = null;
-            }
-            else
-            {
-                DrawEntireWorld();
-            }
+            KillRunning();
+            ClearMarkers();
+            SetRandomPoints();
+            DrawMarkers();
         }
 
         private void OnNewWorldClick(object sender, EventArgs args)
         {
             _worldSeed.Text = (new Random()).Next(10000, 99999).ToString();
+            _bitmapWidget.Clear();
+            Application.Instance.RunIteration();
             MakeWorld();
         }
 
@@ -498,8 +537,6 @@ namespace PathFinderGui
 
         internal static IEnumerable<(int x, int y)> ToMarkerPoints(this Position position, int size)
         {
-            var wx = position.World.XSize;
-            var wy = position.World.YSize;
             for (var i = 0; i <= size; i++)
             {
                 

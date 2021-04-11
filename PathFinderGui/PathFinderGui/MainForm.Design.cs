@@ -6,14 +6,13 @@ namespace PathFinderGui
 {
     public partial class MainForm : Form
     {
-        private UITimer _timer;
+        private readonly UITimer _timer;
         private BitmapWidget _bitmapWidget;
         private Label _tpf;
         private Label _fps;
         private Label _tps;
         private Label _openPoints;
         private Label _closedPoints;
-        private Label _pathCost;
         private NumericStepper _greedStepper;
         private NumericStepper _scaleStepper;
         private NumericStepper _delayStepper;
