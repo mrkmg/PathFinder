@@ -3,47 +3,31 @@ using System.Diagnostics;
 
 namespace PathFinder.Solvers.Generic
 {
-    public sealed class Greedy<T> : GenericGraphSolverBase<T> where T : IGraphNode
+    public sealed class Greedy<T> : GenericGraphSolverBase<T> where T : ITraversableGraphNode<T>
     {
-       /// <summary>
+        /// <summary>
         ///     Finds a path between the origin and destination node.
         /// </summary>
         /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
-        /// <param name="nodeValidator"><see cref="NodeValidator"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        public static SolverState Solve(T origin, T destination, NodeValidator nodeValidator, out IList<T> path)
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to calculate the cos</param>
+        public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null)
         {
-            var solver = new Greedy<T>(origin, destination, nodeValidator);
-            path = solver.Start() == SolverState.Success ? solver.Path : null;
+            var solver = new Greedy<T>(origin, destination, traverser);
+            solver.Start();
+            path = solver.State == SolverState.Success ? solver.Path : null;
             return solver.State;
         }
 
         /// <summary>
-        ///     Finds a path between the origin and destination node.
-        /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        public static SolverState Solve(T origin, T destination, out IList<T> path)
-            => Solve(origin, destination, null, out path);
- 
-        /// <summary>
         ///     Creates a solver using the Greedy method.
         /// </summary>
         /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        public Greedy(T origin, T destination) 
-            : base(new NodeMetaComparer(), origin, destination) { }
-        
-        /// <summary>
-        ///     Creates a solver using the Greedy method.
-        /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="nodeValidator"><see cref="NodeValidator"/></param>
-        public Greedy(T origin, T destination, NodeValidator nodeValidator) 
-            : base(new NodeMetaComparer(), origin, destination, nodeValidator) { }
+        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="traverser"><see cref="INodeTraverser{T}"/></param>
+        public Greedy(T origin, T destination, INodeTraverser<T> traverser = null) 
+            : base(new NodeMetaComparer(), origin, destination, traverser) { }
 
         private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
         {
