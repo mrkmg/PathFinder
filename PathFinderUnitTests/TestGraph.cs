@@ -7,7 +7,7 @@ namespace PathFinderUnitTests
 {
     public class TestGraph
     {
-        private readonly int[][] World =
+        private readonly int[][] _world =
         {
             new[] {1, 1, 1, 1, 1,  1,  1, 1, 1, 1},
             new[] {1, 1, 1, 1, 0,  1,  2, 2, 1, 1},
@@ -21,7 +21,7 @@ namespace PathFinderUnitTests
             new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1}
         };
 
-        public TestGraphNode GetNode(int x, int y) => new (x, y, World[x][y], this);
+        public TestGraphNode GetNode(int x, int y) => new (x, y, _world[x][y], this);
     }
 
     public readonly struct TestGraphNode : IGraphNode
