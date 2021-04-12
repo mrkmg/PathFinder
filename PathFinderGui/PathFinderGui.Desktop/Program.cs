@@ -7,7 +7,7 @@ namespace PathFinderGui.Desktop
     {
         // ReSharper disable once UnusedParameter.Local
         [STAThread]
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             new Application(Eto.Platform.Detect).Run(new MainForm());
         }

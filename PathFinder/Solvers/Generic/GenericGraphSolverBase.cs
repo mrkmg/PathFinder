@@ -7,28 +7,22 @@ using JetBrains.Annotations;
 
 namespace PathFinder.Solvers.Generic
 {
-    
     /// <summary>
     /// TODO
     /// </summary>
-    /// <typeparam name="T"><see cref="IGraphNode"/></typeparam>
-    public abstract class GenericGraphSolverBase<T> : IGraphSolver<T> where T : IGraphNode
+    /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
+    public abstract class GenericGraphSolverBase<T> : IGraphSolver<T> where T : ITraversableGraphNode<T>
     {
-        protected GenericGraphSolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination)
+        protected GenericGraphSolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination, INodeTraverser<T> traverser = null)
         {
             Origin = origin;
             Destination = destination;
-            CurrentMetaData = new GraphNodeMetaData<T>(origin, 0) {ToCost = origin.EstimatedCostTo(Destination)};
-            _closest = CurrentMetaData;
             _lastGraphNodeId = 1;
             Comparer = comparer;
+            Traverser = traverser ?? new DefaultTraverser<T>();
+            CurrentMetaData = new GraphNodeMetaData<T>(origin, 0) {ToCost = Traverser.EstimatedCost(origin, Destination)};
+            _closest = CurrentMetaData;
             OpenNodes = new SortedSet<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
-        }
-
-        protected GenericGraphSolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination, NodeValidator nodeValidator) 
-            : this(comparer, origin, destination)
-        {
-            _nodeValidator = nodeValidator;
         }
         
         /// <inheritdoc cref="IGraphSolver{T}.Open"/>
@@ -77,12 +71,11 @@ namespace PathFinder.Solvers.Generic
         protected GraphNodeMetaData<T> CurrentMetaData;
         protected readonly IComparer<GraphNodeMetaData<T>> Comparer;
         
-        private readonly NodeValidator _nodeValidator;
         private IList<T> _path;
         private GraphNodeMetaData<T> _closest;
         private double? _cost;
         private long _lastGraphNodeId;
-
+        protected readonly INodeTraverser<T> Traverser;
         private int _remainingTicks;
         
         private void Tick()
@@ -135,8 +128,8 @@ namespace PathFinder.Solvers.Generic
             if (Meta.TryGetValue(node, out var meta)) return meta;
             meta = new GraphNodeMetaData<T>(node, _lastGraphNodeId++)
             {
-                ToCost = node.EstimatedCostTo(Destination),
-                FromCost = CurrentMetaData.FromCost + CurrentMetaData.Node.RealCostTo(node),
+                ToCost = Traverser.EstimatedCost(node, Destination),
+                FromCost = CurrentMetaData.FromCost + Traverser.RealCost(CurrentMetaData.Node, node),
                 Parent = CurrentMetaData
             };
             Meta.Add(node, meta);
@@ -156,14 +149,14 @@ namespace PathFinder.Solvers.Generic
 
         private void ProcessNeighbors()
         {
-            var neighbors = Current.GetReachableNodes();
+            var neighbors = Traverser.TraversableNodes(Current);
             foreach (var neighbor in neighbors)
             {
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
                 var neighborMetaData = GetMeta((T) neighbor);
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
                 if (CurrentMetaData.Equals(neighborMetaData)) continue;
-                if (_nodeValidator != null && _nodeValidator(Current, neighborMetaData.Node)) continue;
+                if (!Traverser.CanTraverse(Current, neighborMetaData.Node)) continue;
                 ProcessNeighbor(neighborMetaData);
                 if (!neighbor.Equals(Destination)) continue;
                 State = SolverState.Success;
@@ -188,7 +181,7 @@ namespace PathFinder.Solvers.Generic
 
             foreach (var next in Path.Skip(1))
             {
-                _cost += last.RealCostTo(next);
+                _cost += Traverser.RealCost(last, next);
                 last = next;
             }
 
@@ -214,6 +207,14 @@ namespace PathFinder.Solvers.Generic
             return path;
         }
     }
+
+    internal class DefaultTraverser<T> : INodeTraverser<T> where T : ITraversableGraphNode<T>
+    {
+        public double EstimatedCost(T from, T to) => from.EstimatedCostTo(to);
+        public double RealCost(T from, T to) => from.RealCostTo(to);
+        public IEnumerable<T> TraversableNodes(T sourceNode) => sourceNode.GetReachableNodes();
+        public bool CanTraverse(T from, T to) => true;
+    }
     
     public enum NodeStatus
     {
@@ -222,13 +223,12 @@ namespace PathFinder.Solvers.Generic
         Closed
     }
 
-    public class GraphNodeMetaData<T> : IEquatable<GraphNodeMetaData<T>> where T : IGraphNode
+    public class GraphNodeMetaData<T> : IEquatable<GraphNodeMetaData<T>> where T : ITraversableGraphNode<T>
     {
         public readonly T Node;
         public readonly long NodeId;
         public double FromCost;
-        [CanBeNull]
-        public GraphNodeMetaData<T> Parent;
+        [CanBeNull] public GraphNodeMetaData<T> Parent;
         public double ToCost;
         public double TotalCost;
         public NodeStatus Status;
@@ -242,6 +242,6 @@ namespace PathFinder.Solvers.Generic
         public override bool Equals(object obj) => obj is GraphNodeMetaData<T> n && Equals(n);
         public bool Equals(GraphNodeMetaData<T> other) => other != null && Node.Equals(other.Node);
         public override int GetHashCode() => Node.GetHashCode();
-        public override string ToString() => $"GraphNode[{Node.ToString()}]";
+        public override string ToString() => $"GraphNodeMeta[{Status}]<{Node.ToString()}>";
     }
 }

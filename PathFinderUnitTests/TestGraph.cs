@@ -24,7 +24,7 @@ namespace PathFinderUnitTests
         public TestGraphNode GetNode(int x, int y) => new (x, y, _world[x][y], this);
     }
 
-    public readonly struct TestGraphNode : IGraphNode
+    public readonly struct TestGraphNode : ITraversableGraphNode<TestGraphNode>
     {
         public readonly int X;
         public readonly int Y;
@@ -39,21 +39,19 @@ namespace PathFinderUnitTests
             _testGraph = testGraph;
         }
 
-        public double RealCostTo(IGraphNode other)
+        public double RealCostTo(TestGraphNode other)
         {
-            if (other is not TestGraphNode node) return double.MaxValue;
-            return (_cost + node._cost) / 2d;
+            return (_cost + other._cost) / 2d;
         }
 
-        public double EstimatedCostTo(IGraphNode other)
+        public double EstimatedCostTo(TestGraphNode other)
         {
-            if (other is not TestGraphNode node) return double.MaxValue;
-            var dx = X - node.X;
-            var dy = Y - node.Y;
+            var dx = X - other.X;
+            var dy = Y - other.Y;
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public IEnumerable<IGraphNode> GetReachableNodes()
+        public IEnumerable<TestGraphNode> GetReachableNodes()
         {
             var maxX = Math.Min(9, X + 1);
             var maxY = Math.Min(9, Y + 1);
@@ -65,15 +63,9 @@ namespace PathFinderUnitTests
                     if (node._cost != 0) yield return node;
                 }
         }
-        
-        public bool Equals(IGraphNode? other)
-        {
-            return other is TestGraphNode n && Equals(n);
-        }
-
         public bool Equals(TestGraphNode other)
         {
-            return X == other.X && Y == other.Y;
+            return other != null && X == other.X && Y == other.Y;
         }
 
         public override bool Equals(object? obj)
