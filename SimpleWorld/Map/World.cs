@@ -10,7 +10,6 @@ namespace SimpleWorld.Map
 {
     public class World
     {
-        public bool CornerIsFree { get; set; }
         public bool CanCutCorner { get; set; } = true;
         public double MoveCost { get; set; }
 
