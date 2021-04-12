@@ -34,10 +34,12 @@ namespace PathFinderGui
             _worldSeed = new TextBox {Text = new Random().Next(10000, 99999).ToString(), Width = 90};
             _pointsSeed = new TextBox {Text = new Random().Next(10000, 99999).ToString(), Width = 90};
 
+            var isGtk = Application.Instance.Platform.IsGtk;
+            
             _moveCostStepper = new NumericStepper
             {
                 Value = 1.0,
-                Width = 60,
+                Width = isGtk ? 150 : 60,
                 MinValue = 0.1,
                 MaxValue = 8,
                 Increment = 0.1,
@@ -46,7 +48,7 @@ namespace PathFinderGui
 
             _greedStepper = new NumericStepper
             {
-                Width = 60,
+                Width = isGtk ? 150 : 60,
                 MinValue = 0,
                 Increment = 0.05,
                 DecimalPlaces = 2,
@@ -55,7 +57,7 @@ namespace PathFinderGui
 
             _scaleStepper = new NumericStepper
             {
-                Width = 60,
+                Width = isGtk ? 150 : 60,
                 MinValue = 1,
                 MaxValue = 8,
                 Value = 1
@@ -123,9 +125,9 @@ namespace PathFinderGui
                     },
                     new StackLayout
                     {
-                        Width = 200,
-                        Height = 600,
+                        Width = -1,
                         Orientation = Orientation.Vertical,
+                        VerticalContentAlignment = VerticalAlignment.Stretch,
                         Padding = 10,
                         Spacing = 10,
                         Items =
@@ -144,7 +146,7 @@ namespace PathFinderGui
                             },
                             new StackLayout
                             {
-                                Orientation = Orientation.Horizontal,
+                                Orientation = isGtk ? Orientation.Vertical : Orientation.Horizontal,
                                 Items =
                                 {
                                     new StackLayout { Items =
@@ -164,7 +166,7 @@ namespace PathFinderGui
                             },
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
-                                Items = {"Cornering:", _canCornerCut, "Show Search:", _showSearchCheckbox}
+                                Items = {"Cornering:", _canCornerCut, "   ", "Show Search:", _showSearchCheckbox}
                             },
                             HStretched(_solverSelector),
                             new StackLayout { 
