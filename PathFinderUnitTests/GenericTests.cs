@@ -27,13 +27,14 @@ namespace PathFinderUnitTests
             var solver = new AStar<TestGraphNode>(_start, _end);
             solver.Start();
             Assert.NotNull(solver.Path);
+            DumpPath(solver.Path);
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
-                    new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(2,5), _testGraph.GetNode(3,5), _testGraph.GetNode(4,6), _testGraph.GetNode(5,7), _testGraph.GetNode(6,8), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
+                    new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(0,6), _testGraph.GetNode(0,7), _testGraph.GetNode(1,8), _testGraph.GetNode(2,9), _testGraph.GetNode(3,9), _testGraph.GetNode(4,9), _testGraph.GetNode(5,9), _testGraph.GetNode(6,9), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
                     solver.Path
                 );
-                Assert.AreEqual(12.0d, solver.PathCost);
+                Assert.AreEqual(15.0d, solver.PathCost);
             });
         }
         
@@ -43,13 +44,14 @@ namespace PathFinderUnitTests
             var solver = new AStar<TestGraphNode>(_start, _end, 0);
             solver.Start();
             Assert.NotNull(solver.Path);
+            DumpPath(solver.Path);
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
-                    new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(2,5), _testGraph.GetNode(3,5), _testGraph.GetNode(4,6), _testGraph.GetNode(5,7), _testGraph.GetNode(6,8), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
-                    solver.Path
+                    new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(0,6), _testGraph.GetNode(0,7), _testGraph.GetNode(1,8), _testGraph.GetNode(2,9), _testGraph.GetNode(3,9), _testGraph.GetNode(4,9), _testGraph.GetNode(5,9), _testGraph.GetNode(6,9), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)},
+                solver.Path
                 );
-                Assert.AreEqual(12.0d, solver.PathCost);
+                Assert.AreEqual(15.0d, solver.PathCost);
             });
         }
         
