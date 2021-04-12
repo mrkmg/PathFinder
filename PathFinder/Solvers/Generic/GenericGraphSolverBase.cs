@@ -20,7 +20,7 @@ namespace PathFinder.Solvers.Generic
             Destination = destination;
             CurrentMetaData = new GraphNodeMetaData<T>(origin, 0) {ToCost = origin.EstimatedCostTo(Destination)};
             _closest = CurrentMetaData;
-            _lastGraphNodeid = 1;
+            _lastGraphNodeId = 1;
             Comparer = comparer;
             OpenNodes = new SortedSet<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
         }
@@ -81,7 +81,7 @@ namespace PathFinder.Solvers.Generic
         private IList<T> _path;
         private GraphNodeMetaData<T> _closest;
         private double? _cost;
-        private long _lastGraphNodeid;
+        private long _lastGraphNodeId;
 
         private int _remainingTicks;
         
@@ -133,7 +133,7 @@ namespace PathFinder.Solvers.Generic
         protected GraphNodeMetaData<T> GetMeta(T node)
         {
             if (Meta.TryGetValue(node, out var meta)) return meta;
-            meta = new GraphNodeMetaData<T>(node, _lastGraphNodeid++)
+            meta = new GraphNodeMetaData<T>(node, _lastGraphNodeId++)
             {
                 ToCost = node.EstimatedCostTo(Destination),
                 FromCost = CurrentMetaData.FromCost + CurrentMetaData.Node.RealCostTo(node),
@@ -180,7 +180,7 @@ namespace PathFinder.Solvers.Generic
 
         private double GetCost()
         {
-            if (State != SolverState.Success) return 0;
+            if (State != SolverState.Success) return -1;
             if (_cost.HasValue) return _cost.Value;
             
             _cost = 0d;
