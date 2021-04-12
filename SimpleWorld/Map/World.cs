@@ -77,6 +77,7 @@ namespace SimpleWorld.Map
 
                     var point = Math.Pow(hillsNoiseMap.GetValue(x, y) + 1f, 3) / 8;
                     point *= 3f;
+                    point = Math.Min(3, Math.Max(0, point));
                     _allNodes[x][y] = new Position(this, x, y, (int) Math.Round(point) + 1);
                 }
             }
