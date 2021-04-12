@@ -143,7 +143,6 @@ namespace PathFinderGui
             {
                 Reset();
                 _world.CanCutCorner = _canCornerCut.Checked ?? false;
-                _world.CornerIsFree = _showSearchCheckbox.Checked ?? false;
 
                 IGraphSolver<Position> graphSolver = _solverSelector.Text switch
                 {
