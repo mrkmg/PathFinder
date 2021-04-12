@@ -1,23 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Timers;
 using Eto.Drawing;
 using Eto.Forms;
 using PathFinder.Solvers;
 using PathFinder.Solvers.Generic;
+using PathFinderGui.Widgets;
 using SimpleWorld.Map;
 
 namespace PathFinderGui
 {
     /**
-     * TODO - Separate into individual components (Map, Options, Stats)
+     * TODO - Separate into individual components
      *        MainForm - running the solver and delegating updates
      *        Map - drawing the map
      *        Options - all inputs
-     *        Stats - the stats
      **/
     public partial class MainForm
     {
@@ -25,16 +21,10 @@ namespace PathFinderGui
         private World _world;
         private Position _startPoint;
         private Position _endPoint;
-        private double _lastTpf;
-        private double _lastTps;
-        private double _lastFps;
-        private Stopwatch _frameStopwatch;
-        private Stopwatch _overallStopwatch;
-        private IGraphSolver<Position> _graphSolver;
-        private IList<Position> _lastBestPath;
+        private FrameData _lastFrameData;
 
-        private UiEventDebouncer<EventArgs> _scaleSelectorChangedDebounce;
-        private UiEventDebouncer<EventArgs> _moveCostSelectorChangedDebounce;
+        private readonly UiEventDebouncer<EventArgs> _scaleSelectorChangedDebounce;
+        private readonly UiEventDebouncer<EventArgs> _moveCostSelectorChangedDebounce;
 
         public MainForm()
         {
@@ -42,29 +32,29 @@ namespace PathFinderGui
             InitUi();
 
             _timer = new UITimer {Interval = 1d / 20};
-            _timer.Elapsed += (sender, args) => ProcessFrame();
+            _timer.Elapsed += (_, _) => ProcessFrame();
             
             _scaleSelectorChangedDebounce = new UiEventDebouncer<EventArgs>(250);
             _moveCostSelectorChangedDebounce = new UiEventDebouncer<EventArgs>(250);
             
-            Load += (sender, args) => Content.Height = Height;
-            Closed += (sender, args) => KillRunning();
+            Load += (_, _) => Content.Height = Height;
+            Closed += (_, _) => KillRunning();
             KeyUp += CheckKeyupForExit;
 
             _solverSelector.DataStore = new []{"AStar", "Greedy", "Breadth First"};
             _solverSelector.Text = "AStar";
             _solverSelector.ReadOnly = true;
             
-            _bitmapWidget.BackgroundColor = Colors.Black;
-            _bitmapWidget.IsReady += OnBitmapWidgetIsReady;
-            _bitmapWidget.MouseUp += OnBitmapWidgetMouseUp;
+            _mapWidget.BackgroundColor = Colors.Black;
+            _mapWidget.IsReady += OnMapWidgetIsReady;
+            _mapWidget.MouseUp += OnBitmapWidgetMouseUp;
             
             _solverSelector.TextChanged += OnSolverSelectorChanged;
             
             _newWorld.Click += OnNewWorldClick;
             _newPoints.Click += OnNewPointsClick;
             _go.Click += OnGoClick;
-            _stopButton.Click += OnStopButtonClick;
+            _pauseButton.Click += OnPauseButtonClick;
             _resetSolverButton.Click += OnResetButtonClick;
             
             _delayStepper.ValueChanged += OnDelayStepperChanged;
@@ -83,15 +73,15 @@ namespace PathFinderGui
             Closed += OnClosed;
         }
 
-        private bool SetRandomPoints()
+        private void SetRandomPoints()
         {
-            if (_world == null) return false;
+            if (_world == null) return;
             
             var rnd = new Random(int.Parse(_pointsSeed.Text));
             var worldSize = Math.Sqrt(_world.XSize * _world.XSize + _world.YSize * _world.YSize);
             var targetSize = (int)(worldSize * 0.75);
                 
-            ClearMarkers();
+            _mapWidget.ClearMarkers(_startPoint, _endPoint);
             Position randomFromNode = null;
             Position randomToNode = null;
 
@@ -117,253 +107,91 @@ namespace PathFinderGui
             
             _startPoint = randomFromNode;
             _endPoint = randomToNode;
-            return true;
         }
 
         private void Reset()
         {
             KillRunning();
-            ClearRunning();
-            ClearPath();
+            _mapWidget.ClearRunning();
+            _mapWidget.ClearPath();
         }
 
         private void KillRunning()
         {
-            _lastBestPath = null;
-            _graphSolver = null;
-            
-            if (_timer != null)
-            {
-                _timer.Stop();
-            }
+            _timer?.Stop();
 
-            if (_runnerThread != null)
-            {
-                _runnerThread.Kill();
-                _runnerThread = null;
-            }
+            if (_runnerThread == null) return;
+            _runnerThread.Kill();
+            _runnerThread = null;
         }
 
         private void MakeWorld()
         {
             KillRunning();
-            if (_bitmapWidget.BitmapHeight == 0 || _bitmapWidget.BitmapWidth == 0) return;
-            _world = new World(_bitmapWidget.BitmapWidth, _bitmapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), _moveCostStepper.Value);
+            if (_mapWidget.BitmapHeight == 0 || _mapWidget.BitmapWidth == 0) return;
+            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), _moveCostStepper.Value);
             SetRandomPoints();
-            ClearPath();
-            ClearRunning();
-            DrawWorld();
+            _mapWidget.ClearPath();
+            _mapWidget.ClearRunning();
+            _mapWidget.DrawWorld(_world);
         }
 
         private void Go()
         {
             if (_world == null) return;
-            if (_graphSolver == null)
+            if (_runnerThread == null)
             {
                 Reset();
                 _world.CanCutCorner = _canCornerCut.Checked ?? false;
                 _world.CornerIsFree = _showSearchCheckbox.Checked ?? false;
 
-                switch (_solverSelector.Text)
+                IGraphSolver<Position> graphSolver = _solverSelector.Text switch
                 {
-                    case "AStar":
-                        _graphSolver = new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value);
-                        break;
-                    case "Greedy":
-                        _graphSolver = new Greedy<Position>(_startPoint, _endPoint);
-                        break;
-                    case "Breadth First":
-                        _graphSolver = new BreadthFirst<Position>(_startPoint, _endPoint);
-                        break;
-                    default:
-                        throw new ArgumentException("Unknown GraphSolver");
-                }
+                    "AStar" => new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value),
+                    "Greedy" => new Greedy<Position>(_startPoint, _endPoint),
+                    "Breadth First" => new BreadthFirst<Position>(_startPoint, _endPoint),
+                    _ => throw new ArgumentException("Unknown GraphSolver")
+                };
 
-                _frameStopwatch = new Stopwatch();
-                _overallStopwatch = new Stopwatch();
-                _runnerThread = new SolverRunnerThread {GraphSolver = _graphSolver, Delay = (int) _delayStepper.Value};
-                _lastFps = 0;
-                _lastTpf = 0;
-                _lastTps = 0;
+                _runnerThread = new SolverRunnerThread {GraphSolver = graphSolver, Delay = (int) _delayStepper.Value};
             }
-
+            
             _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
-            _frameStopwatch.Start();
-            _overallStopwatch.Start();
             _runnerThread.Start();
             _timer.Start();
         }
 
         private void ProcessFrame()
         {
-            switch (_graphSolver.State)
+            var frameData = _runnerThread.GetFrameData();
+            switch (frameData.State)
             {
                 case SolverState.Waiting:
                 case SolverState.Running:
-                    UpdateRunningStats();
+                    _statsWidget.UpdateRunningStats(frameData);
                     if (_showSearchCheckbox.Checked != null && _showSearchCheckbox.Checked.Value)
-                        DrawRunning();
-                    _frameStopwatch.Restart();
+                        _mapWidget.DrawRunning(frameData);
                     break;
                 case SolverState.Success:
-                    _frameStopwatch.Stop();
-                    _overallStopwatch.Stop();
-                    UpdateSuccessStats();
-                    ClearRunning();
-                    DrawPath();
+                    _statsWidget.UpdateSuccessStats(frameData);
+                    
+                    _mapWidget.ClearRunning();
+                    _mapWidget.DrawPath(frameData.Path);
                     KillRunning();
                     break;
                 case SolverState.Failure:
-                    UpdateFailureStats();
+                    
+                    _statsWidget.UpdateFailureStats(frameData);
+                    
                     KillRunning();
                     break;
                 default:
                     KillRunning();
                     throw new ArgumentOutOfRangeException();
             }
-        }
 
-        private void UpdateRunningStats()
-        {
-            var frameTime = _frameStopwatch.Elapsed.TotalSeconds;
-            _lastFps = (1 / frameTime) * 0.1d + _lastFps * 0.9d;
-            _lastTps = _graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds;
-            _tpf.Text = _graphSolver.State == SolverState.Waiting ? "Waiting" : $"TPF: {_lastTpf:N0}";
-            _tps.Text = $"TPS: {_lastTps:N0}";
-            _fps.Text = $"FPS: {_lastFps:N0}";
-            _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
-            _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
+            _lastFrameData = frameData;
         }
-
-        private void UpdateSuccessStats()
-        {
-            _tpf.Text = "Path Found";
-            _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-            _tps.Text =
-                $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2} ({_graphSolver.ClosedCount:N0})";
-            // SolverState.Success ensures this is set
-            // ReSharper disable once PossibleNullReferenceException
-            _openPoints.Text = $"Path Length {_runnerThread.GraphSolver.Path.Count:N0}";
-            _closedPoints.Text = $"Path Cost: {_graphSolver.PathCost:N2}";
-        }
-
-        private void UpdateFailureStats()
-        {
-            _tpf.Text = $"Failed to find a path";
-            _fps.Text = $"Time: {_overallStopwatch.Elapsed.TotalSeconds:N3}";
-            _tps.Text = $"TPS: {_graphSolver.ClosedCount / _overallStopwatch.Elapsed.TotalSeconds:N2}";
-            _openPoints.Text = $"Open Points: {_graphSolver.OpenCount:N0}";
-            _closedPoints.Text = $"Closed Points: {_graphSolver.ClosedCount:N0}";
-        }
-
-        private IEnumerable<DrawPoint> BestPathDiff(IEnumerable<Position> newBestPath)
-        {
-            var i = -1;
-            foreach (var position in newBestPath)
-            {
-                i++;
-                
-                if (i >= _lastBestPath.Count)
-                {
-                    yield return position.AsPathDrawPoint();
-                    continue;
-                }
-                
-                if (_lastBestPath[i].Equals(position))
-                {
-                    continue;
-                }
-
-                yield return _lastBestPath[i].AsSearchDrawPoint();
-                yield return position.AsPathDrawPoint();
-            }
-            while (++i < _lastBestPath.Count)
-                yield return _lastBestPath[i].AsSearchDrawPoint();
-        }
-
-        #region Drawing
-
-        private void ClearWorld()
-        {
-            _bitmapWidget.ClearLayer(0);
-        }
-        
-        private void DrawWorld()
-        {
-            if (_world == null) return;
-            _bitmapWidget.DrawAll(0, _world.GetAllNodes().AsMapDrawPoints());
-            DrawMarkers();
-        }
-
-        private void ClearRunning()
-        {
-            _bitmapWidget.ClearLayer(1);
-        }
-
-        private void DrawRunning()
-        {
-            var (recentlyCheckedPoints, currentBestPath) = _runnerThread.GetFrameData();
-            _lastTpf = recentlyCheckedPoints.Count * 0.1d + _lastTpf * 0.9d;
-            _bitmapWidget.DrawAll(1,recentlyCheckedPoints.AsSearchDrawPoints());
-            _bitmapWidget.DrawAll(1,_lastBestPath != null
-                ? BestPathDiff(currentBestPath)
-                : currentBestPath.AsPathDrawPoints());
-            _lastBestPath = currentBestPath;
-        }
-
-        private void ClearMarkers()
-        {
-            if (_startPoint != null)
-            {
-                var p = _startPoint
-                    .ToMarkerPoints(10 / _bitmapWidget.Scale)
-                    .Where(IsPointInBitmap)
-                    .Select(xy => new DrawPoint(xy.x, xy.y, Colors.Transparent));
-                _bitmapWidget.DrawAll(2, p);
-            }
-            if (_endPoint != null)
-            {
-                var p = _endPoint
-                    .ToMarkerPoints(10 / _bitmapWidget.Scale)
-                    .Where(IsPointInBitmap)
-                    .Select(xy => new DrawPoint(xy.x, xy.y, Colors.Transparent));
-                _bitmapWidget.DrawAll(2, p);
-            }
-        }
-
-        private void DrawMarkers()
-        {
-            var p1 = _startPoint
-                .ToMarkerPoints(10 / _bitmapWidget.Scale)
-                .Where(IsPointInBitmap)
-                .Select(xy => xy.AsMarkerDrawPoint());
-                    
-                _bitmapWidget.DrawAll(2, p1);
-                
-            var p2 = _endPoint
-                .ToMarkerPoints(10 / _bitmapWidget.Scale)
-                .Where(IsPointInBitmap)
-                .Select(xy => xy.AsMarkerDrawPoint());
-                
-            _bitmapWidget.DrawAll(2, p2);
-        }
-
-        private bool IsPointInBitmap((int x, int y) xy)
-        {
-            return xy.x > 0 && xy.x < _bitmapWidget.BitmapWidth && xy.y > 0 && xy.y < _bitmapWidget.BitmapHeight;
-        }
-
-        private void ClearPath()
-        {
-            _bitmapWidget.ClearLayer(3);
-        }
-        
-        private void DrawPath()
-        {
-            _bitmapWidget.DrawAll(3, _runnerThread.GraphSolver.Path.AsPathDrawPoints());
-        }
-
-        #endregion
 
         #region EventHandlers
 
@@ -372,16 +200,16 @@ namespace PathFinderGui
             if (e.Key != Keys.Enter && e.Key != Keys.Tab) return;
             if (!int.TryParse(_pointsSeed.Text, out _)) return;
             KillRunning();
-            ClearMarkers();
+            _mapWidget.ClearMarkers(_startPoint, _endPoint);
             SetRandomPoints();
-            DrawMarkers();
+            _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
 
         private void OnWorldSeedChanged(object sender, KeyEventArgs e)
         {
             if (e.Key != Keys.Enter && e.Key != Keys.Tab) return;
             if (!int.TryParse(_worldSeed.Text, out _)) return;
-            _bitmapWidget.Clear();
+            _mapWidget.Clear();
             Application.Instance.RunIteration();
             MakeWorld();
         }
@@ -394,21 +222,19 @@ namespace PathFinderGui
 
         private void OnResetButtonClick(object sender, EventArgs e)
         {
-            if (_graphSolver is AStar<Position> solver)
+            if (_runnerThread is {GraphSolver: AStar<Position> solver})
                 solver.Reset();
         }
 
-        private void OnStopButtonClick(object sender, EventArgs e)
+        private void OnPauseButtonClick(object sender, EventArgs e)
         {
-            _graphSolver?.Stop();
-            if (_runnerThread != null)
+            if (_runnerThread is {GraphSolver: AStar<Position> solver})
             {
+                solver.Stop();
                 _runnerThread.Kill();
-                DrawRunning();
+                _mapWidget.DrawRunning(_lastFrameData);
             }
             _timer.Stop();
-            _frameStopwatch.Stop();
-            _overallStopwatch.Stop();
         }
 
         private void OnClosed(object sender, EventArgs args)
@@ -435,7 +261,7 @@ namespace PathFinderGui
             }
         }
 
-        private void OnBitmapWidgetIsReady(object sender, EventArgs args) => MakeWorld();
+        private void OnMapWidgetIsReady(object sender, EventArgs args) => MakeWorld();
 
         private void OnMoveCostSelectorChanged(object sender, EventArgs args)
         {
@@ -449,7 +275,7 @@ namespace PathFinderGui
         private void OnScaleSelectorChanged(object sender, EventArgs args)
         {
             KillRunning();
-            _bitmapWidget.ChangeScale((int)_scaleStepper.Value);
+            _mapWidget.ChangeScale((int)_scaleStepper.Value);
         }
 
         private void OnDelayStepperChanged(object sender, EventArgs args)
@@ -459,7 +285,7 @@ namespace PathFinderGui
 
         private void OnGreedSelectorChanged(object sender, EventArgs args)
         {
-            if (_graphSolver != null && _graphSolver is AStar<Position> solver)
+            if (_runnerThread is {GraphSolver: AStar<Position> solver})
                 solver.GreedFactor = _greedStepper.Value;
         }
 
@@ -467,21 +293,21 @@ namespace PathFinderGui
 
         private void OnNewPointsClick(object sender, EventArgs args)
         {
-            _pointsSeed.Text = (new Random()).Next(10000, 99999).ToString();
+            _pointsSeed.Text = new Random().Next(10000, 99999).ToString();
             KillRunning();
-            ClearMarkers();
+            _mapWidget.ClearMarkers(_startPoint, _endPoint);
             SetRandomPoints();
-            DrawMarkers();
+            _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
 
         private void OnNewWorldClick(object sender, EventArgs args)
         {
-            _worldSeed.Text = (new Random()).Next(10000, 99999).ToString();
-            _bitmapWidget.Clear();
+            _worldSeed.Text = new Random().Next(10000, 99999).ToString();
+            _mapWidget.Clear();
             Application.Instance.RunIteration();
-            ClearMarkers();
+            _mapWidget.ClearMarkers(_startPoint, _endPoint);
             MakeWorld();
-            DrawMarkers();
+            _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
 
         private void CheckKeyupForExit(object sender, KeyEventArgs args)
@@ -496,15 +322,15 @@ namespace PathFinderGui
 
             if (args.Buttons == MouseButtons.Primary)
             {
-                ClearMarkers();
+                _mapWidget.ClearMarkers(_startPoint, _endPoint);
                 _startPoint = position;
-                DrawMarkers();
+                _mapWidget.DrawMarkers(_startPoint, _endPoint);
             }
             else
             {
-                ClearMarkers();
+                _mapWidget.ClearMarkers(_startPoint, _endPoint);
                 _endPoint = position;
-                DrawMarkers();
+                _mapWidget.DrawMarkers(_startPoint, _endPoint);
             }
 
             if (_runnerThread != null)
@@ -515,81 +341,17 @@ namespace PathFinderGui
 
         #endregion
     }
-    
-    internal static class MainFormExtensions
-    {
-        internal static Color GetColorForLevel(int level)
-        {
-            const int redStart = 0;
-            const int redDiff = 0;
-            const int greenStart = 200;
-            const int greenDiff = -180;
-            const int blueStart = 0;
-            const int blueDiff = 0;
-            var levelAmount = (level - 1) / 4d;
-
-            return Color.FromArgb(redStart + (int)(levelAmount * redDiff), greenStart + (int)(levelAmount * greenDiff), blueStart + (int)(levelAmount * blueDiff));
-        }
-        
-        internal static IEnumerable<DrawPoint> AsMapDrawPoints(this IEnumerable<Position> positions)
-        {
-            return positions.Select(AsMapDrawPoint);
-        }
-
-        internal static IEnumerable<DrawPoint> AsSearchDrawPoints(this IEnumerable<Position> positions)
-        {
-            return positions.Where(p => p != null).Select(AsSearchDrawPoint);
-        }
-        
-        internal static IEnumerable<DrawPoint> AsPathDrawPoints(this IEnumerable<Position> positions)
-        {
-            return positions.Where(p => p != null).Select(AsPathDrawPoint);
-        }
-
-        internal static DrawPoint AsPathDrawPoint(this Position p)
-        {
-            return new DrawPoint {X = p.X, Y = p.Y, Color = Color.Blend(GetColorForLevel(p.Z), Color.FromArgb(255, 0, 0, 200))};
-        }
-
-        internal static DrawPoint AsSearchDrawPoint(this Position p)
-        {
-            return new DrawPoint {X = p.X, Y = p.Y, Color = Color.Blend(GetColorForLevel(p.Z), Color.FromArgb(0, 0, 255, 80))};
-        }
-
-        internal static DrawPoint AsMapDrawPoint(this Position p)
-        {
-            return new DrawPoint {Color = GetColorForLevel(p.Z), X = p.X, Y = p.Y};
-        }
-
-        internal static IEnumerable<(int x, int y)> ToMarkerPoints(this Position position, int size)
-        {
-            for (var i = 0; i <= size; i++)
-            {
-                
-                yield return (position.X + i, position.Y + i);
-                yield return (position.X + i, position.Y - i);
-                yield return (position.X - i, position.Y + i);
-                yield return (position.X - i, position.Y - i);
-            }
-        }
-
-        internal static DrawPoint AsMarkerDrawPoint(this (int x, int y) xy)
-        {
-            var (x, y) = xy;
-            return new DrawPoint {X = x, Y = y, Color = Colors.Red};
-        }
-    }
 
     public class UiEventDebouncer<T> : IDisposable where T : class
     {
         public event EventHandler<T> Fired;
-        private readonly System.Timers.Timer _timer;
+        private readonly Timer _timer;
         private T _lastArgs;
         private object _lastSender;
         
         public UiEventDebouncer(double timeMs)
         {
-            _timer = new System.Timers.Timer(timeMs)
+            _timer = new Timer(timeMs)
             {
                 AutoReset = false,
                 Enabled = false

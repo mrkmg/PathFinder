@@ -1,18 +1,15 @@
 using System;
 using Eto.Forms;
 using Eto.Drawing;
+using PathFinderGui.Widgets;
 
 namespace PathFinderGui
 {
     public partial class MainForm : Form
     {
         private readonly UITimer _timer;
-        private LayeredBitmapWidget _bitmapWidget;
-        private Label _tpf;
-        private Label _fps;
-        private Label _tps;
-        private Label _openPoints;
-        private Label _closedPoints;
+        private MapWidget _mapWidget;
+        
         private NumericStepper _greedStepper;
         private NumericStepper _scaleStepper;
         private NumericStepper _delayStepper;
@@ -24,27 +21,27 @@ namespace PathFinderGui
         private Button _newWorld;
         private Button _newPoints;
         private Button _resetSolverButton;
-        private Button _stopButton;
+        private Button _pauseButton;
         private TextBox _worldSeed;
         private TextBox _pointsSeed;
+        private StatsWidget _statsWidget;
 
         private void InitUi()
         {
             Title = "Path Finder Tester";
             ClientSize = new Size(750, 550);
-            // WindowStyle = WindowStyle.None;
 
             _worldSeed = new TextBox {Text = new Random().Next(10000, 99999).ToString(), Width = 90};
             _pointsSeed = new TextBox {Text = new Random().Next(10000, 99999).ToString(), Width = 90};
 
-            _moveCostStepper = new NumericStepper()
+            _moveCostStepper = new NumericStepper
             {
                 Value = 1.0,
                 Width = 60,
                 MinValue = 0.1,
                 MaxValue = 8,
                 Increment = 0.1,
-                DecimalPlaces = 1,
+                DecimalPlaces = 1
             };
 
             _greedStepper = new NumericStepper
@@ -53,7 +50,7 @@ namespace PathFinderGui
                 MinValue = 0,
                 Increment = 0.05,
                 DecimalPlaces = 2,
-                Value = 1,
+                Value = 1
             };
 
             _scaleStepper = new NumericStepper
@@ -61,10 +58,10 @@ namespace PathFinderGui
                 Width = 60,
                 MinValue = 1,
                 MaxValue = 8,
-                Value = 1,
+                Value = 1
             };
 
-            _delayStepper = new NumericStepper()
+            _delayStepper = new NumericStepper
             {
                 MinValue = 0,
                 MaxValue = 10000,
@@ -74,16 +71,12 @@ namespace PathFinderGui
 
             _solverSelector = new ComboBox();
 
-            _tpf = new Label {Text = "TPF: N/A"};
-            _tps = new Label {Text = "TPS: N/A"};
-            _fps = new Label {Text = "FPS: N/A"};
-            _openPoints = new Label {Text = "Open Points: N/A"};
-            _closedPoints = new Label {Text = "Closed Points: N/A"};
             
             _canCornerCut = new CheckBox {Checked = true};
             _showSearchCheckbox = new CheckBox {Checked = true};
             
-            _bitmapWidget = new LayeredBitmapWidget(1, 4);
+            _mapWidget = new MapWidget();
+            _statsWidget = new StatsWidget();
 
             _newPoints = new Button
             {
@@ -109,14 +102,14 @@ namespace PathFinderGui
                 Width = 60
             };
 
-            _stopButton = new Button
+            _pauseButton = new Button
             {
-                Text = "Stop",
+                Text = "Pause",
                 Width = 60
             };
 
-            StackLayoutItem HStretched(Control c) =>
-                new StackLayoutItem {Control = c, HorizontalAlignment = HorizontalAlignment.Stretch};
+            static StackLayoutItem HStretched(Control c) =>
+                new() {Control = c, HorizontalAlignment = HorizontalAlignment.Stretch};
             
             Content = new StackLayout
             {
@@ -124,7 +117,7 @@ namespace PathFinderGui
                 Items =
                 {
                     new StackLayoutItem {
-                        Control = _bitmapWidget,
+                        Control = _mapWidget,
                         VerticalAlignment = VerticalAlignment.Stretch,
                         Expand = true
                     },
@@ -176,17 +169,13 @@ namespace PathFinderGui
                             HStretched(_solverSelector),
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
-                                Items = {_go, _stopButton, _resetSolverButton}
+                                Items = {_go, _pauseButton, _resetSolverButton}
                             },
                             HStretched(_delayStepper),
-                            HStretched(_tpf),
-                            HStretched(_tps),
-                            HStretched(_fps),
-                            HStretched(_openPoints),
-                            HStretched(_closedPoints)
+                            HStretched(_statsWidget)
                         }
                     }
-                },
+                }
             };
         }
 
