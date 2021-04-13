@@ -3,15 +3,15 @@ using System.Diagnostics;
 
 namespace PathFinder.Solvers.Generic
 {
-    public sealed class Greedy<T> : GenericGraphSolverBase<T> where T : ITraversableGraphNode<T>
+    public sealed class Greedy<T> : SolverBase<T> where T : ITraversableGraphNode<T>
     {
         /// <summary>
         ///     Finds a path between the origin and destination node.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to calculate the cos</param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null)
         {
             var solver = new Greedy<T>(origin, destination, traverser);
@@ -23,9 +23,9 @@ namespace PathFinder.Solvers.Generic
         /// <summary>
         ///     Creates a solver using the Greedy method.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
-        /// <param name="traverser"><see cref="INodeTraverser{T}"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public Greedy(T origin, T destination, INodeTraverser<T> traverser = null) 
             : base(new NodeMetaComparer(), origin, destination, traverser) { }
 

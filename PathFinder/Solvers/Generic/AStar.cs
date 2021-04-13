@@ -7,24 +7,24 @@ namespace PathFinder.Solvers.Generic
     public static class AStar
     {
         /// <summary>
-        ///     Finds a path between the origin and destination node.
+        ///     Finds a path between the origin and destination node using the AStar method.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to calculate the cost</param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public static SolverState Solve<T>(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null) 
             where T : ITraversableGraphNode<T> 
             => AStar<T>.Solve(origin, destination, out path, traverser);
 
         /// <summary>
-        ///     Finds a path between the origin and destination node.
+        ///     Finds a path between the origin and destination node using the AStar method.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to calculate the cost</param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public static SolverState Solve<T>(T origin, T destination, double greedFactor, out IList<T> path, INodeTraverser<T> traverser = null)
             where T : ITraversableGraphNode<T>
             => AStar<T>.Solve(origin, destination, greedFactor, out path, traverser);
@@ -34,15 +34,15 @@ namespace PathFinder.Solvers.Generic
     /// A* is a graph solver to find the cheapest path between two nodes which
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public sealed class AStar<T> : GenericGraphSolverBase<T> where T : ITraversableGraphNode<T>
+    public sealed class AStar<T> : SolverBase<T> where T : ITraversableGraphNode<T>
     {
         /// <summary>
-        ///     Finds a path between the origin and destination node.
+        ///     Finds a path between the origin and destination node using the AStar method.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to calculate the cost</param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null)
         {
             var solver = new AStar<T>(origin, destination, traverser);
@@ -52,13 +52,13 @@ namespace PathFinder.Solvers.Generic
         }
         
         /// <summary>
-        ///     Finds a path between the origin and destination node.
+        ///     Finds a path between the origin and destination node using the AStar method.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to calculate the cost</param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public static SolverState Solve(T origin, T destination, double greedFactor, out IList<T> path, INodeTraverser<T> traverser = null)
         {
             var solver = new AStar<T>(origin, destination, greedFactor, traverser);
@@ -68,21 +68,21 @@ namespace PathFinder.Solvers.Generic
         }
 
         /// <summary>
-        ///     Creates a solver using the Greedy method.
+        ///     Creates a solver using the AStar method.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
-        /// <param name="traverser"><see cref="INodeTraverser{T}"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public AStar(T origin, T destination, INodeTraverser<T> traverser = null) 
             : base(new NodeMetaComparer(), origin, destination, traverser) { }
 
         /// <summary>
-        ///     Creates a solver using the Greedy method.
+        ///     Creates a solver using the AStar method.
         /// </summary>
-        /// <param name="origin"><see cref="GenericGraphSolverBase{T}.Origin"/></param>
-        /// <param name="destination"><see cref="GenericGraphSolverBase{T}.Destination"/></param>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to calculate the cost</param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public AStar(T origin, T destination, double greedFactor, INodeTraverser<T> traverser = null)
             : base(new NodeMetaComparer(), origin, destination, traverser)
         {

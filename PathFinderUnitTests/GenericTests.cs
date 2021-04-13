@@ -27,7 +27,6 @@ namespace PathFinderUnitTests
             var solver = new AStar<TestGraphNode>(_start, _end);
             solver.Start();
             Assert.NotNull(solver.Path);
-            DumpPath(solver.Path);
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
@@ -44,7 +43,6 @@ namespace PathFinderUnitTests
             var solver = new AStar<TestGraphNode>(_start, _end, 0);
             solver.Start();
             Assert.NotNull(solver.Path);
-            DumpPath(solver.Path);
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
@@ -77,10 +75,8 @@ namespace PathFinderUnitTests
             var solver = new BreadthFirst<TestGraphNode>(_start, _end);
             solver.Start();
             Assert.NotNull(solver.Path);
-            DumpPath(solver.Path);
             Assert.Multiple(() =>
             {
-                
                 CollectionAssert.AreEqual(
                     new List<TestGraphNode> {_testGraph.GetNode(0,1), _testGraph.GetNode(0,2), _testGraph.GetNode(0,3), _testGraph.GetNode(0,4), _testGraph.GetNode(0,5), _testGraph.GetNode(0,6), _testGraph.GetNode(0,7), _testGraph.GetNode(1,8), _testGraph.GetNode(2,9), _testGraph.GetNode(3,8), _testGraph.GetNode(4,7), _testGraph.GetNode(5,6), _testGraph.GetNode(6,6), _testGraph.GetNode(7,7), _testGraph.GetNode(8,8), _testGraph.GetNode(9,9)}, 
                     solver.Path
@@ -105,13 +101,16 @@ namespace PathFinderUnitTests
             });
         }
 
+        /// <summary>
+        /// Used to assist in creating tests. Outputs to the test runner the path that can be pasted into CollectionAssert.
+        /// </summary>
+        /// <param name="nodes"></param>
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private static void DumpPath(IEnumerable<TestGraphNode> nodes)
         {
             TestContext.Write("new List<TestGraphNode> {");
             TestContext.Write(string.Join(", ", nodes.Select(n => $"_testGraph.GetNode({n.X},{n.Y})")));
             TestContext.Write("}");
-
         }
     }
 }

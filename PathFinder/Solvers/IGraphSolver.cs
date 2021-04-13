@@ -72,7 +72,6 @@ namespace PathFinder.Solvers
         /// </summary>
         double PathCost { get; }
         
-        
         /// <summary>
         ///     Stop the current solver.
         /// </summary>

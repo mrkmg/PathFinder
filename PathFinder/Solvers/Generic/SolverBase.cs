@@ -11,18 +11,18 @@ namespace PathFinder.Solvers.Generic
     /// TODO
     /// </summary>
     /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
-    public abstract class GenericGraphSolverBase<T> : IGraphSolver<T> where T : ITraversableGraphNode<T>
+    public abstract class SolverBase<T> : IGraphSolver<T> where T : ITraversableGraphNode<T>
     {
-        protected GenericGraphSolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination, INodeTraverser<T> traverser = null)
+        protected SolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination, INodeTraverser<T> traverser = null)
         {
             Origin = origin;
             Destination = destination;
-            _lastGraphNodeId = 1;
             Comparer = comparer;
             Traverser = traverser ?? new DefaultTraverser<T>();
             CurrentMetaData = new GraphNodeMetaData<T>(origin, 0) {ToCost = Traverser.EstimatedCost(origin, Destination)};
-            _closest = CurrentMetaData;
             OpenNodes = new SortedSet<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
+            _closest = CurrentMetaData;
+            _lastGraphNodeId = 1;
         }
         
         /// <inheritdoc cref="IGraphSolver{T}.Open"/>
@@ -156,7 +156,6 @@ namespace PathFinder.Solvers.Generic
                 var neighborMetaData = GetMeta((T) neighbor);
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
                 if (CurrentMetaData.Equals(neighborMetaData)) continue;
-                if (!Traverser.CanTraverse(Current, neighborMetaData.Node)) continue;
                 ProcessNeighbor(neighborMetaData);
                 if (!neighbor.Equals(Destination)) continue;
                 State = SolverState.Success;
@@ -213,7 +212,6 @@ namespace PathFinder.Solvers.Generic
         public double EstimatedCost(T from, T to) => from.EstimatedCostTo(to);
         public double RealCost(T from, T to) => from.RealCostTo(to);
         public IEnumerable<T> TraversableNodes(T sourceNode) => sourceNode.GetReachableNodes();
-        public bool CanTraverse(T from, T to) => true;
     }
     
     public enum NodeStatus

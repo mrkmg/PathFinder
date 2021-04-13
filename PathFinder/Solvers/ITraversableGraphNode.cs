@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PathFinder.Solvers.Generic
+namespace PathFinder.Solvers
 {
     /// <summary>
     /// The interface needed for any nodes in a graph to be searched through

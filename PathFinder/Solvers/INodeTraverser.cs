@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using PathFinder.Solvers.Generic;
 
 namespace PathFinder.Solvers
 {
@@ -7,7 +6,6 @@ namespace PathFinder.Solvers
     {
         double EstimatedCost(T fromNode, T toNode);
         double RealCost(T fromNode, T toNode);
-        bool CanTraverse(T fromNode, T toNode);
         IEnumerable<T> TraversableNodes(T sourceNode);
     }
 }

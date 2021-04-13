@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using PathFinder.Solvers.Generic;
+using PathFinder.Solvers;
 
 namespace SimpleWorld.Map
 {

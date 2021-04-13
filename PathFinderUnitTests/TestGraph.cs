@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using PathFinder.Solvers.Generic;
+using PathFinder.Solvers;
 
 namespace PathFinderUnitTests
 {
@@ -65,7 +65,7 @@ namespace PathFinderUnitTests
         }
         public bool Equals(TestGraphNode other)
         {
-            return other != null && X == other.X && Y == other.Y;
+            return X == other.X && Y == other.Y;
         }
 
         public override bool Equals(object? obj)
