@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using PathFinder.Graphs;
 
 namespace PathFinder.Solvers.Generic
 {
@@ -153,7 +154,7 @@ namespace PathFinder.Solvers.Generic
             foreach (var neighbor in neighbors)
             {
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
-                var neighborMetaData = GetMeta((T) neighbor);
+                var neighborMetaData = GetMeta(neighbor);
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
                 if (CurrentMetaData.Equals(neighborMetaData)) continue;
                 ProcessNeighbor(neighborMetaData);
@@ -207,13 +208,6 @@ namespace PathFinder.Solvers.Generic
         }
     }
 
-    internal class DefaultTraverser<T> : INodeTraverser<T> where T : ITraversableGraphNode<T>
-    {
-        public double EstimatedCost(T from, T to) => from.EstimatedCostTo(to);
-        public double RealCost(T from, T to) => from.RealCostTo(to);
-        public IEnumerable<T> TraversableNodes(T sourceNode) => sourceNode.GetReachableNodes();
-    }
-    
     public enum NodeStatus
     {
         New,

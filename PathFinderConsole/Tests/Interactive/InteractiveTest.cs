@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using PathFinder.Solvers;
 using PathFinder.Solvers.Generic;
 using PathFinderConsole.Sequencer;
 using SimpleWorld.Map;

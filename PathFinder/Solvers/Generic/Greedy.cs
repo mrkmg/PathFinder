@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using PathFinder.Graphs;
 
 namespace PathFinder.Solvers.Generic
 {

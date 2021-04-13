@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
-using PathFinder.Solvers;
+using PathFinder.Graphs;
 
 namespace PathFinderUnitTests
 {
@@ -51,7 +51,7 @@ namespace PathFinderUnitTests
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public IEnumerable<TestGraphNode> GetReachableNodes()
+        public IEnumerable<TestGraphNode> TraversableNodes()
         {
             var maxX = Math.Min(9, X + 1);
             var maxY = Math.Min(9, Y + 1);

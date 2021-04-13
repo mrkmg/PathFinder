@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using JetBrains.Annotations;
-using PathFinder.Solvers;
+using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
 namespace PathFinderGui

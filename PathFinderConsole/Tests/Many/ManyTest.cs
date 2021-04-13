@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using PathFinder.Solvers;
 using PathFinder.Solvers.Generic;
 using PathFinderConsole.Sequencer;
 using SimpleWorld.Map;

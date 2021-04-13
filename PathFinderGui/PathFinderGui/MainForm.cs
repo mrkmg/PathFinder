@@ -2,7 +2,6 @@ using System;
 using System.Timers;
 using Eto.Drawing;
 using Eto.Forms;
-using PathFinder.Solvers;
 using PathFinder.Solvers.Generic;
 using PathFinderGui.Widgets;
 using SimpleWorld.Map;

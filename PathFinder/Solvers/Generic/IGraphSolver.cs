@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace PathFinder.Solvers
+namespace PathFinder.Solvers.Generic
 {
     public interface IGraphSolver<T>
     {

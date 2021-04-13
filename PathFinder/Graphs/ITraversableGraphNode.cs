@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PathFinder.Solvers
+namespace PathFinder.Graphs
 {
     /// <summary>
     /// The interface needed for any nodes in a graph to be searched through
-    /// in via any the <c>PathFinder.Solvers.Generic</c> namespace.
+    /// via any the graph solvers in the <c>PathFinder.Solvers.Generic</c>
+    /// namespace.
     /// </summary>
     public interface ITraversableGraphNode<T> : IEquatable<T>
     {
@@ -32,6 +33,6 @@ namespace PathFinder.Solvers
         ///     Get nodes that are accessible from this node.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<T> GetReachableNodes();
+        IEnumerable<T> TraversableNodes();
     }
 }

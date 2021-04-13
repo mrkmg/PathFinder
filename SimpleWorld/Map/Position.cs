@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using PathFinder.Solvers;
+using PathFinder.Graphs;
 
 namespace SimpleWorld.Map
 {
@@ -35,7 +34,7 @@ namespace SimpleWorld.Map
             return Math.Sqrt(dX * dX + dY * dY);
         }
 
-        public IEnumerable<Position> GetReachableNodes()
+        public IEnumerable<Position> TraversableNodes()
         {
             for (var x = X-1; x <= X+1; x++)
             for (var y = Y-1; y <= Y+1; y++)
@@ -48,7 +47,7 @@ namespace SimpleWorld.Map
             }
         }
 
-        public bool Equals([CanBeNull] Position other) => other != null && X == other.X && Y == other.Y;
+        public bool Equals(Position other) => other != null && X == other.X && Y == other.Y;
         public override string ToString() => "Position: " + X + "::" + Y;
         public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (1427 + Y.GetHashCode());
     }
