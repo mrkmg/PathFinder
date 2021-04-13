@@ -127,13 +127,17 @@ namespace PathFinder.Solvers.Generic
         protected GraphNodeMetaData<T> GetMeta(T node)
         {
             if (Meta.TryGetValue(node, out var meta)) return meta;
+            var fromCost = Traverser.RealCost(CurrentMetaData.Node, node);
             meta = new GraphNodeMetaData<T>(node, _lastGraphNodeId++)
             {
                 ToCost = Traverser.EstimatedCost(node, Destination),
-                FromCost = CurrentMetaData.FromCost + Traverser.RealCost(CurrentMetaData.Node, node),
+                FromCost = CurrentMetaData.FromCost + fromCost,
                 Parent = CurrentMetaData
             };
             Meta.Add(node, meta);
+            // If the fromCost has a negative value, it is not actually traversable so
+            // close the node to prevent it from being searched further.
+            if (fromCost < 0) meta.Status = NodeStatus.Closed;
             return meta;
         }
         
