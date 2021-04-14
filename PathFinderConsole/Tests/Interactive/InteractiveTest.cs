@@ -27,7 +27,7 @@ namespace PathFinderConsole.Tests.Interactive
         public InteractiveTest()
         {
             _greedyFactors = 
-                Enumerable.Sequence(0d, 2d, 0.25d)
+                EnumerableExtensions.Sequence(0d, 2d, 0.25d)
                 .ToList();
         }
 

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
+// Extending enumerable to add Sequence
 namespace System.Linq
 {
-    public static partial class Enumerable
+    public static partial class EnumerableExtensions
     {
-        
         public static IEnumerable<sbyte> Sequence(sbyte end) => Sequence((sbyte)0, end, (sbyte)1);
         public static IEnumerable<sbyte> Sequence(sbyte start, sbyte end) => Sequence(start, end, start < end ? (sbyte)1 : (sbyte)-1);
         public static IEnumerable<sbyte> Sequence(sbyte start, sbyte end, sbyte inc)

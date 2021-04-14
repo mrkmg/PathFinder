@@ -11,7 +11,7 @@ namespace PathFinderConsole.Tests.Many
 {
     internal class ManyTest
     {
-        public IList<double> GreedyFactors = Enumerable.Sequence(0, 2, 0.25d).ToList();
+        public IList<double> GreedyFactors = EnumerableExtensions.Sequence(0, 2, 0.25d).ToList();
         
         public string OutputFile
         {
@@ -39,7 +39,7 @@ namespace PathFinderConsole.Tests.Many
         {
             WriteFileHeader();
 
-            Enumerable
+            EnumerableExtensions
                 // ReSharper disable once InconsistentlySynchronizedField
                 .Sequence(NumberOfTests)
                 .SelectMany(BuildTest)

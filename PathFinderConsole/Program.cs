@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using PathFinderConsole.Tests.Interactive;
 using PathFinderConsole.Tests.Many;
@@ -46,7 +45,7 @@ namespace PathFinderConsole
 
 
                     var greedyFactors =
-                        Enumerable.Sequence(0d, 2d, 0.25d)
+                        EnumerableExtensions.Sequence(0d, 2d, 0.25d)
                             .ToList();
                     Console.Write($"GreedFactor ({string.Join(", ", greedyFactors)})?");
                     var tInput = Console.ReadLine();
