@@ -8,30 +8,33 @@ namespace SimpleWorld.Map
     {
         public readonly int X;
         public readonly int Y;
-        public readonly int Z;
+        public readonly int Cost;
         public readonly World World;
 
-        public Position(World world, int x, int y, int z)
+        public Position(World world, int x, int y, int cost)
         {
             World = world;
             X = x;
             Y = y;
-            Z = z;
+            Cost = cost;
         }
 
-        public double RealCostTo(Position other)
-        {
-            var dX = other.X - X;
-            var dY = other.Y - Y;
-            return Math.Sqrt(dX * dX + dY * dY) * Math.Pow(Z, World.MoveCost);
+        public double RealCostTo(Position other) 
+            =>  (World.CanCutCorner ? StraightLineDistanceTo(other) : GridDistanceTo(other)) *
+                Math.Pow(Cost, World.MoveCost);
 
-        }
+        public double EstimatedCostTo(Position other) => GridDistanceTo(other);
 
-        public double EstimatedCostTo(Position other)
+        private double StraightLineDistanceTo(Position other)
         {
             var dX = other.X - X;
             var dY = other.Y - Y;
             return Math.Sqrt(dX * dX + dY * dY);
+        }
+
+        private double GridDistanceTo(Position other)
+        {
+            return Math.Max(Math.Abs(X - other.X), Math.Abs(Y - other.Y));
         }
 
         public IEnumerable<Position> TraversableNodes()
@@ -48,7 +51,7 @@ namespace SimpleWorld.Map
         }
 
         public bool Equals(Position other) => other != null && X == other.X && Y == other.Y;
-        public override string ToString() => "Position: " + X + "::" + Y;
+        public override string ToString() => $"Position<{Cost}>({X},{Y})";
         public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (1427 + Y.GetHashCode());
     }
 

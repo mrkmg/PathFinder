@@ -139,7 +139,7 @@ namespace PathFinderGui.Widgets
             => new(p.X, p.Y, Color.FromArgb(0, 0, 50, 100));
         
         internal static DrawPoint AsMapDrawPoint(this Position p) 
-            => new (p.X, p.Y, GetColorForLevel(p.Z));
+            => new (p.X, p.Y, GetColorForLevel(p.Cost));
 
         internal static IEnumerable<(int x, int y)> ToMarkerPoints(this Position position, int size)
         {

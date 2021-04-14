@@ -48,7 +48,7 @@ namespace PathFinderConsole.Tests.Interactive
             var node = _world.GetPosition(x, y);
             if (node != null)
             {
-                DrawPosition(x, y, GetWorldBackground(node.Z), GetWorldForeground(node.Z));
+                DrawPosition(x, y, GetWorldBackground(node.Cost), GetWorldForeground(node.Cost));
             }
             else
                 DrawPosition(x, y, ConsoleColor.Black, ConsoleColor.White);
@@ -93,7 +93,7 @@ namespace PathFinderConsole.Tests.Interactive
             Console.ForegroundColor = foreground;
             var node = _world.GetPosition(x, y);
             if (node != null)
-                Console.Write(node.Z);
+                Console.Write(node.Cost);
             else
                 Console.Write(" ");
 
