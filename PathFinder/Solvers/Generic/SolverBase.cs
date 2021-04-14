@@ -19,7 +19,11 @@ namespace PathFinder.Solvers.Generic
             Destination = destination;
             Comparer = comparer;
             Traverser = traverser ?? new DefaultTraverser<T>();
-            CurrentMetaData = new GraphNodeMetaData<T>(origin, 0) {ToCost = Traverser.EstimatedCost(origin, Destination)};
+            CurrentMetaData = new GraphNodeMetaData<T>(origin, 0)
+            {
+                ToCost = Traverser.EstimatedCost(origin, Destination),
+                PathLength = 0,
+            };
             OpenNodes = new SortedSet<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
             _closest = CurrentMetaData;
             _lastGraphNodeId = 1;
@@ -129,7 +133,8 @@ namespace PathFinder.Solvers.Generic
             {
                 ToCost = Traverser.EstimatedCost(node, Destination),
                 FromCost = CurrentMetaData.FromCost + fromCost,
-                Parent = CurrentMetaData
+                Parent = CurrentMetaData,
+                PathLength = CurrentMetaData.PathLength + 1
             };
             Meta.Add(node, meta);
             // If the fromCost has a negative value, it is not actually traversable so
@@ -225,6 +230,7 @@ namespace PathFinder.Solvers.Generic
         public double ToCost;
         public double TotalCost;
         public NodeStatus Status;
+        public int PathLength;
 
         public GraphNodeMetaData(T obj, long nodeId)
         {
@@ -235,6 +241,6 @@ namespace PathFinder.Solvers.Generic
         public override bool Equals(object obj) => obj is GraphNodeMetaData<T> n && Equals(n);
         public bool Equals(GraphNodeMetaData<T> other) => other != null && Node.Equals(other.Node);
         public override int GetHashCode() => Node.GetHashCode();
-        public override string ToString() => $"GraphNodeMeta[{Status}]<{Node.ToString()}>";
+        public override string ToString() => $"GraphNodeMeta<{Status}>[{Node.ToString()}]";
     }
 }

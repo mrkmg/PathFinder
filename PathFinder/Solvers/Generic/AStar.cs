@@ -133,6 +133,7 @@ namespace PathFinder.Solvers.Generic
                 if (fromCost >= neighborMetaData.FromCost) return;
                 OpenNodes.Remove(neighborMetaData);
                 neighborMetaData.Parent = CurrentMetaData;
+                neighborMetaData.PathLength = CurrentMetaData.PathLength + 1;
                 neighborMetaData.FromCost = fromCost;
             }
             neighborMetaData.Status = NodeStatus.Open;
