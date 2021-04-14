@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using PathFinderConsole.Sequencer;
 using PathFinderConsole.Tests.Interactive;
 using PathFinderConsole.Tests.Many;
 
@@ -44,11 +43,10 @@ namespace PathFinderConsole
                     {
                         sizes = sizesStr.Split(',').Select(s => int.Parse(s.Trim())).ToArray();
                     }
-                    
-                    
-                    var greedyFactors = 
-                        SequenceBuilder
-                            .Build(2d, 0d, 0.25d)
+
+
+                    var greedyFactors =
+                        Enumerable.Sequence(0d, 2d, 0.25d)
                             .ToList();
                     var tStr = greedyFactors
                         .Select(s => s.ToString(CultureInfo.InvariantCulture))

@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using PathFinder.Solvers.Generic;
-using PathFinderConsole.Sequencer;
 using SimpleWorld.Map;
+using Linq_Enumerable = System.Linq.Enumerable;
 
 namespace PathFinderConsole.Tests.Interactive
 {
@@ -28,7 +28,7 @@ namespace PathFinderConsole.Tests.Interactive
         public InteractiveTest()
         {
             _greedyFactors = 
-                SequenceBuilder.Build(2d, 0d, 0.25d)
+                Enumerable.Sequence(0d, 2d, 0.25d)
                 .ToList();
         }
 

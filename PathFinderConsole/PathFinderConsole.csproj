@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PathFinder\PathFinder.csproj" />
+    <ProjectReference Include="..\SequenceBuilder\SequenceBuilder.csproj" />
     <ProjectReference Include="..\SimpleWorld\SimpleWorld.csproj" />
   </ItemGroup>
 </Project>

@@ -5,14 +5,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using PathFinder.Solvers.Generic;
-using PathFinderConsole.Sequencer;
 using SimpleWorld.Map;
 
 namespace PathFinderConsole.Tests.Many
 {
     internal class ManyTest
     {
-        public IList<double> GreedyFactors = SequenceBuilder.Build(2, 0, 0.25d).ToList();
+        public IList<double> GreedyFactors = Enumerable.Sequence(0, 2, 0.25d).ToList();
         
         public string OutputFile
         {
@@ -40,9 +39,9 @@ namespace PathFinderConsole.Tests.Many
         {
             WriteFileHeader();
 
-            SequenceBuilder
+            Enumerable
                 // ReSharper disable once InconsistentlySynchronizedField
-                .Build(NumberOfTests)
+                .Sequence(NumberOfTests)
                 .SelectMany(BuildTest)
                 .AsParallel()
                 .Select(RunTest)
