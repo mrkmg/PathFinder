@@ -82,12 +82,6 @@ namespace PathFinder.Solvers.Generic
         /// </summary>
         /// <param name="ticks">Number of ticks to run. Any number less than zero means run until <see cref="MaxTicks"/></param>
         SolverState Start(int ticks = -1);
-
-        /// <summary>
-        /// Async version of <see cref="Start"/>
-        /// </summary> 
-        /// <param name="ticks">Number of ticks to run. Any number less than zero means run until <see cref="MaxTicks"/></param>
-        Task<SolverState> StartAsync(int ticks = -1);
     }
 
     public enum SolverState

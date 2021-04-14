@@ -113,8 +113,6 @@ namespace PathFinder.Solvers.Generic
             return State;
         }
 
-        public Task<SolverState> StartAsync(int ticks = -1) => new Task<SolverState>(() => Start(ticks));
-
         protected virtual void ProcessNeighbor(GraphNodeMetaData<T> neighborMetaData)
         {
             if (neighborMetaData.Status != NodeStatus.New) return;
