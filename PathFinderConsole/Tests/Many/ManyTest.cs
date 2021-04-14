@@ -28,11 +28,11 @@ namespace PathFinderConsole.Tests.Many
         }
 
         public bool CanDiag = true;
-        public int NumberOfTests = 100;
-        public int MapHeight = 400;
-        public int MapWidth = 400;
-        public readonly Random Random = new ();
-        private string _outputFile = "./test.csv";
+        public int NumberOfTests;
+        public int MapHeight;
+        public int MapWidth;
+        private readonly Random _random = new ();
+        private string _outputFile;
         private readonly object _fileLock = new { };
 
         public void Run()
@@ -60,18 +60,20 @@ namespace PathFinderConsole.Tests.Many
             Position origin;
             Position destination;
 
-            IGraphSolver<Position> aStarGraphSolver;
+            IGraphSolver<Position> solver;
             do
             {
                 var allNodes = map.GetAllNodes().ToList();
-                origin = allNodes[Random.Next(allNodes.Count - 1)];
-                destination = allNodes[Random.Next(allNodes.Count - 1)];
+                origin = allNodes[_random.Next(allNodes.Count - 1)];
+                destination = allNodes[_random.Next(allNodes.Count - 1)];
                 
-                aStarGraphSolver = new Greedy<Position>(origin, destination);
-                aStarGraphSolver.Start();
-            } while (aStarGraphSolver.State == SolverState.Failure);
+                solver = new Greedy<Position>(origin, destination);
+                solver.Start();
+            } while (solver.State == SolverState.Failure);
 
-            var bestCostTo = Math.Round(aStarGraphSolver.PathCost, 3);
+            solver = new BreadthFirst<Position>(origin, destination);
+            solver.Start();
+            var bestCostTo = solver.PathCost;
             var estimatedCostTo = (int)origin.EstimatedCostTo(destination);
 
             var subTestNum = 0;
@@ -106,13 +108,15 @@ namespace PathFinderConsole.Tests.Many
             {
                 TestId = test.Id,
                 SubId = test.SubId,
-                BestCostTo = test.BestCostTo,
-                EstimatedCostTo = test.EstimatedCostTo,
+                BestCostTo = Math.Round(test.BestCostTo, 4),
+                EstimatedCostTo = Math.Round(test.EstimatedCostTo, 4),
                 Greed = test.Greed,
                 PathCost = Math.Round(aStar.PathCost, 3),
                 Checks = aStar.Ticks,
                 Ticks = timer.ElapsedTicks,
                 Time = Math.Round(timer.Elapsed.TotalMilliseconds, 4),
+                CostRatio = Math.Round(test.BestCostTo / aStar.PathCost, 4),
+                TicksRatio = Math.Round(aStar.PathCost / aStar.Ticks, 4)
             };
         }
 
@@ -128,18 +132,20 @@ namespace PathFinderConsole.Tests.Many
                     "TId".PadRight(5)
                     + "StId".PadRight(5)
                     + "T".PadRight(6)
-                    + "ECT".PadRight(8)
-                    + "BC".PadRight(12)
+                    + "ECT".PadRight(9)
+                    + "BC".PadRight(9)
                     + "PC".PadRight(12)
                     + "C".PadRight(8)
                     + "Ti".PadRight(12)
                     + "Tm".PadRight(12)
+                    + "Cr".PadRight(8)
+                    + "Tr".PadRight(8)
                 );
             }
             
             lock (_fileLock)
             {
-                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,GreedFactor,BestCost,PathCost,Check,Ticks,Time\n");
+                File.WriteAllText(OutputFile, "TestId,SubTestId,EstimatedCostTo,GreedFactor,BestCost,PathCost,Check,Ticks,Time,CostRatio,TicksRatio\n");
             }
         }
 
@@ -147,7 +153,7 @@ namespace PathFinderConsole.Tests.Many
         {
             lock (_fileLock)
             {
-                File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Greed},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time}\n");
+                File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Greed},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time},{result.CostRatio},{result.TicksRatio}\n");
             }
             lock (Console.Out)
             {
@@ -157,12 +163,14 @@ namespace PathFinderConsole.Tests.Many
                     result.TestId.PadResult(5)
                     + result.SubId.PadResult(5)
                     + result.Greed.PadResult(6)
-                    + result.EstimatedCostTo.PadResult(8)
-                    + result.BestCostTo.PadResult(12)
+                    + result.EstimatedCostTo.PadResult(9)
+                    + result.BestCostTo.PadResult(9)
                     + result.PathCost.PadResult(12)
                     + result.Checks.PadResult(8)
                     + result.Ticks.PadResult(12)
                     + result.Time.PadResult(12)
+                    + result.CostRatio.PadResult(8)
+                    + result.TicksRatio.PadResult(8)
                 );
             }
         }
@@ -172,7 +180,7 @@ namespace PathFinderConsole.Tests.Many
     {
         public int Id;
         public int SubId;
-        public int EstimatedCostTo;
+        public double EstimatedCostTo;
         public double BestCostTo;
         public Position Origin;
         public Position Destination;
@@ -183,13 +191,15 @@ namespace PathFinderConsole.Tests.Many
     {
         public int TestId;
         public int SubId;
-        public int EstimatedCostTo;
+        public double EstimatedCostTo;
         public double BestCostTo;
         public double Greed;
         public double PathCost;
         public int Checks;
         public long Ticks;
         public double Time;
+        public double CostRatio;
+        public double TicksRatio;
     }
 
     internal static class TestFormats

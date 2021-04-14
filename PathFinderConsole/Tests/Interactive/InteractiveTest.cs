@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
-using Linq_Enumerable = System.Linq.Enumerable;
 
 namespace PathFinderConsole.Tests.Interactive
 {

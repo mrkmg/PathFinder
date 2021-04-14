@@ -32,12 +32,12 @@ namespace PathFinderConsole
                     Console.WriteLine("Multi Test Run");
                     
                     var numTests = 200;
-                    Console.Write("Num Tests (200)? ");
+                    Console.Write($"Num Tests ({numTests})? ");
                     var numTestsStr = Console.ReadLine();
                     if (!string.IsNullOrEmpty(numTestsStr)) numTests = Int32.Parse(numTestsStr); 
 
-                    var sizes = new [] {100, 200, 300, 400, 500};
-                    Console.Write("Sizes (100, 200, 300, 400, 500)?");
+                    var sizes = new [] {200, 400, 800, 1000, 2000};
+                    Console.Write($"Sizes ({string.Join(", ", sizes)})?");
                     var sizesStr = Console.ReadLine();
                     if (!string.IsNullOrEmpty(sizesStr))
                     {
@@ -48,11 +48,7 @@ namespace PathFinderConsole
                     var greedyFactors =
                         Enumerable.Sequence(0d, 2d, 0.25d)
                             .ToList();
-                    var tStr = greedyFactors
-                        .Select(s => s.ToString(CultureInfo.InvariantCulture))
-                        .Aggregate((p, a) => p + "," + a);
-                    
-                    Console.Write($"GreedFactor ({tStr})?");
+                    Console.Write($"GreedFactor ({string.Join(", ", greedyFactors)})?");
                     var tInput = Console.ReadLine();
                     if (!string.IsNullOrEmpty(tInput))
                     {
