@@ -33,7 +33,7 @@ namespace PathFinderUnitTests
                     new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(0,6), _testGraph.GetNode(0,7), _testGraph.GetNode(1,8), _testGraph.GetNode(2,9), _testGraph.GetNode(3,9), _testGraph.GetNode(4,9), _testGraph.GetNode(5,9), _testGraph.GetNode(6,9), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)}, 
                     solver.Path
                 );
-                Assert.AreEqual(15.0d, solver.PathCost);
+                Assert.AreEqual(16.0d, solver.PathCost);
             });
         }
         
@@ -49,7 +49,7 @@ namespace PathFinderUnitTests
                     new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(1,3), _testGraph.GetNode(0,4), _testGraph.GetNode(1,5), _testGraph.GetNode(0,6), _testGraph.GetNode(0,7), _testGraph.GetNode(1,8), _testGraph.GetNode(2,9), _testGraph.GetNode(3,9), _testGraph.GetNode(4,9), _testGraph.GetNode(5,9), _testGraph.GetNode(6,9), _testGraph.GetNode(7,9), _testGraph.GetNode(8,9), _testGraph.GetNode(9,9)},
                 solver.Path
                 );
-                Assert.AreEqual(15.0d, solver.PathCost);
+                Assert.AreEqual(16.0d, solver.PathCost);
             });
         }
         
@@ -65,7 +65,7 @@ namespace PathFinderUnitTests
                     new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(3,3), _testGraph.GetNode(4,3), _testGraph.GetNode(5,3), _testGraph.GetNode(6,4), _testGraph.GetNode(6,5), _testGraph.GetNode(7,6), _testGraph.GetNode(8,7), _testGraph.GetNode(9,8), _testGraph.GetNode(9,9)}, 
                     solver.Path
                 );
-                Assert.AreEqual(28.0d, solver.PathCost);
+                Assert.AreEqual(29.0d, solver.PathCost);
             });
         }
 
@@ -81,7 +81,7 @@ namespace PathFinderUnitTests
                     new List<TestGraphNode> {_testGraph.GetNode(0,1), _testGraph.GetNode(0,2), _testGraph.GetNode(0,3), _testGraph.GetNode(0,4), _testGraph.GetNode(0,5), _testGraph.GetNode(0,6), _testGraph.GetNode(0,7), _testGraph.GetNode(1,8), _testGraph.GetNode(2,9), _testGraph.GetNode(3,8), _testGraph.GetNode(4,7), _testGraph.GetNode(5,6), _testGraph.GetNode(6,6), _testGraph.GetNode(7,7), _testGraph.GetNode(8,8), _testGraph.GetNode(9,9)}, 
                     solver.Path
                 );
-                Assert.AreEqual(15.0d, Math.Round(solver.PathCost));
+                Assert.AreEqual(16.0d, Math.Round(solver.PathCost));
             });
         }
 
@@ -97,7 +97,7 @@ namespace PathFinderUnitTests
                     new List<TestGraphNode> {_testGraph.GetNode(1,1), _testGraph.GetNode(2,2), _testGraph.GetNode(3,3), _testGraph.GetNode(4,3), _testGraph.GetNode(5,3), _testGraph.GetNode(6,4), _testGraph.GetNode(6,5), _testGraph.GetNode(7,6), _testGraph.GetNode(8,7), _testGraph.GetNode(9,8), _testGraph.GetNode(9,9)}, 
                     solver.Path
                 );
-                Assert.AreEqual(28.0d, Math.Round(solver.PathCost));
+                Assert.AreEqual(29.0d, Math.Round(solver.PathCost));
             });
         }
 

@@ -177,40 +177,28 @@ namespace PathFinder.Solvers.Generic
             return _path ??= BuildPath(Destination);
         }
 
+        private IList<T> BuildPath(T node)
+        {
+            if (Origin.Equals(node)) return new T[0];
+
+            var cMeta = GetMeta(node);
+            var path = new T[cMeta.PathLength];
+            var pathIndex = cMeta.PathLength - 1;
+            do
+            {
+                path[pathIndex--] = cMeta!.Node;
+                Debug.Assert(cMeta.Parent != null, "cMeta != null while building path");
+                Debug.Assert(!cMeta.Node.Equals(Origin));
+                cMeta = cMeta.Parent;
+            } while (pathIndex >= 0);
+            return path;
+        }
+
         private double GetCost()
         {
             if (State != SolverState.Success) return -1;
             if (_cost.HasValue) return _cost.Value;
-            
-            _cost = 0d;
-            var last = Path!.First();
-
-            foreach (var next in Path.Skip(1))
-            {
-                _cost += Traverser.RealCost(last, next);
-                last = next;
-            }
-
-            return _cost.Value;
-        }
-
-        private IList<T> BuildPath(T node)
-        {
-            if (Origin.Equals(node)) return new List<T> {node};
-            
-            var path = new List<T>();
-
-            var cMeta = GetMeta(node);
-
-            while (true)
-            {
-                path.Add(cMeta.Node);
-                cMeta = cMeta.Parent;
-                if (cMeta == null || Origin.Equals(cMeta.Node)) break;
-            }
-
-            path.Reverse();
-            return path;
+            return _cost ??= GetMeta(Path![Path.Count - 1]).FromCost;
         }
     }
 
