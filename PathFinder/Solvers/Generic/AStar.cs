@@ -144,18 +144,22 @@ namespace PathFinder.Solvers.Generic
 
         private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
         {
+            
+            /**
+             * For aStar, we want the node with a lowest total cost first
+             * If total costs are the same, then the node which has a lower "to cost"
+             * if to costs are the same, use the latest found node
+             */
             public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
             {
                 Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
-                return x.TotalCost <  y.TotalCost ? -1 
-                     : x.TotalCost >  y.TotalCost ?  1 
-                     : x.FromCost  <  y.FromCost  ? -1
-                     : x.FromCost  >  y.FromCost  ?  1
+                return x.TotalCost <  y.TotalCost ? -1
+                     : x.TotalCost >  y.TotalCost ?  1
                      : x.ToCost    <  y.ToCost    ? -1
                      : x.ToCost    >  y.ToCost    ?  1
                      : x.NodeId    == y.NodeId    ?  0
-                     : x.NodeId    <  y.NodeId    ? -1 
-                     :                               1;
+                     : x.NodeId    <  y.NodeId    ?  1
+                     :                              -1;
             }
         }
     }
