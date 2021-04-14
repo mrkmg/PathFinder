@@ -21,10 +21,19 @@ namespace SimpleWorld.Map
 
         public double RealCostTo(Position other) 
             =>  (World.CanCutCorner ? StraightLineDistanceTo(other) : GridDistanceTo(other)) *
-                Math.Pow(Cost, World.MoveCost);
+                Math.Pow(other.Cost, World.MoveCost);
 
-        public double EstimatedCostTo(Position other) => GridDistanceTo(other);
+        public double EstimatedCostTo(Position other) => BestCaseCornering(other);
 
+        private double BestCaseCornering(Position other)
+        {
+            var dX = Math.Abs(other.X - X);
+            var dY = Math.Abs(other.Y - Y);
+            var distCornering = Math.Min(dX, dY);
+            var distStraight = Math.Max(dX, dY) - distCornering;
+            return Math.Sqrt(distCornering * distCornering * 2) + distStraight;
+        }
+        
         private double StraightLineDistanceTo(Position other)
         {
             var dX = other.X - X;
