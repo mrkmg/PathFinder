@@ -5,8 +5,7 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PathFinder\PathFinder.csproj" />
-    <ProjectReference Include="..\SequenceBuilder\SequenceBuilder.csproj" />
+    <ProjectReference Include="..\..\PathFinder\PathFinder.csproj" />
     <ProjectReference Include="..\SimpleWorld\SimpleWorld.csproj" />
   </ItemGroup>
 </Project>

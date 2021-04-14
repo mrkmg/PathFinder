@@ -5,15 +5,15 @@ VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinder", "PathFinder\PathFinder.csproj", "{9369AE15-4BC4-44FB-B17A-FF7643A8E687}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderConsole", "PathFinderConsole\PathFinderConsole.csproj", "{11551E4D-764E-44E1-92FE-36F0F628C02A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderConsole", "Extras\PathFinderConsole\PathFinderConsole.csproj", "{11551E4D-764E-44E1-92FE-36F0F628C02A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderGui", "PathFinderGui\PathFinderGui\PathFinderGui.csproj", "{6713AF6E-7DA2-48ED-9A00-B5DAC50E197E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderGui", "Extras\PathFinderGui\PathFinderGui\PathFinderGui.csproj", "{6713AF6E-7DA2-48ED-9A00-B5DAC50E197E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderGui.Desktop", "PathFinderGui\PathFinderGui.Desktop\PathFinderGui.Desktop.csproj", "{1AC486C5-F863-484C-8F56-E2BF22B5E7FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderGui.Desktop", "Extras\PathFinderGui\PathFinderGui.Desktop\PathFinderGui.Desktop.csproj", "{1AC486C5-F863-484C-8F56-E2BF22B5E7FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleWorld", "SimpleWorld\SimpleWorld.csproj", "{DD5E5278-513D-4D44-A696-2BF0B48484F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleWorld", "Extras\SimpleWorld\SimpleWorld.csproj", "{DD5E5278-513D-4D44-A696-2BF0B48484F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderBenchmark", "PathFinderBenchmark\PathFinderBenchmark.csproj", "{8A732A6A-3A47-4A8C-991F-B9D00C8AFA44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderBenchmark", "Extras\PathFinderBenchmark\PathFinderBenchmark.csproj", "{8A732A6A-3A47-4A8C-991F-B9D00C8AFA44}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderUnitTests", "PathFinderUnitTests\PathFinderUnitTests.csproj", "{4A337FF3-203D-4AFE-99C8-559BEAB658C6}"
 EndProject
