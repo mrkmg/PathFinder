@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Profile" type="DotNetProject" factoryName=".NET Project" activateToolWindowBeforeRun="false">
+  <configuration default="false" name="Profile" type="DotNetProject" factoryName=".NET Project">
     <option name="EXE_PATH" value="$PROJECT_DIR$/Extras/PathFinderBenchmark/bin/Release/net5.0/PathFinderBenchmark.exe" />
     <option name="PROGRAM_PARAMETERS" value="profile 1000 1" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Extras/PathFinderBenchmark/bin/Release/net5.0" />

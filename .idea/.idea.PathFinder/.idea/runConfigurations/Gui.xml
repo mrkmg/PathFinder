@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Gui" type="DotNetProject" factoryName=".NET Project" activateToolWindowBeforeRun="false">
+  <configuration default="false" name="Gui" type="DotNetProject" factoryName=".NET Project">
     <option name="EXE_PATH" value="$PROJECT_DIR$/Extras/PathFinderGui/PathFinderGui.Desktop/bin/Release/netcoreapp3.1/PathFinderGui.Desktop.exe" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Extras/PathFinderGui/PathFinderGui.Desktop/bin/Release/netcoreapp3.1" />
