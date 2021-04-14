@@ -9,6 +9,7 @@ namespace PathFinderGui.Widgets
     public class MapWidget : LayeredBitmapWidget
     {
         private IList<Position> _lastBestPath;
+
         
         public MapWidget() : base(1, 4)
         {
@@ -107,8 +108,13 @@ namespace PathFinderGui.Widgets
         }
     }
     
-     internal static class MainFormExtensions
+    internal static class MainFormExtensions
     {
+        
+        private static readonly Color PathPointColor = Color.FromArgb(255, 0, 0, 200);
+        private static readonly Color SearchPointColor = Color.FromArgb(0, 0, 200, 100);
+        private static readonly Color MarkerPointColor = Color.FromArgb(150, 0, 150);
+        
         private static Color GetColorForLevel(int level)
         {
             var intensity = level switch
@@ -133,10 +139,10 @@ namespace PathFinderGui.Widgets
             => positions.Where(p => p != null).Select(AsPathDrawPoint);
 
         internal static DrawPoint AsPathDrawPoint(this Position p) 
-            => new(p.X, p.Y, Color.FromArgb(255, 0, 0, 200));
+            => new(p.X, p.Y, PathPointColor);
         
         internal static DrawPoint AsSearchDrawPoint(this Position p) 
-            => new(p.X, p.Y, Color.FromArgb(0, 0, 50, 100));
+            => new(p.X, p.Y, SearchPointColor);
         
         internal static DrawPoint AsMapDrawPoint(this Position p) 
             => new (p.X, p.Y, GetColorForLevel(p.Cost));
@@ -154,6 +160,6 @@ namespace PathFinderGui.Widgets
         }
 
         internal static DrawPoint AsMarkerDrawPoint(this (int x, int y) xy)
-            => new(xy.x, xy.y, Color.FromArgb(150, 0, 150));
+            => new(xy.x, xy.y, MarkerPointColor);
     }
 }
