@@ -102,23 +102,31 @@ namespace PathFinderGui
             if (_world == null) return;
             if (_runnerThread == null)
             {
-                Reset();
-                _world.CanCutCorner = _canCornerCut.Checked ?? false;
-
-                IGraphSolver<Position> graphSolver = _solverSelector.Text switch
-                {
-                    "AStar" => new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value),
-                    "Greedy" => new Greedy<Position>(_startPoint, _endPoint),
-                    "Breadth First" => new BreadthFirst<Position>(_startPoint, _endPoint),
-                    _ => throw new ArgumentException("Unknown GraphSolver")
-                };
-
-                _runnerThread = new SolverRunnerThread {GraphSolver = graphSolver, Delay = (int) _delayStepper.Value};
+                CreateNewRunner();
             }
             
             _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
             _runnerThread.Start();
             _timer.Start();
+        }
+        
+        private void CreateNewRunner()
+        {
+            Reset();
+            _world.CanCutCorner = _canCornerCut.Checked ?? false;
+
+            IGraphSolver<Position> graphSolver = _solverSelector.Text switch
+            {
+                "AStar" => new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value),
+                "Greedy" => new Greedy<Position>(_startPoint, _endPoint),
+                "Breadth First" => new BreadthFirst<Position>(_startPoint, _endPoint),
+                _ => throw new ArgumentException("Unknown GraphSolver")
+            };
+
+            _runnerThread = new SolverRunnerThread
+            {
+                GraphSolver = graphSolver, Delay = (int)_delayStepper.Value
+            };
         }
 
         private void ProcessFrame()
@@ -134,15 +142,12 @@ namespace PathFinderGui
                     break;
                 case SolverState.Success:
                     _statsWidget.UpdateSuccessStats(frameData);
-                    
                     _mapWidget.ClearRunning();
                     _mapWidget.DrawPath(frameData.Path);
                     KillRunning();
                     break;
                 case SolverState.Failure:
-                    
                     _statsWidget.UpdateFailureStats(frameData);
-                    
                     KillRunning();
                     break;
                 default:

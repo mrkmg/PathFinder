@@ -24,7 +24,7 @@ namespace PathFinder.Solvers.Generic
                 ToCost = Traverser.EstimatedCost(origin, Destination),
                 PathLength = 0,
             };
-            OpenNodes = new SortedSet<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
+            OpenNodes = new C5.IntervalHeap<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
             _closest = CurrentMetaData;
             _lastGraphNodeId = 1;
         }
@@ -70,7 +70,7 @@ namespace PathFinder.Solvers.Generic
         /// <inheritdoc cref="IGraphSolver{T}.MaxTicks"/>
         public int MaxTicks { get; set; } = int.MaxValue;
         
-        protected SortedSet<GraphNodeMetaData<T>> OpenNodes;
+        protected C5.IntervalHeap<GraphNodeMetaData<T>> OpenNodes;
         protected readonly Dictionary<T, GraphNodeMetaData<T>> Meta = new Dictionary<T, GraphNodeMetaData<T>>();
         protected GraphNodeMetaData<T> CurrentMetaData;
         protected readonly IComparer<GraphNodeMetaData<T>> Comparer;
@@ -120,7 +120,7 @@ namespace PathFinder.Solvers.Generic
         {
             if (neighborMetaData.Status != NodeStatus.New) return;
             neighborMetaData.Status = NodeStatus.Open;
-            var didAdd = OpenNodes.Add(neighborMetaData);
+            var didAdd = OpenNodes.Add(ref neighborMetaData.Handle, neighborMetaData);
             Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
         }
 
@@ -145,9 +145,7 @@ namespace PathFinder.Solvers.Generic
         
         private void SetCurrentNode()
         {
-            CurrentMetaData = OpenNodes.Min;
-            var didRemove = OpenNodes.Remove(CurrentMetaData);
-            Debug.Assert(didRemove);
+            CurrentMetaData = OpenNodes.DeleteMin();
             ClosedCount++;
             CurrentMetaData.Status = NodeStatus.Closed;
             if (CurrentMetaData.ToCost < _closest.ToCost)
@@ -219,6 +217,7 @@ namespace PathFinder.Solvers.Generic
         public double TotalCost;
         public NodeStatus Status;
         public int PathLength;
+        public C5.IPriorityQueueHandle<GraphNodeMetaData<T>> Handle;
 
         public GraphNodeMetaData(T obj, long nodeId)
         {

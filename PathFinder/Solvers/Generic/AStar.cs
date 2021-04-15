@@ -90,17 +90,6 @@ namespace PathFinder.Solvers.Generic
             _greedFactor = greedFactor;
         }
 
-        public void Reset()
-        {
-            foreach (var nodeMetaData in Meta.Values)
-            {
-                nodeMetaData.Status = NodeStatus.Open;
-            }
-            CurrentMetaData = GetMeta(Origin);
-            OpenNodes = new SortedSet<GraphNodeMetaData<T>>(Meta.Values, Comparer) {CurrentMetaData};
-            State = SolverState.Waiting;
-        }
-
         /// <summary>
         /// <para>How thorough the search should be.</para>
         /// <para>Must be greater than or equal to 0.</para>
@@ -131,14 +120,14 @@ namespace PathFinder.Solvers.Generic
             {
                 var fromCost = CurrentMetaData.FromCost + Traverser.RealCost(CurrentMetaData.Node, neighborMetaData.Node);
                 if (fromCost >= neighborMetaData.FromCost) return;
-                OpenNodes.Remove(neighborMetaData);
+                OpenNodes.Delete(neighborMetaData.Handle);
                 neighborMetaData.Parent = CurrentMetaData;
                 neighborMetaData.PathLength = CurrentMetaData.PathLength + 1;
                 neighborMetaData.FromCost = fromCost;
             }
             neighborMetaData.Status = NodeStatus.Open;
             neighborMetaData.TotalCost = neighborMetaData.FromCost + neighborMetaData.ToCost * _greedFactor;
-            var didAdd = OpenNodes.Add(neighborMetaData);
+            var didAdd = OpenNodes.Add(ref neighborMetaData.Handle, neighborMetaData);
             Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
         }
 

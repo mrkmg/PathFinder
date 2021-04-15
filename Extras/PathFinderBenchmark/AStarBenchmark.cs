@@ -12,17 +12,17 @@ namespace PathFinderBenchmark
         private Position _from;
         private Position _to;
 
-        [Params(400)]
+        [Params(1500)]
         public int Size;
         
-        [Params(1)]
+        [Params(0, 0.5, 1, 1.5)]
         public double Greed;
 
         // [Params(4967, 4969, 4973, 4987, 4993, 4999, 5003)]
-        [Params(111111, 222222, 333333)]
+        [Params(111111)]
         public int Seed;
 
-        [Params(0.1, 1.0, 3.0)]
+        [Params(1.0)]
         public double MoveFactor;
         
         [IterationSetup]
@@ -38,17 +38,5 @@ namespace PathFinderBenchmark
         {
             AStar<Position>.Solve(_from, _to, Greed, out _);
         }
-
-        // [Benchmark]
-        // public void Test1()
-        // {
-        //     new AStarTest1<Position>(_from, _to, GreedFactor).Solve();
-        // }
-
-        // [Benchmark]
-        // public void Test2()
-        // {
-        //     new AStarTest2<Position>(_from, _to, GreedFactor).Solve();
-        // }
     }
 }

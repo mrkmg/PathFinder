@@ -84,12 +84,6 @@ namespace PathFinderGui
             Text = "Start",
             Width = 60
         };
-        private readonly Button _resetSolverButton = new()
-        {
-            Text = "Reset",
-            Width = 60
-        };
-        
         private readonly Button _pauseButton = new()
         {
             Text = "Stop",
@@ -163,7 +157,7 @@ namespace PathFinderGui
                             HStretched(_solverSelector),
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
-                                Items = {_go, _pauseButton, _resetSolverButton}
+                                Items = {_go, _pauseButton}
                             },
                             HStretched(_delayStepper),
                             HStretched(_statsWidget)

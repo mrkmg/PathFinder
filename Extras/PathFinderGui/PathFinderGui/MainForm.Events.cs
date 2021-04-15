@@ -27,7 +27,6 @@ namespace PathFinderGui
             _newPoints.Click += OnNewPointsClick;
             _go.Click += OnGoClick;
             _pauseButton.Click += OnPauseButtonClick;
-            _resetSolverButton.Click += OnResetButtonClick;
             
             _delayStepper.ValueChanged += OnDelayStepperChanged;
             _greedStepper.ValueChanged += OnGreedSelectorChanged;
@@ -67,11 +66,6 @@ namespace PathFinderGui
             if (_runnerThread != null)
                 _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
         }
-        private void OnResetButtonClick(object sender, EventArgs e)
-        {
-            if (_runnerThread is {GraphSolver: AStar<Position> solver})
-                solver.Reset();
-        }
         private void OnPauseButtonClick(object sender, EventArgs e)
         {
             if (_runnerThread is {GraphSolver: AStar<Position> solver})
@@ -95,12 +89,10 @@ namespace PathFinderGui
             {
                 case "AStar":
                     _greedStepper.Enabled = true;
-                    _resetSolverButton.Enabled = true;
                     break;
                 case "Greedy":
                 case "Breadth First":
                     _greedStepper.Enabled = false;
-                    _resetSolverButton.Enabled = false;
                     break;
             }
         }
