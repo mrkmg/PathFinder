@@ -8,8 +8,8 @@ namespace PathFinder.Graphs
     /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
     public class DefaultTraverser<T> : INodeTraverser<T> where T : ITraversableGraphNode<T>
     {
-        public double EstimatedCost(T from, T to) => from.EstimatedCostTo(to);
-        public double RealCost(T from, T to) => from.RealCostTo(to);
+        public double EstimatedCost(T fromNode, T toNode) => fromNode.EstimatedCostTo(toNode);
+        public double RealCost(T fromNode, T toNode) => fromNode.RealCostTo(toNode);
         public IEnumerable<T> TraversableNodes(T sourceNode) => sourceNode.TraversableNodes();
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PathFinder.Graphs;
 
@@ -19,6 +20,8 @@ namespace PathFinder.Solvers.Generic
             Destination = destination;
             Comparer = comparer;
             Traverser = traverser ?? new DefaultTraverser<T>();
+            // create the origin node metadata manually as the "GetMeta" method
+            // needs to use the CurrentMetaData
             CurrentMetaData = new GraphNodeMetaData<T>(origin, 0)
             {
                 ToCost = Traverser.EstimatedCost(origin, Destination),
@@ -26,7 +29,8 @@ namespace PathFinder.Solvers.Generic
             };
             OpenNodes = new C5.IntervalHeap<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
             _closest = CurrentMetaData;
-            _lastGraphNodeId = 1;
+            // set to 1 because the origin is node 0
+            _nextGraphNodeId = 1;
         }
         
         /// <inheritdoc cref="IGraphSolver{T}.Open"/>
@@ -78,14 +82,16 @@ namespace PathFinder.Solvers.Generic
         private IList<T> _path;
         private GraphNodeMetaData<T> _closest;
         private double? _cost;
-        private long _lastGraphNodeId;
+        private long _nextGraphNodeId;
         protected readonly INodeTraverser<T> Traverser;
         private int _remainingTicks;
         
         private void Tick()
         {
+            // there is nothing left to search
             if (OpenNodes.Count == 0)
                 State = SolverState.Failure;
+            // the current "start" ran out of remaining ticks and we did not succeed or fail
             else if (_remainingTicks == 0)
                 State = SolverState.Waiting;
             else if (Ticks > MaxTicks)
@@ -104,7 +110,7 @@ namespace PathFinder.Solvers.Generic
         }
         
         public void Stop() => _remainingTicks = 0;
-
+        
         public SolverState Start(int numTicks = -1)
         {
             if (State != SolverState.Waiting)
@@ -129,7 +135,7 @@ namespace PathFinder.Solvers.Generic
         {
             if (Meta.TryGetValue(node, out var meta)) return meta;
             var fromCost = Traverser.RealCost(CurrentMetaData.Node, node);
-            meta = new GraphNodeMetaData<T>(node, _lastGraphNodeId++)
+            meta = new GraphNodeMetaData<T>(node, _nextGraphNodeId++)
             {
                 ToCost = Traverser.EstimatedCost(node, Destination),
                 FromCost = CurrentMetaData.FromCost + fromCost,
@@ -139,19 +145,24 @@ namespace PathFinder.Solvers.Generic
             Meta.Add(node, meta);
             // If the fromCost has a negative value, it is not actually traversable so
             // close the node to prevent it from being searched further.
+            // TODO determine if this should actually be the case
             if (fromCost < 0) meta.Status = NodeStatus.Closed;
             return meta;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SetCurrentNode()
         {
+            // get the best node, remove from open nodes, set to closed
             CurrentMetaData = OpenNodes.DeleteMin();
             ClosedCount++;
             CurrentMetaData.Status = NodeStatus.Closed;
+            // check if this node is closest to the target
             if (CurrentMetaData.ToCost < _closest.ToCost)
                 _closest = CurrentMetaData;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ProcessNeighbors()
         {
             var neighbors = Traverser.TraversableNodes(Current);
@@ -159,12 +170,15 @@ namespace PathFinder.Solvers.Generic
             {
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
                 var neighborMetaData = GetMeta(neighbor);
+                // do not check already checked nodes
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
+                // if a node somehow is connected to itself, do not check. Would leave to an infinite loop
                 if (CurrentMetaData.Equals(neighborMetaData)) continue;
                 ProcessNeighbor(neighborMetaData);
                 if (!neighbor.Equals(Destination)) continue;
+                // neighbor is the destination
                 State = SolverState.Success;
-                return;
+                break;
             }
         }
 
@@ -175,10 +189,16 @@ namespace PathFinder.Solvers.Generic
             return _path ??= BuildPath(Destination);
         }
 
+        
+        // used for both the "best path" and the final path
         private IList<T> BuildPath(T node)
         {
             if (Origin.Equals(node)) return new T[0];
 
+            // iterate from the 'node' back to the origin.
+            // add them from the back to the front, so the
+            // returned path starts at the origin. 
+            
             var cMeta = GetMeta(node);
             var path = new T[cMeta.PathLength];
             var pathIndex = cMeta.PathLength - 1;
@@ -196,7 +216,7 @@ namespace PathFinder.Solvers.Generic
         {
             if (State != SolverState.Success) return -1;
             if (_cost.HasValue) return _cost.Value;
-            return _cost ??= GetMeta(Path![Path.Count - 1]).FromCost;
+            return _cost ??= GetMeta(Destination).FromCost;
         }
     }
 

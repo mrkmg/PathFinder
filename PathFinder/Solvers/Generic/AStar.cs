@@ -115,10 +115,12 @@ namespace PathFinder.Solvers.Generic
 
         protected override void ProcessNeighbor(GraphNodeMetaData<T> neighborMetaData)
         {
-            
+            // in astar, we can recheck an open node to see if the new path is cheaper to get to it
             if (neighborMetaData.Status == NodeStatus.Open)
             {
+                // recalculate the from cost of the neighbor if coming from the current node
                 var fromCost = CurrentMetaData.FromCost + Traverser.RealCost(CurrentMetaData.Node, neighborMetaData.Node);
+                // only replace the neighbor if it is cheaper to get to it from the current node
                 if (fromCost >= neighborMetaData.FromCost) return;
                 OpenNodes.Delete(neighborMetaData.Handle);
                 neighborMetaData.Parent = CurrentMetaData;
@@ -133,12 +135,9 @@ namespace PathFinder.Solvers.Generic
 
         private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
         {
-            
-            /**
-             * For aStar, we want the node with a lowest total cost first
-             * If total costs are the same, then the node which has a lower "to cost"
-             * if to costs are the same, use the latest found node
-             */
+            // For aStar, we want the node with a lowest total cost first
+            // If total costs are the same, then the node which has a lower "to cost"
+            // if to costs are the same, use the latest found node
             public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
             {
                 Debug.Assert(x != null && y != null, "Graph Nodes should never be null");

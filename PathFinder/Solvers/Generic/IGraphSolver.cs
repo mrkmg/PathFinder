@@ -85,9 +85,24 @@ namespace PathFinder.Solvers.Generic
 
     public enum SolverState
     {
+        /// <summary>
+        /// The solver is waiting to run.
+        /// </summary>
         Waiting = 0,
+        
+        /// <summary>
+        /// The solver is currently running.
+        /// </summary>
         Running = 1,
+        
+        /// <summary>
+        /// The solver failed.
+        /// </summary>
         Failure = 2,
+        
+        /// <summary>
+        /// The solver succeeded and found a path.
+        /// </summary>
         Success = 3
     }
 }

@@ -32,6 +32,8 @@ namespace PathFinder.Solvers.Generic
 
         private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
         {
+            // greedy only really cares about the to cost, but we also check
+            // from cost to ensure we are not checking more nodes than needed
             public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
             {
                 Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
