@@ -11,6 +11,7 @@ namespace PathFinderGui
     {
         private readonly UiEventDebouncer<EventArgs> _scaleSelectorChangedDebounce = new (250);
         private readonly UiEventDebouncer<EventArgs> _moveCostSelectorChangedDebounce = new (250);
+        private readonly UiEventDebouncer<EventArgs> _worldInitChanged = new(250);
         
         private void BindEvents()
         {
@@ -23,8 +24,8 @@ namespace PathFinderGui
             
             _solverSelector.TextChanged += OnSolverSelectorChanged;
             
-            _newWorld.Click += OnNewWorldClick;
-            _newPoints.Click += OnNewPointsClick;
+            _newSeedButton.Click += OnNewSeedClick;
+            _newPointsButton.Click += OnNewPointsClick;
             _go.Click += OnGoClick;
             _pauseButton.Click += OnPauseButtonClick;
             
@@ -33,6 +34,16 @@ namespace PathFinderGui
             _scaleStepper.ValueChanged += _scaleSelectorChangedDebounce.Handle;
             _moveCostStepper.ValueChanged += _moveCostSelectorChangedDebounce.Handle;
             
+            _initF1.ValueChanged += _worldInitChanged.Handle;
+            _initF2.ValueChanged += _worldInitChanged.Handle;
+            _initL1.ValueChanged += _worldInitChanged.Handle;
+            _initL2.ValueChanged += _worldInitChanged.Handle;
+            _initP1.ValueChanged += _worldInitChanged.Handle;
+            _initP2.ValueChanged += _worldInitChanged.Handle;
+            _initRatio12.ValueChanged += _worldInitChanged.Handle;
+            
+            _newWorldButton.Click += OnNewWorldClick;
+            
             _worldSeed.KeyUp += OnWorldSeedChanged;
             _pointsSeed.KeyUp += OnPointsSeedChanged;
             
@@ -40,7 +51,29 @@ namespace PathFinderGui
             
             _scaleSelectorChangedDebounce.Fired += OnScaleSelectorChanged;
             _moveCostSelectorChangedDebounce.Fired += OnMoveCostSelectorChanged;
-            
+            _worldInitChanged.Fired += OnWorldInitChanged;
+        }
+
+        private void OnNewWorldClick(object? sender, EventArgs e)
+        {
+            var seed = new Random().Next(100000, 999999);
+            _worldSeed.Text = seed.ToString();
+            var random = new Random(seed);
+            _initF1.Value = random.Next(50);
+            _initF2.Value = random.Next(50) + 50;
+            _initL1.Value = random.Next(100);
+            _initL2.Value = random.Next(100);
+            _initP1.Value = random.Next(100);
+            _initP2.Value = random.Next(100);
+            _initRatio12.Value = random.Next(100);
+            KillRunning();
+            _mapWidget.Clear();
+        }
+
+        private void OnWorldInitChanged(object? sender, EventArgs e)
+        {
+            KillRunning();
+            MakeWorld();
         }
 
         private void OnPointsSeedChanged(object sender, KeyEventArgs e)
@@ -56,8 +89,8 @@ namespace PathFinderGui
         {
             if (e.Key != Keys.Enter && e.Key != Keys.Tab) return;
             if (!int.TryParse(_worldSeed.Text, out _)) return;
+            KillRunning();
             _mapWidget.Clear();
-            Application.Instance.RunIteration();
             MakeWorld();
         }
         private void OnShowSearchCheckboxChanged(object sender, EventArgs e)
@@ -127,7 +160,7 @@ namespace PathFinderGui
             SetRandomPoints();
             _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
-        private void OnNewWorldClick(object sender, EventArgs args)
+        private void OnNewSeedClick(object sender, EventArgs args)
         {
             _worldSeed.Text = new Random().Next(10000, 99999).ToString();
             _mapWidget.Clear();

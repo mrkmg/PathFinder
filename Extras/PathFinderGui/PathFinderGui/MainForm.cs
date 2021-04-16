@@ -90,7 +90,16 @@ namespace PathFinderGui
         {
             KillRunning();
             if (_mapWidget.BitmapHeight == 0 || _mapWidget.BitmapWidth == 0) return;
-            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), _moveCostStepper.Value);
+            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), new World.InitializationOptions
+            {
+                F1 = (double)_initF1.Value / 100 * 30d,
+                F2 = (double)_initF2.Value / 100 * 30d,
+                L1 = (double)_initL1.Value / 100 * 3d + 1d,
+                L2 = (double)_initL2.Value / 100 * 3d + 1d,
+                P1 = (double)_initP1.Value / 100,
+                P2 = (double)_initP2.Value / 100,
+                Ratio12 = (double)_initRatio12.Value / 100 * 4 - 2
+            } ,_moveCostStepper.Value);
             SetRandomPoints();
             _mapWidget.ClearPath();
             _mapWidget.ClearRunning();

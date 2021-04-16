@@ -2,6 +2,7 @@ using System;
 using Eto.Forms;
 using Eto.Drawing;
 using PathFinderGui.Widgets;
+using SimpleWorld.Map;
 
 namespace PathFinderGui
 {
@@ -59,6 +60,49 @@ namespace PathFinderGui
             Increment = 0.1,
             DecimalPlaces = 1
         };
+
+        private readonly Slider _initF1 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+        }; 
+
+        private readonly Slider _initF2 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+        }; 
+
+        private readonly Slider _initL1 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+        }; 
+
+        private readonly Slider _initL2 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+        }; 
+
+        private readonly Slider _initP1 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+        }; 
+
+        private readonly Slider _initP2 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+        }; 
+
+        private readonly Slider _initRatio12 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+        }; 
+        
         private readonly CheckBox _canCornerCut = new () { Checked = true };
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
 
@@ -69,12 +113,12 @@ namespace PathFinderGui
             ReadOnly = true
         };
 
-        private readonly Button _newWorld = new () 
+        private readonly Button _newSeedButton = new () 
         {
-            Text = "New World",
+            Text = "New Seed",
             Width = 90
         };
-        private readonly Button _newPoints = new () 
+        private readonly Button _newPointsButton = new () 
         {
             Text = "New Points",
             Width = 90
@@ -90,11 +134,26 @@ namespace PathFinderGui
             Width = 60
         };
 
+        private readonly Button _newWorldButton = new()
+        {
+            Text = "New World Options",
+        };
+
         private void InitUi()
         {
 
             static StackLayoutItem HStretched(Control c) =>
                 new() {Control = c, HorizontalAlignment = HorizontalAlignment.Stretch};
+
+            static StackLayoutItem LabelInput(int labelWidth, string label, Control input) =>
+                HStretched(new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    Items =
+                    {
+                        new StackLayoutItem {Control = new Label {Text = label, Width = labelWidth}}, HStretched(input)
+                    }
+                });
             
             Content = new StackLayout
             {
@@ -125,7 +184,7 @@ namespace PathFinderGui
                             new StackLayout
                             {
                                 Orientation =  Orientation.Horizontal, 
-                                Items = { _newWorld, _newPoints }
+                                Items = { _newSeedButton, _newPointsButton }
                             },
                             new StackLayout
                             {
@@ -157,7 +216,15 @@ namespace PathFinderGui
                                 Items = {_go, _pauseButton}
                             },
                             HStretched(_delayStepper),
-                            HStretched(_statsWidget)
+                            HStretched(_statsWidget),
+                            LabelInput(50, "F1", _initF1),
+                            LabelInput(50, "L1", _initL1),
+                            LabelInput(50, "P1", _initP1),
+                            LabelInput(50, "F2", _initF2),
+                            LabelInput(50, "L2", _initL2),
+                            LabelInput(50, "P2", _initP2),
+                            LabelInput(50, "R12", _initRatio12),
+                            HStretched(_newWorldButton)
                         }
                     }
                 }

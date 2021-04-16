@@ -10,6 +10,28 @@ namespace SimpleWorld.Map
 {
     public class World
     {
+        public struct InitializationOptions
+        {
+            public double F1;
+            public double F2;
+            public double L1;
+            public double L2;
+            public double P1;
+            public double P2;
+            public double Ratio12;
+        }
+
+        public static readonly InitializationOptions DefaultInit = new ()
+        {
+            F1 = 2,
+            F2 = 9,
+            L1 = 2,
+            L2 = 3.5d,
+            P1 = 0.25d,
+            P2 = 0.25d,
+            Ratio12 = 0,
+        };
+        
         public bool CanCutCorner { get; set; } = true;
         public double MoveCost { get; set; }
 
@@ -19,17 +41,16 @@ namespace SimpleWorld.Map
         private readonly Random _random;
         private readonly Position[][] _allNodes;
 
-        public World(int xSize, int ySize, Random random = null, double moveCost = 1)
+        public World(int xSize, int ySize, Random random = null, InitializationOptions? init = null, double moveCost = 1)
         {
             XSize = xSize;
             YSize = ySize;
             MoveCost = moveCost;
-
             _allNodes = new Position[XSize][];
 
             _random = random ?? new Random();
-
-            Standard();
+            
+            Standard(init ?? DefaultInit);
         }
 
         [CanBeNull]
@@ -62,10 +83,10 @@ namespace SimpleWorld.Map
         // ReSharper restore UnusedParameter.Local
         // ReSharper enable UnusedMember.Local
 
-        private void Standard()
+        private void Standard(InitializationOptions initializationOptions)
         {
             var deadSpaceNoiseMap = DeadSpaceNoiseMap();
-            var hillsNoiseMap = HillsNoiseMap();
+            var hillsNoiseMap = HillsNoiseMap(initializationOptions);
             
             for (var x = 0; x < XSize; x++)
             {
@@ -93,7 +114,7 @@ namespace SimpleWorld.Map
             return noiseMap;
         }
 
-        private NoiseMap HillsNoiseMap()
+        private NoiseMap HillsNoiseMap(InitializationOptions initializationOptions)
         {
             var noiseMap = new NoiseMap();
             var noiseMapBuilder = new PlaneNoiseMapBuilder
@@ -107,10 +128,10 @@ namespace SimpleWorld.Map
                         UpperBound = 1,
                         Source0 = new Perlin
                         {
-                            Frequency = 1,
-                            Lacunarity = 3,
-                            Quality = NoiseQuality.Best,
-                            Persistence = 0.25,
+                            Frequency = initializationOptions.F1,
+                            Lacunarity = initializationOptions.L1,
+                            Quality = NoiseQuality.Fast,
+                            Persistence = initializationOptions.P1,
                             Seed = _random.Next()
                         }
                     },
@@ -120,14 +141,14 @@ namespace SimpleWorld.Map
                         UpperBound = 1,
                         Source0 = new Perlin
                         {
-                            Frequency = 3,
-                            Lacunarity = 3.5,
-                            Quality = NoiseQuality.Best,
-                            Persistence = 0.25,
+                            Frequency = initializationOptions.F2,
+                            Lacunarity = initializationOptions.L2,
+                            Quality = NoiseQuality.Fast,
+                            Persistence = initializationOptions.P2,
                             Seed = _random.Next()
                         }
                     },
-                    Control = new Constant {ConstantValue = 0}
+                    Control = new Constant {ConstantValue = initializationOptions.Ratio12}
                 }
             };
             noiseMapBuilder.SetDestSize(XSize, YSize);
