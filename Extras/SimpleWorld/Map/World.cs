@@ -13,27 +13,38 @@ namespace SimpleWorld.Map
         public struct InitializationOptions
         {
             public double F1;
-            public double F2;
             public double L1;
-            public double L2;
             public double P1;
+            public double SX1;
+            public double SY1;
+
+            public double F2;
+            public double L2;
             public double P2;
+            public double SX2;
+            public double SY2;
+            
             public double Ratio12;
         }
 
         public static readonly InitializationOptions DefaultInit = new ()
         {
             F1 = 2,
-            F2 = 9,
             L1 = 2,
-            L2 = 3.5d,
             P1 = 0.25d,
+            SX1 = 1, SY1 = 1,
+            
+            F2 = 9,
+            L2 = 3.5d,
             P2 = 0.25d,
+            SX2 = 1, SY2 = 1,
+            
             Ratio12 = 0,
         };
         
         public bool CanCutCorner { get; set; } = true;
         public double MoveCost { get; set; }
+        public int MaxStepSize { get; set; } = 2;
 
         public readonly int XSize;
         public readonly int YSize;
@@ -117,40 +128,35 @@ namespace SimpleWorld.Map
         private NoiseMap HillsNoiseMap(InitializationOptions initializationOptions)
         {
             var noiseMap = new NoiseMap();
-            var noiseMapBuilder = new PlaneNoiseMapBuilder
-            {
+            var noiseMapBuilder = new PlaneNoiseMapBuilder {
                 DestNoiseMap = noiseMap,
-                SourceModule = new Blend
-                {
-                    Source0 = new Clamp
-                    {
+                SourceModule = new Blend {
+                    Source0 = new Clamp {
                         LowerBound = -1,
                         UpperBound = 1,
-                        Source0 = new Perlin
-                        {
-                            Frequency = initializationOptions.F1,
-                            Lacunarity = initializationOptions.L1,
-                            Quality = NoiseQuality.Fast,
-                            Persistence = initializationOptions.P1,
-                            Seed = _random.Next()
-                        }
-                    },
-                    Source1 = new Clamp
-                    {
+                        Source0 = new ScalePoint { 
+                            XScale = initializationOptions.SX1, 
+                            ZScale = initializationOptions.SY1,
+                            Source0 = new Perlin {
+                                Frequency = initializationOptions.F1,
+                                Lacunarity = initializationOptions.L1,
+                                Quality = NoiseQuality.Fast,
+                                Persistence = initializationOptions.P1,
+                                Seed = _random.Next() }}},
+                    Source1 = new Clamp {
                         LowerBound = -1,
                         UpperBound = 1,
-                        Source0 = new Perlin
-                        {
-                            Frequency = initializationOptions.F2,
-                            Lacunarity = initializationOptions.L2,
-                            Quality = NoiseQuality.Fast,
-                            Persistence = initializationOptions.P2,
-                            Seed = _random.Next()
-                        }
-                    },
-                    Control = new Constant {ConstantValue = initializationOptions.Ratio12}
-                }
-            };
+                        Source0 = new ScalePoint {
+                            XScale = initializationOptions.SX2, 
+                            ZScale = initializationOptions.SY2,
+                            Source0 = new Perlin {
+                                Frequency = initializationOptions.F2,
+                                Lacunarity = initializationOptions.L2,
+                                Quality = NoiseQuality.Fast,
+                                Persistence = initializationOptions.P2,
+                                Seed = _random.Next() }}},
+                    Control = new Constant {ConstantValue = initializationOptions.Ratio12}}};
+            
             noiseMapBuilder.SetDestSize(XSize, YSize);
             noiseMapBuilder.SetBounds(-3, 3, -2, 2);
             noiseMapBuilder.Build();

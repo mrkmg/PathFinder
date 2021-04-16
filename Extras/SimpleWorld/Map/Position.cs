@@ -48,8 +48,8 @@ namespace SimpleWorld.Map
 
         public IEnumerable<Position> TraversableNodes()
         {
-            for (var x = X-1; x <= X+1; x++)
-            for (var y = Y-1; y <= Y+1; y++)
+            for (var x = X-World.MaxStepSize; x <= X+World.MaxStepSize; x++)
+            for (var y = Y-World.MaxStepSize; y <= Y+World.MaxStepSize; y++)
             {
                 if (!World.CanCutCorner && x != X && y != Y) continue;
                 if (x == X && x == y) continue;
