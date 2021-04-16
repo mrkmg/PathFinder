@@ -210,136 +210,93 @@ namespace PathFinderGui
                     }
                 });
 
+            // TODO: Separate this monster into smaller parts
             Content = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
-                Items =
-                {
+                Items = {
                     new StackLayoutItem {
                         Control = _mapWidget,
                         VerticalAlignment = VerticalAlignment.Stretch,
-                        Expand = true
-                    },
-                    new StackLayout
-                    {
+                        Expand = true },
+                    new StackLayout {
                         Width = -1,
                         Orientation = Orientation.Vertical,
                         VerticalContentAlignment = VerticalAlignment.Stretch,
                         Padding = 10,
                         Spacing = 10,
-                        Items =
-                        {
-                            new Label
-                            {
+                        Items = {
+                            new Label {
                                 Text = "Path Finder Demobox",
-                                Font = new Font("", 12f, FontStyle.Bold)
-                            },
-                            new Label
-                            {
+                                Font = new Font("", 12f, FontStyle.Bold)},
+                            new Label {
                                 Text = "World Settings",
-                                Font = new Font("", 10f, FontStyle.Bold)
-                            },
+                                Font = new Font("", 10f, FontStyle.Bold)},
                             HStretched("Seeds"),
-                            new StackLayout
-                            {
+                            new StackLayout {
                                 Orientation = Orientation.Horizontal,
-                                Items = { _worldSeed, _pointsSeed}
-                            },
-                            new StackLayout
-                            {
+                                Items = { _worldSeed, _pointsSeed}},
+                            new StackLayout {
                                 Orientation =  Orientation.Horizontal, 
-                                Items = { _newSeedButton, _newPointsButton }
-                            },
-                            new StackLayout
-                            {
+                                Items = { _newSeedButton, _newPointsButton }},
+                            new StackLayout {
                                 Orientation = IsGtk ? Orientation.Vertical : Orientation.Horizontal,
-                                Items =
-                                {
-                                    new StackLayout { Items =
-                                    {
+                                Items = {
+                                    new StackLayout { Items = {
                                         "Factor",
-                                        _moveCostStepper
-                                    }},new StackLayout { Items =
-                                    {
+                                        _moveCostStepper }},
+                                    new StackLayout { Items = {
                                         "Scale",
-                                        _scaleStepper
-                                    }},new StackLayout { Items =
-                                    {
+                                        _scaleStepper }},
+                                    new StackLayout { Items = {
                                         "Step Size",
-                                        _stepSizeStepper
-                                    }}
-                                }
-                            },
+                                        _stepSizeStepper }}}},
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
-                                Items = {"Cornering:", _canCornerCut, "   ", "Show Search:", _showSearchCheckbox}
-                            },
-                            new TableLayout
-                            {
-                                Rows =
-                                {
-                                    new TableRow { Cells = {
-                                            new TableCell { Control = ""},
-                                            new TableCell { Control = new Label {Text = "1", TextAlignment = TextAlignment.Center, Width = 80}},
-                                            new TableCell { Control = new Label {Text = "2", TextAlignment = TextAlignment.Center, Width = 80}}
-                                        }},
-                                    new TableRow { Cells = {
-                                        new TableCell { Control = "F"},
-                                        new TableCell { Control = _initF1},
-                                        new TableCell { Control = _initF2}
-                                    }},
-                                    new TableRow { Cells = {
-                                        new TableCell { Control = "L"},
-                                        new TableCell { Control = _initL1},
-                                        new TableCell { Control = _initL2}
-                                    }},
-                                    new TableRow { Cells = {
-                                        new TableCell { Control = "P"},
-                                        new TableCell { Control = _initP1},
-                                        new TableCell { Control = _initP2}
-                                    }},
-                                    new TableRow { Cells = {
-                                        new TableCell { Control = "SX"},
-                                        new TableCell { Control = _initSX1},
-                                        new TableCell { Control = _initSX2}
-                                    }},
-                                    new TableRow { Cells = {
-                                        new TableCell { Control = "SY"},
-                                        new TableCell { Control = _initSY1},
-                                        new TableCell { Control = _initSY2}
-                                    }},
-                                }
-                            },
+                                Items = {"Cornering:", _canCornerCut, "   ", "Show Search:", _showSearchCheckbox}},
+                            new TableLayout { Rows = {
+                                new TableRow { Cells = {
+                                    new TableCell { Control = ""},
+                                    new TableCell { Control = new Label {Text = "1", TextAlignment = TextAlignment.Center, Width = 80}},
+                                    new TableCell { Control = new Label {Text = "2", TextAlignment = TextAlignment.Center, Width = 80}}}},
+                                new TableRow { Cells = {
+                                    new TableCell { Control = "F"},
+                                    new TableCell { Control = _initF1},
+                                    new TableCell { Control = _initF2}}},
+                                new TableRow { Cells = {
+                                    new TableCell { Control = "L"},
+                                    new TableCell { Control = _initL1},
+                                    new TableCell { Control = _initL2}}},
+                                new TableRow { Cells = {
+                                    new TableCell { Control = "P"},
+                                    new TableCell { Control = _initP1},
+                                    new TableCell { Control = _initP2}}},
+                                new TableRow { Cells = {
+                                    new TableCell { Control = "SX"},
+                                    new TableCell { Control = _initSX1},
+                                    new TableCell { Control = _initSX2}}},
+                                new TableRow { Cells = {
+                                    new TableCell { Control = "SY"},
+                                    new TableCell { Control = _initSY1},
+                                    new TableCell { Control = _initSY2}}}}},
                             LabelInput(50, "Ratio", _initRatio12),
                             HStretched(_newWorldButton),
-                            new Label
-                            {
+                            new Label {
                                 Text = "Solver Settings",
-                                Font = new Font("", 10f, FontStyle.Bold)
-                            },
-                            new TableLayout
-                            {
-                                Rows =
-                                {
-                                    new TableRow
-                                    {
-                                        Cells = {new TableCell { Control = "Solver"}, new TableCell { Control = "Greed"}}
-                                    },
-                                    new TableRow
-                                    {
-                                        Cells = {new TableCell(_solverSelector), new TableCell(_greedStepper)}
-                                    }
-                                }
-                            },
-                            new Label
-                            {
+                                Font = new Font("", 10f, FontStyle.Bold)},
+                            new TableLayout { Rows = {
+                                    new TableRow { Cells = {
+                                        new TableCell { Control = "Solver"}, 
+                                        new TableCell { Control = "Greed"}}},
+                                    new TableRow { Cells = {
+                                        new TableCell(_solverSelector), new TableCell(_greedStepper)
+                                    }}}},
+                            new Label {
                                 Text = "Commands",
-                                Font = new Font("", 10f, FontStyle.Bold)
-                            },
+                                Font = new Font("", 10f, FontStyle.Bold)},
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
-                                Items = {_go, _pauseButton, _delayStepper}
-                            },
+                                Items = {_go, _pauseButton, _delayStepper}},
                             HStretched(_statsWidget)
                         }
                     }

@@ -18,7 +18,7 @@ namespace PathFinderGui
 
         public MainForm()
         {
-            Title = "Path Finder Tester";
+            Title = "Path Finder Demobox";
             WindowState = WindowState.Maximized;
             
             InitUi();
