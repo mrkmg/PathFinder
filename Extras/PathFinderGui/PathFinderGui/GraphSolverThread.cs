@@ -31,15 +31,13 @@ namespace PathFinderGui
             _kill = false;
             _thread = new Thread(Main);
             _thread.Start();
-            _frameStopwatch.Start();
         }
 
         private void Main()
         {
-            while (!_kill)
+            _frameStopwatch.Start();
+            while (!_kill && GraphSolver.State == SolverState.Waiting)
             {
-                if (GraphSolver.State != SolverState.Waiting)
-                    break;
                 lock (_lock)
                 {
                     if (Delay <= 0 || _checkedPositions.Count < Delay)

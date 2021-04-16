@@ -14,6 +14,7 @@ namespace PathFinderGui.Widgets
 
         private readonly List<Bitmap> _bitmaps = new();
         private int _scale;
+        private UiEventDebouncer<EventArgs> resizeDebouce = new(50);
 
         public int Scale
         {
@@ -37,7 +38,8 @@ namespace PathFinderGui.Widgets
             
             Paint += OnPaint;
             LoadComplete += OnLoadComplete;
-            SizeChanged += OnSizeChanged;
+            SizeChanged += resizeDebouce.Handle;
+            resizeDebouce.Fired += OnSizeChanged;
             UnLoad += OnUnLoad;
 
             base.MouseUp += (sender, args) => MouseUp?.Invoke(sender, new BitmapMouseEventArgs(args, new Point(args.Location / _scale)));
@@ -72,6 +74,9 @@ namespace PathFinderGui.Widgets
 
         private void OnPaint(object sender, PaintEventArgs args)
         {
+            args.Graphics.SetClip(args.ClipRectangle);
+            args.Graphics.Clear(Colors.Black);
+            args.Graphics.ResetClip();
             foreach (var bitmap in _bitmaps)
             {
                 args.Graphics.DrawImage(bitmap, args.ClipRectangle, args.ClipRectangle);

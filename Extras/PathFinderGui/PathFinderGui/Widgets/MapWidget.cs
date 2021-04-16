@@ -9,6 +9,7 @@ namespace PathFinderGui.Widgets
     public class MapWidget : LayeredBitmapWidget
     {
         private IList<Position> _lastBestPath;
+        private ICollection<Position> _lastCheckedPoints;
 
         
         public MapWidget() : base(1, 4)
@@ -23,16 +24,20 @@ namespace PathFinderGui.Widgets
 
         public void ClearRunning()
         {
+            _lastCheckedPoints = null;
             _lastBestPath = null;
             ClearLayer(1);
         }
 
         public void DrawRunning(FrameData frameData)
         {
-            DrawAllPoints(1, frameData.CheckedPositions.AsSearchDrawPoints());
+            if (_lastCheckedPoints != null)
+                DrawAllPoints(1, _lastCheckedPoints.AsSearchDrawPoints());
+            DrawAllPoints(1, frameData.CheckedPositions.AsActiveSearchDrawPoints());
             DrawAllPoints(1, _lastBestPath != null
                 ? BestPathDiff(frameData.CurrentBestPath)
                 : frameData.CurrentBestPath.AsPathDrawPoints());
+            _lastCheckedPoints = frameData.CheckedPositions;
             _lastBestPath = frameData.CurrentBestPath;
         }
 
@@ -82,29 +87,16 @@ namespace PathFinderGui.Widgets
         private bool IsPointInBitmap((int x, int y) xy) 
             => xy.x > 0 && xy.x < BitmapWidth && xy.y > 0 && xy.y < BitmapHeight;
 
-        private IEnumerable<DrawPoint> BestPathDiff(IEnumerable<Position> newBestPath)
+        private IEnumerable<DrawPoint> BestPathDiff(IList<Position> newBestPath)
         {
-            var i = -1;
-            foreach (var position in newBestPath)
-            {
-                i++;
-                
-                if (i >= _lastBestPath.Count)
-                {
-                    yield return position.AsPathDrawPoint();
-                    continue;
-                }
-                
-                if (_lastBestPath[i].Equals(position))
-                {
-                    continue;
-                }
+            var i = 0;
+            var m = Math.Min(newBestPath.Count, _lastBestPath.Count);
+            while (i < m && newBestPath[i].Equals(_lastBestPath[i])) i++;
 
-                yield return _lastBestPath[i].AsSearchDrawPoint();
-                yield return position.AsPathDrawPoint();
-            }
-            while (++i < _lastBestPath.Count)
-                yield return _lastBestPath[i].AsSearchDrawPoint();
+            for (var ii = i; ii < _lastBestPath.Count; ii++) 
+                yield return _lastBestPath[ii].AsSearchDrawPoint();
+
+            foreach (var p in newBestPath) yield return p.AsPathDrawPoint();
         }
     }
     
@@ -112,7 +104,8 @@ namespace PathFinderGui.Widgets
     {
         
         private static readonly Color PathPointColor = Color.FromArgb(255, 0, 0, 200);
-        private static readonly Color SearchPointColor = Color.FromArgb(0, 0, 200, 100);
+        private static readonly Color SearchPointColor = Color.FromArgb(0, 0, 150, 100);
+        private static readonly Color ActiveSearchPointColor = Color.FromArgb(100, 100, 0, 100);
         private static readonly Color MarkerPointColor = Color.FromArgb(150, 0, 150);
         
         private static Color GetColorForLevel(int level)
@@ -134,6 +127,9 @@ namespace PathFinderGui.Widgets
 
         internal static IEnumerable<DrawPoint> AsSearchDrawPoints(this IEnumerable<Position> positions) 
             => positions.Where(p => p != null).Select(AsSearchDrawPoint);
+        
+        internal static IEnumerable<DrawPoint> AsActiveSearchDrawPoints(this IEnumerable<Position> positions) 
+            => positions.Where(p => p != null).Select(AsActiveSearchDrawPoint);
 
         internal static IEnumerable<DrawPoint> AsPathDrawPoints(this IEnumerable<Position> positions) 
             => positions.Where(p => p != null).Select(AsPathDrawPoint);
@@ -143,6 +139,9 @@ namespace PathFinderGui.Widgets
         
         internal static DrawPoint AsSearchDrawPoint(this Position p) 
             => new(p.X, p.Y, SearchPointColor);
+        
+        internal static DrawPoint AsActiveSearchDrawPoint(this Position p) 
+            => new(p.X, p.Y, ActiveSearchPointColor);
         
         internal static DrawPoint AsMapDrawPoint(this Position p) 
             => new (p.X, p.Y, GetColorForLevel(p.Cost));

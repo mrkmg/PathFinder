@@ -92,9 +92,6 @@ namespace PathFinderGui
 
         private void InitUi()
         {
-            Title = "Path Finder Tester";
-            ClientSize = new Size(750, 600);
-            
 
             static StackLayoutItem HStretched(Control c) =>
                 new() {Control = c, HorizontalAlignment = HorizontalAlignment.Stretch};

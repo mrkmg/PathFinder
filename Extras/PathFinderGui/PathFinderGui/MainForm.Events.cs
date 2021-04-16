@@ -15,7 +15,7 @@ namespace PathFinderGui
         private void BindEvents()
         {
             Load += (_, _) => Content.Height = Height;
-            Closed += (_, _) => KillRunning();
+            Closed += OnClosed;
             KeyUp += CheckKeyupForExit;
 
             _mapWidget.IsReady += OnMapWidgetIsReady;
@@ -36,12 +36,11 @@ namespace PathFinderGui
             _worldSeed.KeyUp += OnWorldSeedChanged;
             _pointsSeed.KeyUp += OnPointsSeedChanged;
             
+            _showSearchCheckbox.CheckedChanged += OnShowSearchCheckboxChanged;
+            
             _scaleSelectorChangedDebounce.Fired += OnScaleSelectorChanged;
             _moveCostSelectorChangedDebounce.Fired += OnMoveCostSelectorChanged;
             
-            _showSearchCheckbox.CheckedChanged += OnShowSearchCheckboxChanged;
-            
-            Closed += OnClosed;
         }
 
         private void OnPointsSeedChanged(object sender, KeyEventArgs e)

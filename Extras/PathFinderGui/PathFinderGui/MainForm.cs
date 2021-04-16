@@ -1,5 +1,4 @@
 using System;
-using System.Timers;
 using Eto.Drawing;
 using Eto.Forms;
 using PathFinder.Solvers.Generic;
@@ -20,11 +19,12 @@ namespace PathFinderGui
         private World _world;
         private Position _startPoint;
         private Position _endPoint;
-        private readonly UITimer _timer = new () { Interval = 1d/20 };
+        private readonly UITimer _timer = new () { Interval = 1d/60 };
         private FrameData _lastFrameData;
 
         public MainForm()
         {
+            Title = "Path Finder Tester";
             WindowState = WindowState.Maximized;
             
             InitUi();
@@ -158,45 +158,5 @@ namespace PathFinderGui
             _lastFrameData = frameData;
         }
 
-    }
-
-    public class UiEventDebouncer<T> : IDisposable where T : class
-    {
-        public event EventHandler<T> Fired;
-        private readonly Timer _timer;
-        private T _lastArgs;
-        private object _lastSender;
-        
-        public UiEventDebouncer(double timeMs)
-        {
-            _timer = new Timer(timeMs)
-            {
-                AutoReset = false,
-                Enabled = false
-            };
-            _timer.Elapsed += TimerFired;
-        }
-
-        public void Handle(object sender, T args)
-        {
-            _lastSender = sender;
-            _lastArgs = args;
-            _timer.Stop();
-            _timer.Start();
-        }
-
-        private void TimerFired(object sender, ElapsedEventArgs args) => Application.Instance.InvokeAsync(InvokeFire);
-
-        private void InvokeFire()
-        {
-            Fired?.Invoke(_lastSender, _lastArgs);
-            _lastSender = null;
-            _lastArgs = null;
-        }
-
-        public void Dispose()
-        {
-            _timer.Dispose();
-        }
     }
 }
