@@ -19,13 +19,13 @@ namespace PathFinderGui
 
         private readonly TextBox _worldSeed = new ()
         {
-            Text = new Random().Next(10000, 99999).ToString(),
+            Text = new Random().Next(100000, 999999).ToString(),
             Width = 90
         };
         
         private readonly TextBox _pointsSeed = new ()
         {
-            Text = new Random().Next(10000, 99999).ToString(),
+            Text = new Random().Next(100000, 999999).ToString(),
             Width = 90
         };
         
@@ -44,12 +44,22 @@ namespace PathFinderGui
             MaxValue = 8,
             Value = 1
         };
+        private readonly NumericStepper _stepSizeStepper = new ()
+        {
+            Width = IsGtk ? 150 : 60,
+            MinValue = 1,
+            MaxValue = 4,
+            Value = 1,
+            Increment = 1,
+            DecimalPlaces = 0
+        };
         private readonly NumericStepper _delayStepper = new ()
         {
             MinValue = 0,
             MaxValue = 10000,
             Value = 0,
-            ToolTip = "Max ticks per frame"
+            ToolTip = "Max ticks per frame",
+            Width = 60
         };
         private readonly NumericStepper _moveCostStepper = new ()
         {
@@ -65,42 +75,87 @@ namespace PathFinderGui
             MinValue = 0,
             MaxValue = 100,
             Value = 50,
+            Width = 80,
+            ToolTip = "Frequency Layer 1"
         }; 
 
         private readonly Slider _initF2 = new () {
             MinValue = 0,
             MaxValue = 100,
             Value = 50,
+            Width = 80,
+            ToolTip = "Frequency Layer 2"
         }; 
 
         private readonly Slider _initL1 = new () {
             MinValue = 0,
             MaxValue = 100,
             Value = 50,
+            Width = 80,
+            ToolTip = "Lacunarity Layer 1"
         }; 
 
         private readonly Slider _initL2 = new () {
             MinValue = 0,
             MaxValue = 100,
             Value = 50,
+            Width = 80,
+            ToolTip = "Lacunarity Layer 2"
         }; 
 
         private readonly Slider _initP1 = new () {
             MinValue = 0,
             MaxValue = 100,
             Value = 50,
+            Width = 80,
+            ToolTip = "Persistence Layer 1"
         }; 
 
         private readonly Slider _initP2 = new () {
             MinValue = 0,
             MaxValue = 100,
             Value = 50,
+            Width = 80,
+            ToolTip = "Persistence Layer 2"
+        }; 
+
+        private readonly Slider _initSX1 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+            Width = 80,
+            ToolTip = "X Scale Layer 1"
+        }; 
+
+        private readonly Slider _initSX2 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+            Width = 80,
+            ToolTip = "X Scale Layer 2"
+        }; 
+
+        private readonly Slider _initSY1 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+            Width = 80,
+            ToolTip = "Y Scale Layer 1"
+        }; 
+
+        private readonly Slider _initSY2 = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = 50,
+            Width = 80,
+            ToolTip = "Y Scale Layer 2"
         }; 
 
         private readonly Slider _initRatio12 = new () {
             MinValue = 0,
             MaxValue = 100,
             Value = 50,
+            ToolTip = "Ratio between Layer 1 and 2"
         }; 
         
         private readonly CheckBox _canCornerCut = new () { Checked = true };
@@ -154,7 +209,7 @@ namespace PathFinderGui
                         new StackLayoutItem {Control = new Label {Text = label, Width = labelWidth}}, HStretched(input)
                     }
                 });
-            
+
             Content = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
@@ -174,7 +229,16 @@ namespace PathFinderGui
                         Spacing = 10,
                         Items =
                         {
-                            HStretched("Path Finder Testing"),
+                            new Label
+                            {
+                                Text = "Path Finder Demobox",
+                                Font = new Font("", 12f, FontStyle.Bold)
+                            },
+                            new Label
+                            {
+                                Text = "World Settings",
+                                Font = new Font("", 10f, FontStyle.Bold)
+                            },
                             HStretched("Seeds"),
                             new StackLayout
                             {
@@ -197,12 +261,12 @@ namespace PathFinderGui
                                         _moveCostStepper
                                     }},new StackLayout { Items =
                                     {
-                                        "Greed",
-                                        _greedStepper
-                                    }},new StackLayout { Items =
-                                    {
                                         "Scale",
                                         _scaleStepper
+                                    }},new StackLayout { Items =
+                                    {
+                                        "Step Size",
+                                        _stepSizeStepper
                                     }}
                                 }
                             },
@@ -210,21 +274,73 @@ namespace PathFinderGui
                                 Orientation = Orientation.Horizontal, 
                                 Items = {"Cornering:", _canCornerCut, "   ", "Show Search:", _showSearchCheckbox}
                             },
-                            HStretched(_solverSelector),
+                            new TableLayout
+                            {
+                                Rows =
+                                {
+                                    new TableRow { Cells = {
+                                            new TableCell { Control = ""},
+                                            new TableCell { Control = new Label {Text = "1", TextAlignment = TextAlignment.Center, Width = 80}},
+                                            new TableCell { Control = new Label {Text = "2", TextAlignment = TextAlignment.Center, Width = 80}}
+                                        }},
+                                    new TableRow { Cells = {
+                                        new TableCell { Control = "F"},
+                                        new TableCell { Control = _initF1},
+                                        new TableCell { Control = _initF2}
+                                    }},
+                                    new TableRow { Cells = {
+                                        new TableCell { Control = "L"},
+                                        new TableCell { Control = _initL1},
+                                        new TableCell { Control = _initL2}
+                                    }},
+                                    new TableRow { Cells = {
+                                        new TableCell { Control = "P"},
+                                        new TableCell { Control = _initP1},
+                                        new TableCell { Control = _initP2}
+                                    }},
+                                    new TableRow { Cells = {
+                                        new TableCell { Control = "SX"},
+                                        new TableCell { Control = _initSX1},
+                                        new TableCell { Control = _initSX2}
+                                    }},
+                                    new TableRow { Cells = {
+                                        new TableCell { Control = "SY"},
+                                        new TableCell { Control = _initSY1},
+                                        new TableCell { Control = _initSY2}
+                                    }},
+                                }
+                            },
+                            LabelInput(50, "Ratio", _initRatio12),
+                            HStretched(_newWorldButton),
+                            new Label
+                            {
+                                Text = "Solver Settings",
+                                Font = new Font("", 10f, FontStyle.Bold)
+                            },
+                            new TableLayout
+                            {
+                                Rows =
+                                {
+                                    new TableRow
+                                    {
+                                        Cells = {new TableCell { Control = "Solver"}, new TableCell { Control = "Greed"}}
+                                    },
+                                    new TableRow
+                                    {
+                                        Cells = {new TableCell(_solverSelector), new TableCell(_greedStepper)}
+                                    }
+                                }
+                            },
+                            new Label
+                            {
+                                Text = "Commands",
+                                Font = new Font("", 10f, FontStyle.Bold)
+                            },
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
-                                Items = {_go, _pauseButton}
+                                Items = {_go, _pauseButton, _delayStepper}
                             },
-                            HStretched(_delayStepper),
-                            HStretched(_statsWidget),
-                            LabelInput(50, "F1", _initF1),
-                            LabelInput(50, "L1", _initL1),
-                            LabelInput(50, "P1", _initP1),
-                            LabelInput(50, "F2", _initF2),
-                            LabelInput(50, "L2", _initL2),
-                            LabelInput(50, "P2", _initP2),
-                            LabelInput(50, "R12", _initRatio12),
-                            HStretched(_newWorldButton)
+                            HStretched(_statsWidget)
                         }
                     }
                 }

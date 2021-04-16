@@ -31,15 +31,22 @@ namespace PathFinderGui
             
             _delayStepper.ValueChanged += OnDelayStepperChanged;
             _greedStepper.ValueChanged += OnGreedSelectorChanged;
+            _stepSizeStepper.ValueChanged += OnStepSizeChanged;
             _scaleStepper.ValueChanged += _scaleSelectorChangedDebounce.Handle;
             _moveCostStepper.ValueChanged += _moveCostSelectorChangedDebounce.Handle;
             
             _initF1.ValueChanged += _worldInitChanged.Handle;
-            _initF2.ValueChanged += _worldInitChanged.Handle;
             _initL1.ValueChanged += _worldInitChanged.Handle;
-            _initL2.ValueChanged += _worldInitChanged.Handle;
             _initP1.ValueChanged += _worldInitChanged.Handle;
+            _initSX1.ValueChanged += _worldInitChanged.Handle;
+            _initSY1.ValueChanged += _worldInitChanged.Handle;
+
+            _initF2.ValueChanged += _worldInitChanged.Handle;
+            _initL2.ValueChanged += _worldInitChanged.Handle;
             _initP2.ValueChanged += _worldInitChanged.Handle;
+            _initSX2.ValueChanged += _worldInitChanged.Handle;
+            _initSY2.ValueChanged += _worldInitChanged.Handle;
+            
             _initRatio12.ValueChanged += _worldInitChanged.Handle;
             
             _newWorldButton.Click += OnNewWorldClick;
@@ -54,6 +61,15 @@ namespace PathFinderGui
             _worldInitChanged.Fired += OnWorldInitChanged;
         }
 
+        private void OnStepSizeChanged(object? sender, EventArgs e)
+        {
+            if (_world == null) return;
+
+            KillRunning();
+            _world.MaxStepSize = (int)_stepSizeStepper.Value;
+            Reset();
+        }
+
         private void OnNewWorldClick(object? sender, EventArgs e)
         {
             var seed = new Random().Next(100000, 999999);
@@ -65,6 +81,10 @@ namespace PathFinderGui
             _initL2.Value = random.Next(100);
             _initP1.Value = random.Next(100);
             _initP2.Value = random.Next(100);
+            _initSX1.Value = random.Next(100);
+            _initSX2.Value = random.Next(100);
+            _initSY1.Value = random.Next(100);
+            _initSY2.Value = random.Next(100);
             _initRatio12.Value = random.Next(100);
             KillRunning();
             _mapWidget.Clear();

@@ -7,19 +7,13 @@ using SimpleWorld.Map;
 
 namespace PathFinderGui
 {
-    /**
-     * TODO - Separate into individual components
-     *        MainForm - running the solver and delegating updates
-     *        Map - drawing the map
-     *        Options - all inputs
-     **/
     public partial class MainForm
     {
         private SolverRunnerThread _runnerThread;
         private World _world;
         private Position _startPoint;
         private Position _endPoint;
-        private readonly UITimer _timer = new () { Interval = 1d/60 };
+        private readonly UITimer _timer = new () { Interval = 1d / 60 };
         private FrameData _lastFrameData;
 
         public MainForm()
@@ -92,14 +86,21 @@ namespace PathFinderGui
             if (_mapWidget.BitmapHeight == 0 || _mapWidget.BitmapWidth == 0) return;
             _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), new World.InitializationOptions
             {
-                F1 = (double)_initF1.Value / 100 * 30d,
-                F2 = (double)_initF2.Value / 100 * 30d,
+                F1 = (double)_initF1.Value / 100 * 3d,
                 L1 = (double)_initL1.Value / 100 * 3d + 1d,
-                L2 = (double)_initL2.Value / 100 * 3d + 1d,
                 P1 = (double)_initP1.Value / 100,
+                SX1 = (double)_initSX1.Value / 100 * 5d,
+                SY1 = (double)_initSY1.Value / 100 * 5d,
+                
+                F2 = (double)_initF2.Value / 100 * 10d,
+                L2 = (double)_initL2.Value / 100 * 3d + 1d,
                 P2 = (double)_initP2.Value / 100,
-                Ratio12 = (double)_initRatio12.Value / 100 * 4 - 2
+                SX2 = (double)_initSX2.Value / 100 * 5d,
+                SY2 = (double)_initSY2.Value / 100 * 5d,
+                
+                Ratio12 = (double)_initRatio12.Value / 100 * 4d - 2d
             } ,_moveCostStepper.Value);
+            _world.MaxStepSize = (int) _stepSizeStepper.Value;
             SetRandomPoints();
             _mapWidget.ClearPath();
             _mapWidget.ClearRunning();
