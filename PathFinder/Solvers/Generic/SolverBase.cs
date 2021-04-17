@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PathFinder.Graphs;
+using PathFinder.Supplement;
 
 namespace PathFinder.Solvers.Generic
 {
@@ -74,16 +75,21 @@ namespace PathFinder.Solvers.Generic
         /// <inheritdoc cref="IGraphSolver{T}.MaxTicks"/>
         public int MaxTicks { get; set; } = int.MaxValue;
         
+        [DocsHidden]
         protected C5.IntervalHeap<GraphNodeMetaData<T>> OpenNodes;
+        [DocsHidden]
         protected readonly Dictionary<T, GraphNodeMetaData<T>> Meta = new Dictionary<T, GraphNodeMetaData<T>>();
+        [DocsHidden]
         protected GraphNodeMetaData<T> CurrentMetaData;
+        [DocsHidden]
         protected readonly IComparer<GraphNodeMetaData<T>> Comparer;
+        [DocsHidden]
+        protected readonly INodeTraverser<T> Traverser;
         
         private IList<T> _path;
         private GraphNodeMetaData<T> _closest;
         private double? _cost;
         private long _nextGraphNodeId;
-        protected readonly INodeTraverser<T> Traverser;
         private int _remainingTicks;
         
         private void Tick()
@@ -125,7 +131,8 @@ namespace PathFinder.Solvers.Generic
                 Tick();
             return State;
         }
-
+        
+        [DocsHidden]
         protected virtual void ProcessNeighbor(GraphNodeMetaData<T> neighborMetaData)
         {
             if (neighborMetaData.Status != NodeStatus.New) return;
@@ -134,7 +141,7 @@ namespace PathFinder.Solvers.Generic
             Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
         }
 
-        [NotNull]
+        [NotNull, DocsHidden]
         protected GraphNodeMetaData<T> GetMeta(T node, bool onlyExisting = false)
         {
             if (Meta.TryGetValue(node, out var meta)) return meta;
@@ -219,6 +226,7 @@ namespace PathFinder.Solvers.Generic
         }
     }
 
+    [DocsHidden]
     public enum NodeStatus
     {
         New,
@@ -226,6 +234,7 @@ namespace PathFinder.Solvers.Generic
         Closed
     }
 
+    [DocsHidden]
     public class GraphNodeMetaData<T> : IEquatable<GraphNodeMetaData<T>> where T : ITraversableGraphNode<T>
     {
         public readonly T Node;
