@@ -19,9 +19,9 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies (PathFinder)
       run: dotnet restore PathFinder
-    - name: Restore dependencies (PathFinderUnitTests)
-      run: dotnet restore PathFinderUnitTests
+    - name: Restore dependencies (PathFinder.UnitTests)
+      run: dotnet restore PathFinder.UnitTests
     - name: Build
-      run: dotnet build --no-restore PathFinderUnitTests
+      run: dotnet build --no-restore PathFinder.UnitTests
     - name: Test
-      run: dotnet test --no-build --verbosity normal PathFinderUnitTests
+      run: dotnet test --no-build --verbosity normal PathFinder.UnitTests
