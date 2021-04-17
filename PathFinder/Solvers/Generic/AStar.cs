@@ -124,6 +124,7 @@ namespace PathFinder.Solvers.Generic
                 if (fromCost > neighborMetaData.FromCost) return;
                 // remove from open nodes as it will be re-added later with new costs
                 OpenNodes.Delete(neighborMetaData.Handle);
+                // set the new data on the neighbor to reflect its new parent
                 neighborMetaData.Parent = CurrentMetaData;
                 neighborMetaData.PathLength = CurrentMetaData.PathLength + 1;
                 neighborMetaData.FromCost = fromCost;

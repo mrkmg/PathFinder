@@ -176,7 +176,8 @@ namespace PathFinder.Solvers.Generic
                 var neighborMetaData = GetMeta(neighbor);
                 // do not check already checked nodes
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
-                // if a node somehow is connected to itself, do not check. Would leave to an infinite loop
+                // if a node somehow is connected to itself, do not check
+                // this should never be reach as it should be closed already
                 if (CurrentMetaData.Equals(neighborMetaData)) continue;
                 ProcessNeighbor(neighborMetaData);
             }
