@@ -31,12 +31,12 @@ namespace PathFinder.Solvers.Generic
         T Current { get; }
         
         /// <summary>
-        /// The starting <see cref="T"/> to search from.
+        /// The starting node to search from.
         /// </summary>
         T Origin { get; }
         
         /// <summary>
-        /// The destination <see cref="T"/> to search for.
+        /// The destination node to search for.
         /// </summary>
         T Destination { get; }
         
