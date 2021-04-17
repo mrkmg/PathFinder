@@ -36,6 +36,9 @@ graph connected by traversing through the map. A Graph could represent anything
 though, for example persons in a social network, with friendships allowing
 traversal through the graph.
 
+View the [Api Documentation](https://mrkmg.github.io/PathFinder/) for a complete
+reference.
+
 ### Simple Usage
 
 First, update your current "nodes" to
