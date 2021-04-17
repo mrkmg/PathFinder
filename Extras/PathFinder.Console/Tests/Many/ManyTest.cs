@@ -7,7 +7,7 @@ using System.Linq;
 using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
-namespace PathFinderConsole.Tests.Many
+namespace PathFinder.Console.Tests.Many
 {
     internal class ManyTest
     {
@@ -122,13 +122,13 @@ namespace PathFinderConsole.Tests.Many
 
         private void WriteFileHeader()
         {
-            lock (Console.Out)
+            lock (System.Console.Out)
             {
-                Console.Clear();
-                Console.CursorLeft = 0;
-                Console.CursorTop = 0;
-                Console.WriteLine($"{MapWidth}x{MapHeight} - {NumberOfTests}");
-                Console.WriteLine(
+                System.Console.Clear();
+                System.Console.CursorLeft = 0;
+                System.Console.CursorTop = 0;
+                System.Console.WriteLine($"{MapWidth}x{MapHeight} - {NumberOfTests}");
+                System.Console.WriteLine(
                     "TId".PadRight(5)
                     + "StId".PadRight(5)
                     + "T".PadRight(6)
@@ -155,11 +155,11 @@ namespace PathFinderConsole.Tests.Many
             {
                 File.AppendAllText(OutputFile,  $"{result.TestId},{result.SubId},{result.EstimatedCostTo},{result.Greed},{result.BestCostTo},{result.PathCost},{result.Checks},{result.Ticks},{result.Time},{result.CostRatio},{result.TicksRatio}\n");
             }
-            lock (Console.Out)
+            lock (System.Console.Out)
             {
-                if (Console.CursorTop >= Console.BufferHeight - 2)
-                    Console.CursorTop = 2;
-                Console.WriteLine(
+                if (System.Console.CursorTop >= System.Console.BufferHeight - 2)
+                    System.Console.CursorTop = 2;
+                System.Console.WriteLine(
                     result.TestId.PadResult(5)
                     + result.SubId.PadResult(5)
                     + result.Greed.PadResult(6)

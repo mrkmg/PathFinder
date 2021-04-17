@@ -5,7 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using PathFinder.Solvers.Generic;
 
-namespace PathFinderUnitTests
+namespace PathFinder.UnitTests
 {
     public class GenericTests
     {

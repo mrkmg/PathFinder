@@ -6,7 +6,7 @@ using System.Threading;
 using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
-namespace PathFinderConsole.Tests.Interactive
+namespace PathFinder.Console.Tests.Interactive
 {
     internal class InteractiveTest
     {
@@ -94,7 +94,7 @@ namespace PathFinderConsole.Tests.Interactive
                 IList<Position> previous = null;
                 while (true)
                 {
-                    var key = Console.ReadKey(true);
+                    var key = System.Console.ReadKey(true);
 
                     if (key.Key == ConsoleKey.Q || key.Key == ConsoleKey.Enter) break;
 
@@ -115,7 +115,7 @@ namespace PathFinderConsole.Tests.Interactive
 
         private void MakeWorld(Random rnd)
         {
-            _world = new World(Console.WindowWidth - 1, Console.WindowHeight, rnd)
+            _world = new World(System.Console.WindowWidth - 1, System.Console.WindowHeight, rnd)
             {
                 CanCutCorner = _canDiag,
             };
@@ -144,16 +144,16 @@ namespace PathFinderConsole.Tests.Interactive
         {
             while (true)
             {
-                Console.ResetColor();
-                Console.Clear();
-                Console.WriteLine("(d) Can Diag: " + _canDiag);
-                Console.WriteLine("(s) Show Search: " + _showSearch);
-                Console.WriteLine("(l) Slow Mode: " + _slowMode);
-                Console.WriteLine("(j) Big Jumps: " + _bigJumps);
-                Console.WriteLine($"(v) Seed: {_seed}");
-                Console.WriteLine("(ENTER) Run");
-                Console.WriteLine("(q) Quit");
-                var key = Console.ReadKey();
+                System.Console.ResetColor();
+                System.Console.Clear();
+                System.Console.WriteLine("(d) Can Diag: " + _canDiag);
+                System.Console.WriteLine("(s) Show Search: " + _showSearch);
+                System.Console.WriteLine("(l) Slow Mode: " + _slowMode);
+                System.Console.WriteLine("(j) Big Jumps: " + _bigJumps);
+                System.Console.WriteLine($"(v) Seed: {_seed}");
+                System.Console.WriteLine("(ENTER) Run");
+                System.Console.WriteLine("(q) Quit");
+                var key = System.Console.ReadKey();
 
                 // ReSharper disable once SwitchStatementMissingSomeCases
                 switch (key.Key)
@@ -175,8 +175,8 @@ namespace PathFinderConsole.Tests.Interactive
                         _bigJumps = !_bigJumps;
                         break;
                     case ConsoleKey.V:
-                        Console.WriteLine("\nNew Seed?");
-                        _seed = int.Parse(Console.ReadLine() ?? "0");
+                        System.Console.WriteLine("\nNew Seed?");
+                        _seed = int.Parse(System.Console.ReadLine() ?? "0");
                         break;
                 }
             }
@@ -206,7 +206,7 @@ namespace PathFinderConsole.Tests.Interactive
                     if (_slowMode) Thread.Sleep(20);
                     PrintFinding(aStar);
                     
-                    if (!Console.KeyAvailable || Console.ReadKey().Key != ConsoleKey.N) continue;
+                    if (!System.Console.KeyAvailable || System.Console.ReadKey().Key != ConsoleKey.N) continue;
 
                     aStar.Stop();
                     break;

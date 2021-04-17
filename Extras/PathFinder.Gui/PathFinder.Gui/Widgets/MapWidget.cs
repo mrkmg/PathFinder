@@ -4,7 +4,7 @@ using System.Linq;
 using Eto.Drawing;
 using SimpleWorld.Map;
 
-namespace PathFinderGui.Widgets
+namespace PathFinder.Gui.Widgets
 {
     public class MapWidget : LayeredBitmapWidget
     {

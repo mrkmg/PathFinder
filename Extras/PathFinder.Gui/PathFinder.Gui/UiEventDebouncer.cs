@@ -2,7 +2,7 @@
 using System.Timers;
 using Eto.Forms;
 
-namespace PathFinderGui
+namespace PathFinder.Gui
 {
     public class UiEventDebouncer<T> : IDisposable where T : class
     {

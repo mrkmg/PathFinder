@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 
-namespace PathFinderBenchmark
+namespace PathFinder.Benchmark
 {
     public static class Program
     {

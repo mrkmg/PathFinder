@@ -2,7 +2,7 @@
 using System.Globalization;
 using SimpleWorld.Map;
 
-namespace PathFinderConsole.Tests.Interactive
+namespace PathFinder.Console.Tests.Interactive
 {
     public class SimpleWorldWriter : IWorldWriter
     {
@@ -18,24 +18,24 @@ namespace PathFinderConsole.Tests.Interactive
 
         public void WriteInfo(string info)
         {
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.CursorLeft = 0;
-            Console.CursorTop = 0;
-            Console.Write(info);
+            System.Console.BackgroundColor = ConsoleColor.Black;
+            System.Console.ForegroundColor = ConsoleColor.White;
+            System.Console.CursorLeft = 0;
+            System.Console.CursorTop = 0;
+            System.Console.Write(info);
         }
 
         public void WriteResult(int testNum, double thoroughness, double cost, int ticks, long cpuCycles)
         {
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.CursorLeft = 0;
-            Console.CursorTop = Console.WindowHeight - testNum - 1;
-            Console.Write(testNum.ToString().PadRight(5) + " | " +
-                          thoroughness.ToString(CultureInfo.CurrentCulture).PadRight(5) + " | " +
-                          Math.Ceiling(cost).ToString(CultureInfo.CurrentCulture).PadLeft(6) + " / " +
-                          ticks.ToString().PadLeft(6) + " / " +
-                          cpuCycles.ToString().PadLeft(12));
+            System.Console.BackgroundColor = ConsoleColor.White;
+            System.Console.ForegroundColor = ConsoleColor.Black;
+            System.Console.CursorLeft = 0;
+            System.Console.CursorTop = System.Console.WindowHeight - testNum - 1;
+            System.Console.Write(testNum.ToString().PadRight(5) + " | " +
+                                 thoroughness.ToString(CultureInfo.CurrentCulture).PadRight(5) + " | " +
+                                 Math.Ceiling(cost).ToString(CultureInfo.CurrentCulture).PadLeft(6) + " / " +
+                                 ticks.ToString().PadLeft(6) + " / " +
+                                 cpuCycles.ToString().PadLeft(12));
         }
 
         public void DrawSeed(int seed)
@@ -85,19 +85,19 @@ namespace PathFinderConsole.Tests.Interactive
 
         public void DrawPosition(int x, int y, ConsoleColor background, ConsoleColor foreground)
         {
-            if (x < ResultWidth && y > Console.WindowHeight - _totalTests - 1) return;
+            if (x < ResultWidth && y > System.Console.WindowHeight - _totalTests - 1) return;
 
-            Console.CursorLeft = x;
-            Console.CursorTop = y;
-            Console.BackgroundColor = background;
-            Console.ForegroundColor = foreground;
+            System.Console.CursorLeft = x;
+            System.Console.CursorTop = y;
+            System.Console.BackgroundColor = background;
+            System.Console.ForegroundColor = foreground;
             var node = _world.GetPosition(x, y);
             if (node != null)
-                Console.Write(node.Cost);
+                System.Console.Write(node.Cost);
             else
-                Console.Write(" ");
+                System.Console.Write(" ");
 
-            Console.ResetColor();
+            System.Console.ResetColor();
         }
 
         public void DrawWorld()

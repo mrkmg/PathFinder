@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PathFinderConsole.Tests.Interactive
+namespace PathFinder.Console.Tests.Interactive
 {
     public interface IWorldWriter
     {

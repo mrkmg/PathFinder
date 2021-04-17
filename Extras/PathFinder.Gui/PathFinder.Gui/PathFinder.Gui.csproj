@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <RootNamespace>PathFinderGui</RootNamespace>
         <PackageVersion>1.0</PackageVersion>
         <Title>PathFinderGui</Title>
         <Copyright>Copyright © 2019</Copyright>

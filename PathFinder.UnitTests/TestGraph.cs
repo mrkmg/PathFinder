@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using PathFinder.Graphs;
 
-namespace PathFinderUnitTests
+namespace PathFinder.UnitTests
 {
     public class TestGraph
     {

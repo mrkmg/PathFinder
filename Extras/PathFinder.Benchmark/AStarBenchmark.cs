@@ -3,7 +3,7 @@ using BenchmarkDotNet.Attributes;
 using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
-namespace PathFinderBenchmark
+namespace PathFinder.Benchmark
 {
     [SimpleJob(1, 2, 20, 1)]
     public class AStarBenchmark

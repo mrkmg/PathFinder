@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
-namespace PathFinderGui
+namespace PathFinder.Gui
 {
     public class SolverRunnerThread
     {

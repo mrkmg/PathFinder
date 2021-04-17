@@ -1,11 +1,9 @@
 using System;
-using Eto.Drawing;
 using Eto.Forms;
 using PathFinder.Solvers.Generic;
-using PathFinderGui.Widgets;
 using SimpleWorld.Map;
 
-namespace PathFinderGui
+namespace PathFinder.Gui.Forms
 {
     public partial class MainForm
     {
@@ -31,7 +29,7 @@ namespace PathFinderGui
         {
             if (_world == null) return;
             
-            var rnd = new Random(int.Parse(_pointsSeed.Text));
+            var rnd = new Random(int.Parse((string) _pointsSeed.Text));
             var worldSize = Math.Sqrt(_world.XSize * _world.XSize + _world.YSize * _world.YSize);
             var targetSize = (int)(worldSize * 0.75);
                 
@@ -84,7 +82,7 @@ namespace PathFinderGui
         {
             KillRunning();
             if (_mapWidget.BitmapHeight == 0 || _mapWidget.BitmapWidth == 0) return;
-            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), new World.InitializationOptions
+            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse((string) _worldSeed.Text)), new World.InitializationOptions
             {
                 F1 = (double)_initF1.Value / 100 * 3d,
                 L1 = (double)_initL1.Value / 100 * 3d + 1d,

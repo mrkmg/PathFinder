@@ -4,7 +4,7 @@ using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 
-namespace PathFinderGui.Widgets
+namespace PathFinder.Gui.Widgets
 {
     public class LayeredBitmapWidget : Drawable
     {

@@ -1,11 +1,10 @@
 using System;
-using Eto.Drawing;
 using Eto.Forms;
+using PathFinder.Gui.Widgets;
 using PathFinder.Solvers.Generic;
-using PathFinderGui.Widgets;
 using SimpleWorld.Map;
 
-namespace PathFinderGui
+namespace PathFinder.Gui.Forms
 {
     public partial class MainForm
     {

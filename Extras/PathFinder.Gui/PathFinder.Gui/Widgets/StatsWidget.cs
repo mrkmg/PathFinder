@@ -1,6 +1,6 @@
 ﻿using Eto.Forms;
 
-namespace PathFinderGui.Widgets
+namespace PathFinder.Gui.Widgets
 {
     public class StatsWidget : StackLayout
     {

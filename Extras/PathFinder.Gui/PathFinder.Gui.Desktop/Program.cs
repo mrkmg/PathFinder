@@ -1,7 +1,7 @@
 ﻿using System;
 using Eto.Forms;
 
-namespace PathFinderGui.Desktop
+namespace PathFinder.Gui.Desktop
 {
     internal static class Program
     {
@@ -9,7 +9,7 @@ namespace PathFinderGui.Desktop
         [STAThread]
         public static void Main(string[] args)
         {
-            new Application(Eto.Platform.Detect).Run(new MainForm());
+            new Application(Eto.Platform.Detect).Run(new Forms.MainForm());
         }
     }
 }

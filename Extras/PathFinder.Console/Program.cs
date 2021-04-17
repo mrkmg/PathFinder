@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using PathFinderConsole.Tests.Interactive;
-using PathFinderConsole.Tests.Many;
+using PathFinder.Console.Tests.Interactive;
+using PathFinder.Console.Tests.Many;
 
-namespace PathFinderConsole
+namespace PathFinder.Console
 {
     internal class Program
     {
@@ -14,10 +14,10 @@ namespace PathFinderConsole
             
             while (true)
             {
-                Console.ResetColor();
-                Console.Clear();
-                Console.WriteLine("I, M, Q");
-                var key = Console.ReadKey().Key;
+                System.Console.ResetColor();
+                System.Console.Clear();
+                System.Console.WriteLine("I, M, Q");
+                var key = System.Console.ReadKey().Key;
 
                 if (key == ConsoleKey.I)
                 {
@@ -26,18 +26,18 @@ namespace PathFinderConsole
                 }
                 else if (key == ConsoleKey.M)
                 {
-                    Console.Clear();
+                    System.Console.Clear();
 
-                    Console.WriteLine("Multi Test Run");
+                    System.Console.WriteLine("Multi Test Run");
                     
                     var numTests = 200;
-                    Console.Write($"Num Tests ({numTests})? ");
-                    var numTestsStr = Console.ReadLine();
+                    System.Console.Write($"Num Tests ({numTests})? ");
+                    var numTestsStr = System.Console.ReadLine();
                     if (!string.IsNullOrEmpty(numTestsStr)) numTests = Int32.Parse(numTestsStr); 
 
                     var sizes = new [] {200, 400, 800, 1000, 2000};
-                    Console.Write($"Sizes ({string.Join(", ", sizes)})?");
-                    var sizesStr = Console.ReadLine();
+                    System.Console.Write($"Sizes ({string.Join(", ", sizes)})?");
+                    var sizesStr = System.Console.ReadLine();
                     if (!string.IsNullOrEmpty(sizesStr))
                     {
                         sizes = sizesStr.Split(',').Select(s => int.Parse(s.Trim())).ToArray();
@@ -47,8 +47,8 @@ namespace PathFinderConsole
                     var greedyFactors =
                         EnumerableExtensions.Sequence(0d, 2d, 0.25d)
                             .ToList();
-                    Console.Write($"GreedFactor ({string.Join(", ", greedyFactors)})?");
-                    var tInput = Console.ReadLine();
+                    System.Console.Write($"GreedFactor ({string.Join(", ", greedyFactors)})?");
+                    var tInput = System.Console.ReadLine();
                     if (!string.IsNullOrEmpty(tInput))
                     {
                         greedyFactors = tInput.Split(',').Select(s => double.Parse(s.Trim())).ToList();
