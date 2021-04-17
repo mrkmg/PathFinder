@@ -120,8 +120,9 @@ namespace PathFinder.Solvers.Generic
             {
                 // recalculate the from cost of the neighbor if coming from the current node
                 var fromCost = CurrentMetaData.FromCost + Traverser.RealCost(CurrentMetaData.Node, neighborMetaData.Node);
-                // only replace the neighbor if it is cheaper to get to it from the current node
-                if (fromCost >= neighborMetaData.FromCost) return;
+                // only replace the neighbor's parent if it is cheaper to get to it from the current node
+                if (fromCost > neighborMetaData.FromCost) return;
+                // remove from open nodes as it will be re-added later with new costs
                 OpenNodes.Delete(neighborMetaData.Handle);
                 neighborMetaData.Parent = CurrentMetaData;
                 neighborMetaData.PathLength = CurrentMetaData.PathLength + 1;
