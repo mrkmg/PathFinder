@@ -170,8 +170,7 @@ namespace PathFinder.Solvers.Generic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ProcessNeighbors()
         {
-            var neighbors = Traverser.TraversableNodes(Current);
-            foreach (var neighbor in neighbors)
+            foreach (var neighbor in Traverser.TraversableNodes(Current))
             {
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
                 var neighborMetaData = GetMeta(neighbor);
