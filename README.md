@@ -56,7 +56,9 @@ YourNode fromNode = YourGraph.GetNode();
 YourNode toNode = YourGraph.GetNode();
 
 // just get a path using A*
-var didGetPath = AStar.Solve(fromNode, toNode, out IList path);
+var state = AStar.Solve(fromNode, toNode, out IList path);
+if (state == SolverState.Success)
+    UsePath(path);
 
 // create a solver and run it manually
 var solver = new Greedy(fromNode, toNode);
