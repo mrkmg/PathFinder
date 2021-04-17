@@ -185,7 +185,6 @@ namespace PathFinder.Solvers.Generic
         private IList<T> GetPath()
         {
             if (State != SolverState.Success) return null;
-            if (_path != null) return _path;
             return _path ??= BuildPath(Destination);
         }
 
