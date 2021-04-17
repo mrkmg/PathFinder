@@ -13,9 +13,13 @@ namespace PathFinder.Solvers.Generic
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
-        public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null)
+        /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
+        public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null, int maxTicks = 1000000)
         {
-            var solver = new Greedy<T>(origin, destination, traverser);
+            var solver = new Greedy<T>(origin, destination, traverser)
+            {
+                MaxTicks = maxTicks
+            };
             solver.Start();
             path = solver.State == SolverState.Success ? solver.Path : null;
             return solver.State;
