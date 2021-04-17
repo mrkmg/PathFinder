@@ -200,7 +200,7 @@ namespace PathFinder.Console.Tests.Interactive
                 while (aStar.State == SolverState.Running)
                 {
                     timer.Start();
-                    aStar.Start(1);
+                    aStar.Run(1);
                     timer.Stop();
 
                     if (_slowMode) Thread.Sleep(20);
@@ -219,7 +219,7 @@ namespace PathFinder.Console.Tests.Interactive
             else
             {
                 timer.Start();
-                aStar.Start();
+                aStar.Run();
                 timer.Stop();
                 
                 DrawPath(aStar.Path, 0);

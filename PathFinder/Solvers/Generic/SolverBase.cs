@@ -115,7 +115,7 @@ namespace PathFinder.Solvers.Generic
         
         public void Stop() => _remainingTicks = 0;
         
-        public SolverState Start(int numTicks = -1)
+        public SolverState Run(int numTicks = -1)
         {
             if (State != SolverState.Waiting)
                 throw new InvalidOperationException("Graph Solver is not in a startable state");

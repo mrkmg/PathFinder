@@ -7,26 +7,27 @@ namespace PathFinder.Solvers.Generic
     public sealed class Greedy<T> : SolverBase<T> where T : ITraversableGraphNode<T>
     {
         /// <summary>
-        ///     Finds a path between the origin and destination node.
+        /// Finds a path between the origin and destination node.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
+        /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null, int maxTicks = 1000000)
         {
             var solver = new Greedy<T>(origin, destination, traverser)
             {
                 MaxTicks = maxTicks
             };
-            solver.Start();
+            solver.Run();
             path = solver.State == SolverState.Success ? solver.Path : null;
             return solver.State;
         }
 
         /// <summary>
-        ///     Creates a solver using the Greedy method.
+        /// Creates a solver using the Greedy method.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>

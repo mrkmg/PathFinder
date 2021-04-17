@@ -25,7 +25,7 @@ namespace PathFinder.UnitTests
         public void AStarWithGreedOneTestPath()
         {
             var solver = new AStar<TestGraphNode>(_start, _end);
-            solver.Start();
+            solver.Run();
             Assert.NotNull(solver.Path);
             DumpPath(solver.Path);
             Assert.Multiple(() =>
@@ -42,7 +42,7 @@ namespace PathFinder.UnitTests
         public void AStarWithGreedZeroTestPath()
         {
             var solver = new AStar<TestGraphNode>(_start, _end, 0);
-            solver.Start();
+            solver.Run();
             Assert.NotNull(solver.Path);
             DumpPath(solver.Path);
             Assert.Multiple(() =>
@@ -59,7 +59,7 @@ namespace PathFinder.UnitTests
         public void AStarWithGreedTwoTestPath()
         {
             var solver = new AStar<TestGraphNode>(_start, _end, 8);
-            solver.Start();
+            solver.Run();
             Assert.NotNull(solver.Path);
             Assert.Multiple(() =>
             {
@@ -75,7 +75,7 @@ namespace PathFinder.UnitTests
         public void BreadthFirstPath()
         {
             var solver = new BreadthFirst<TestGraphNode>(_start, _end);
-            solver.Start();
+            solver.Run();
             Assert.NotNull(solver.Path);
             Assert.Multiple(() =>
             {
@@ -91,7 +91,7 @@ namespace PathFinder.UnitTests
         public void GreedyPath()
         {
             var solver = new Greedy<TestGraphNode>(_start, _end);
-            solver.Start();
+            solver.Run();
             Assert.NotNull(solver.Path);
             Assert.Multiple(() =>
             {

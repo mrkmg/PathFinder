@@ -8,24 +8,26 @@ namespace PathFinder.Solvers.Generic
     public static class AStar
     {
         /// <summary>
-        ///     Finds a path between the origin and destination node using the AStar method.
+        /// Finds a path between the origin and destination node using the AStar method.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
+        /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         public static SolverState Solve<T>(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null) 
             where T : ITraversableGraphNode<T> 
             => AStar<T>.Solve(origin, destination, out path, traverser);
 
         /// <summary>
-        ///     Finds a path between the origin and destination node using the AStar method.
+        /// Finds a path between the origin and destination node using the AStar method.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
+        /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         public static SolverState Solve<T>(T origin, T destination, double greedFactor, out IList<T> path, INodeTraverser<T> traverser = null)
             where T : ITraversableGraphNode<T>
             => AStar<T>.Solve(origin, destination, greedFactor, out path, traverser);
@@ -38,26 +40,27 @@ namespace PathFinder.Solvers.Generic
     public sealed class AStar<T> : SolverBase<T> where T : ITraversableGraphNode<T>
     {
         /// <summary>
-        ///     Finds a path between the origin and destination node using the AStar method.
+        /// Finds a path between the origin and destination node using the AStar method.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
+        /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null, int maxTicks = 1000000)
         {
             var solver = new AStar<T>(origin, destination, traverser)
             {
                 MaxTicks = maxTicks
             };
-            solver.Start();
+            solver.Run();
             path = solver.State == SolverState.Success ? solver.Path : null;
             return solver.State;
         }
         
         /// <summary>
-        ///     Finds a path between the origin and destination node using the AStar method.
+        /// Finds a path between the origin and destination node using the AStar method.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
@@ -65,19 +68,20 @@ namespace PathFinder.Solvers.Generic
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
+        /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         public static SolverState Solve(T origin, T destination, double greedFactor, out IList<T> path, INodeTraverser<T> traverser = null, int maxTicks = 1000000)
         {
             var solver = new AStar<T>(origin, destination, greedFactor, traverser)
             {
                 MaxTicks = maxTicks
             };
-            solver.Start();
+            solver.Run();
             path = solver.State == SolverState.Success ? solver.Path : null;
             return solver.State;
         }
 
         /// <summary>
-        ///     Creates a solver using the AStar method.
+        /// Creates a solver using the AStar method.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
@@ -86,7 +90,7 @@ namespace PathFinder.Solvers.Generic
             : base(new NodeMetaComparer(), origin, destination, traverser) { }
 
         /// <summary>
-        ///     Creates a solver using the AStar method.
+        /// Creates a solver using the AStar method.
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
@@ -101,6 +105,7 @@ namespace PathFinder.Solvers.Generic
         /// <summary>
         /// <para>How thorough the search should be.</para>
         /// <para>Must be greater than or equal to 0.</para>
+        /// </summary>
         /// <remarks>
         /// <list type="bullet">
         /// <item>0 is breadth-first search.</item>
@@ -108,7 +113,6 @@ namespace PathFinder.Solvers.Generic
         /// <item>>1 favors obtaining the goal over finding the cheapest path.</item>
         /// </list>
         /// </remarks>
-        /// </summary>
         public double GreedFactor
         {
             get => _greedFactor;

@@ -68,11 +68,11 @@ namespace PathFinder.Console.Tests.Many
                 destination = allNodes[_random.Next(allNodes.Count - 1)];
                 
                 solver = new Greedy<Position>(origin, destination);
-                solver.Start();
+                solver.Run();
             } while (solver.State == SolverState.Failure);
 
             solver = new BreadthFirst<Position>(origin, destination);
-            solver.Start();
+            solver.Run();
             var bestCostTo = solver.PathCost;
             var estimatedCostTo = (int)origin.EstimatedCostTo(destination);
 
@@ -99,7 +99,7 @@ namespace PathFinder.Console.Tests.Many
             var aStar = new AStar<Position>(test.Origin, test.Destination, test.Greed);
             var timer = new Stopwatch();
             timer.Start();
-            aStar.Start();
+            aStar.Run();
             timer.Stop();
 
             if (aStar.State == SolverState.Failure) return null;

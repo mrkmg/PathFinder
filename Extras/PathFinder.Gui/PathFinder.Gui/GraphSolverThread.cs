@@ -44,10 +44,10 @@ namespace PathFinder.Gui
                     {
                         _overallStopwatch.Start();
                         if (RunToSolve)
-                            GraphSolver.Start();
+                            GraphSolver.Run();
                         else
                         {
-                            GraphSolver.Start(1);
+                            GraphSolver.Run(1);
                             _checkedPositions.Add(GraphSolver.Current);
                         }
                         _overallStopwatch.Stop();

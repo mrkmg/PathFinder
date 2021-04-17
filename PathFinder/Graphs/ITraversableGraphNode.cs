@@ -11,26 +11,26 @@ namespace PathFinder.Graphs
     public interface ITraversableGraphNode<T> : IEquatable<T>
     {
         /// <summary>
-        ///     Calculate the real cost to another node.
+        /// Calculate the real cost to another node.
         /// </summary>
         /// <param name="other">The target node to move to.</param>
         /// <returns>
-        ///     The actual cost to move from one node to another.
+        /// The actual cost to move from one node to another.
         /// </returns>
         /// <remarks>
-        ///     Should return less than 0 if not possible to move to node.
+        /// Should return less than 0 if not possible to move to node.
         /// </remarks>
         double RealCostTo(T other);
 
         /// <summary>
-        ///     Calculate the estimated cost to another node.
+        /// Calculate the estimated cost to another node.
         /// </summary>
         /// <param name="other">The target node to move to.</param>
         /// <returns>The best case (cheapest) cost to get from one node to another.</returns>
         double EstimatedCostTo(T other);
 
         /// <summary>
-        ///     Get nodes that are accessible from this node.
+        /// Get nodes that are accessible from this node.
         /// </summary>
         /// <returns></returns>
         IEnumerable<T> TraversableNodes();
