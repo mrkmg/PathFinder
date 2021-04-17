@@ -1,7 +1,9 @@
 using System;
 using Eto.Forms;
+using PathFinder.Graphs;
 using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
+using SimpleWorld.Traversers;
 
 namespace PathFinder.Gui.Forms
 {
@@ -16,7 +18,7 @@ namespace PathFinder.Gui.Forms
 
         public MainForm()
         {
-            Title = "Path Finder Demobox";
+            Title = "Path Finder Playground";
             WindowState = WindowState.Maximized;
             
             InitUi();
@@ -80,7 +82,7 @@ namespace PathFinder.Gui.Forms
 
         private void MakeWorld()
         {
-            KillRunning();
+            Reset();
             if (_mapWidget.BitmapHeight == 0 || _mapWidget.BitmapWidth == 0) return;
             _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse((string) _worldSeed.Text)), new World.InitializationOptions
             {
@@ -98,7 +100,6 @@ namespace PathFinder.Gui.Forms
                 
                 Ratio12 = (double)_initRatio12.Value / 100 * 4d - 2d
             } ,_moveCostStepper.Value);
-            _world.MaxStepSize = (int) _stepSizeStepper.Value;
             SetRandomPoints();
             _mapWidget.ClearPath();
             _mapWidget.ClearRunning();
@@ -121,13 +122,20 @@ namespace PathFinder.Gui.Forms
         private void CreateNewRunner()
         {
             Reset();
-            _world.CanCutCorner = _canCornerCut.Checked ?? false;
+
+            INodeTraverser<Position> traverser = _traverserSelector.Text switch
+            {
+                "Default" => new DefaultTraverser<Position>(),
+                "Grid" => new GridTraverser(),
+                "LargeStep" => new LargerStepTraverser((int)_stepSizeStepper.Value),
+                _ => throw new ArgumentException("Unknown traverser")
+            };
 
             IGraphSolver<Position> graphSolver = _solverSelector.Text switch
             {
-                "AStar" => new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value),
-                "Greedy" => new Greedy<Position>(_startPoint, _endPoint),
-                "Breadth First" => new BreadthFirst<Position>(_startPoint, _endPoint),
+                "AStar" => new AStar<Position>(_startPoint, _endPoint, _greedStepper.Value, traverser),
+                "Greedy" => new Greedy<Position>(_startPoint, _endPoint, traverser),
+                "Breadth First" => new BreadthFirst<Position>(_startPoint, _endPoint, traverser),
                 _ => throw new ArgumentException("Unknown GraphSolver")
             };
 

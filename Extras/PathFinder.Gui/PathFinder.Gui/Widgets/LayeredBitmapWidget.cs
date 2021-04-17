@@ -68,6 +68,7 @@ namespace PathFinder.Gui.Widgets
 
         private void OnLoadComplete(object sender, EventArgs args)
         {
+            if (Width == 0 || Height == 0) return;            
             Clear();
             OnIsReady();
         }

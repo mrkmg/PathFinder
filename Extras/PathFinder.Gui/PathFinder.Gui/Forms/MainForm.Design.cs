@@ -38,7 +38,7 @@ namespace PathFinder.Gui.Forms
         };
         private readonly NumericStepper _scaleStepper = new ()
         {
-            Width = IsGtk ? 150 : 60,
+            Width = IsGtk ? 150 : 90,
             MinValue = 1,
             MaxValue = 8,
             Value = 1
@@ -47,10 +47,11 @@ namespace PathFinder.Gui.Forms
         {
             Width = IsGtk ? 150 : 60,
             MinValue = 1,
-            MaxValue = 4,
-            Value = 1,
+            MaxValue = 8,
+            Value = 2,
             Increment = 1,
-            DecimalPlaces = 0
+            DecimalPlaces = 0,
+            Enabled = false
         };
         private readonly NumericStepper _delayStepper = new ()
         {
@@ -63,7 +64,7 @@ namespace PathFinder.Gui.Forms
         private readonly NumericStepper _moveCostStepper = new ()
         {
             Value = 1.0,
-            Width = IsGtk ? 150 : 60,
+            Width = IsGtk ? 150 : 90,
             MinValue = 0.1,
             MaxValue = 8,
             Increment = 0.1,
@@ -157,13 +158,19 @@ namespace PathFinder.Gui.Forms
             ToolTip = "Ratio between Layer 1 and 2"
         }; 
         
-        private readonly CheckBox _canCornerCut = new () { Checked = true };
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
 
         private readonly ComboBox _solverSelector = new ()
         {
             DataStore = new[] {"AStar", "Breadth First", "Greedy"},
             Text = "AStar",
+            ReadOnly = true
+        };
+
+        private readonly ComboBox _traverserSelector = new()
+        {
+            DataStore = new[] {"Default", "Grid", "LargeStep"},
+            Text = "Default",
             ReadOnly = true
         };
 
@@ -226,7 +233,7 @@ namespace PathFinder.Gui.Forms
                         Spacing = 10,
                         Items = {
                             new Label {
-                                Text = "Path Finder Demobox",
+                                Text = "Path Finder Playground",
                                 Font = new Font("", 12f, FontStyle.Bold)},
                             new Label {
                                 Text = "World Settings",
@@ -246,13 +253,7 @@ namespace PathFinder.Gui.Forms
                                         _moveCostStepper }},
                                     new StackLayout { Items = {
                                         "Scale",
-                                        _scaleStepper }},
-                                    new StackLayout { Items = {
-                                        "Step Size",
-                                        _stepSizeStepper }}}},
-                            new StackLayout { 
-                                Orientation = Orientation.Horizontal, 
-                                Items = {"Cornering:", _canCornerCut, "   ", "Show Search:", _showSearchCheckbox}},
+                                        _scaleStepper }}}},
                             new TableLayout { Rows = {
                                 new TableRow { Cells = {
                                     new TableCell { Control = ""},
@@ -288,8 +289,13 @@ namespace PathFinder.Gui.Forms
                                         new TableCell { Control = "Solver"}, 
                                         new TableCell { Control = "Greed"}}},
                                     new TableRow { Cells = {
-                                        new TableCell(_solverSelector), new TableCell(_greedStepper)
-                                    }}}},
+                                        new TableCell(_solverSelector), new TableCell(_greedStepper)}}}},
+                            new TableLayout { Rows = {
+                                new TableRow { Cells = {
+                                    new TableCell { Control = "Traverser"}, 
+                                    new TableCell { Control = "Step Size"}}},
+                                new TableRow { Cells = {
+                                    new TableCell(_traverserSelector), new TableCell(_stepSizeStepper)}}}},
                             new Label {
                                 Text = "Commands",
                                 Font = new Font("", 10f, FontStyle.Bold)},

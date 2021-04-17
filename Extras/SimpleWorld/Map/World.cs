@@ -42,9 +42,7 @@ namespace SimpleWorld.Map
             Ratio12 = 0,
         };
         
-        public bool CanCutCorner { get; set; } = true;
         public double MoveCost { get; set; }
-        public int MaxStepSize { get; set; } = 2;
 
         public readonly int XSize;
         public readonly int YSize;

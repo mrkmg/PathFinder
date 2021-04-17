@@ -22,6 +22,7 @@ namespace PathFinder.Gui.Forms
             _mapWidget.MouseUp += OnBitmapWidgetMouseUp;
             
             _solverSelector.TextChanged += OnSolverSelectorChanged;
+            _traverserSelector.TextChanged += OnTraverserChanged;
             
             _newSeedButton.Click += OnNewSeedClick;
             _newPointsButton.Click += OnNewPointsClick;
@@ -60,12 +61,18 @@ namespace PathFinder.Gui.Forms
             _worldInitChanged.Fired += OnWorldInitChanged;
         }
 
+        private void OnTraverserChanged(object? sender, EventArgs e)
+        {
+            _stepSizeStepper.Enabled = _traverserSelector.Text == "LargeStep";
+            if (_world == null) return;
+            Reset();
+        }
+
         private void OnStepSizeChanged(object? sender, EventArgs e)
         {
             if (_world == null) return;
+            if (_traverserSelector.Text != "LargeStep") return;
 
-            KillRunning();
-            _world.MaxStepSize = (int)_stepSizeStepper.Value;
             Reset();
         }
 
@@ -91,7 +98,6 @@ namespace PathFinder.Gui.Forms
 
         private void OnWorldInitChanged(object? sender, EventArgs e)
         {
-            KillRunning();
             MakeWorld();
         }
 
@@ -108,8 +114,6 @@ namespace PathFinder.Gui.Forms
         {
             if (e.Key != Keys.Enter && e.Key != Keys.Tab) return;
             if (!int.TryParse(_worldSeed.Text, out _)) return;
-            KillRunning();
-            _mapWidget.Clear();
             MakeWorld();
         }
         private void OnShowSearchCheckboxChanged(object sender, EventArgs e)
@@ -152,7 +156,6 @@ namespace PathFinder.Gui.Forms
         {
             if (_world == null) return;
 
-            KillRunning();
             _world.MoveCost = _moveCostStepper.Value;
             Reset();
         }

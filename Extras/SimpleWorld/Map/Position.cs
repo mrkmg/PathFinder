@@ -20,10 +20,10 @@ namespace SimpleWorld.Map
         }
 
         public double RealCostTo(Position other) 
-            =>  (World.CanCutCorner ? StraightLineDistanceTo(other) : GridDistanceTo(other)) *
-                Math.Pow(other.Cost, World.MoveCost);
+            => StraightLineDistanceTo(other) * Math.Pow((Cost + other.Cost) / 2d, World.MoveCost);
 
-        public double EstimatedCostTo(Position other) => BestCaseCornering(other);
+        public double EstimatedCostTo(Position other) 
+            => BestCaseCornering(other);
 
         private double BestCaseCornering(Position other)
         {
@@ -48,11 +48,10 @@ namespace SimpleWorld.Map
 
         public IEnumerable<Position> TraversableNodes()
         {
-            for (var x = X-World.MaxStepSize; x <= X+World.MaxStepSize; x++)
-            for (var y = Y-World.MaxStepSize; y <= Y+World.MaxStepSize; y++)
+            for (var x = X-1; x <= X+1; x++)
+            for (var y = Y-1; y <= Y+1; y++)
             {
-                if (!World.CanCutCorner && x != X && y != Y) continue;
-                if (x == X && x == y) continue;
+                if (x == X && y == Y) continue;
 
                 var node = World.GetPosition(x, y);
                 if (node != null) yield return node;
