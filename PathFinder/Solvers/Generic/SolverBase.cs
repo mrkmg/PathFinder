@@ -10,7 +10,7 @@ using PathFinder.Supplement;
 namespace PathFinder.Solvers.Generic
 {
     /// <summary>
-    /// TODO
+    /// The base of the Generic Solvers, which handles all the common functionality.
     /// </summary>
     /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
     public abstract class SolverBase<T> : IGraphSolver<T> where T : ITraversableGraphNode<T>

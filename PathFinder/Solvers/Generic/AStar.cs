@@ -5,6 +5,9 @@ using PathFinder.Graphs;
 
 namespace PathFinder.Solvers.Generic
 {
+    /// <summary>
+    /// Helper methods for the A* graph solver. See <see cref="AStar{T}"/>.
+    /// </summary>
     public static class AStar
     {
         /// <summary>
@@ -15,6 +18,7 @@ namespace PathFinder.Solvers.Generic
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
+        /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/></typeparam>
         public static SolverState Solve<T>(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null) 
             where T : ITraversableGraphNode<T> 
             => AStar<T>.Solve(origin, destination, out path, traverser);
@@ -28,15 +32,26 @@ namespace PathFinder.Solvers.Generic
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
+        /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/></typeparam>
         public static SolverState Solve<T>(T origin, T destination, double greedFactor, out IList<T> path, INodeTraverser<T> traverser = null)
             where T : ITraversableGraphNode<T>
             => AStar<T>.Solve(origin, destination, greedFactor, out path, traverser);
     }
     
     /// <summary>
-    /// A* is a graph solver to find the cheapest path between two nodes which
+    /// A Graph Solver using the A* method, with a configurable <see cref="GreedFactor"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <remarks>
+    /// <para>
+    /// The A* method is considered the most optimal "blind" graph solver, but only in cases where
+    /// the distance between arbitrary nodes can be estimated.
+    /// </para>
+    /// <para>
+    /// The <c>GreedFactor</c> determines how much weight is given to the distance estimate to
+    /// the <c>Destination</c>.
+    /// </para>
+    /// </remarks>
+    /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/></typeparam>
     public sealed class AStar<T> : SolverBase<T> where T : ITraversableGraphNode<T>
     {
         /// <summary>

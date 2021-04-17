@@ -3,6 +3,11 @@ using JetBrains.Annotations;
 
 namespace PathFinder.Solvers.Generic
 {
+    /// <summary>
+    /// All Generic Graph Solvers implement this interface. This ensures solvers
+    /// can be used interchangeably depending on need.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IGraphSolver<T>
     {
         /// <summary>
@@ -90,6 +95,9 @@ namespace PathFinder.Solvers.Generic
         SolverState Run(int ticks = -1);
     }
 
+    /// <summary>
+    /// Denotes the state of a graph solver.
+    /// </summary>
     public enum SolverState
     {
         /// <summary>

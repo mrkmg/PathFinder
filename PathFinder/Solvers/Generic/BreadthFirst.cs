@@ -4,6 +4,34 @@ using PathFinder.Graphs;
 
 namespace PathFinder.Solvers.Generic
 {
+    /// <summary>
+    /// Helper methods for the BreadthFirst graph solver. See <see cref="BreadthFirst{T}"/>.
+    /// </summary>
+    public static class BreadthFirst
+    {
+        /// <summary>
+        /// Finds a path between the origin and destination node using the Breadth First method.
+        /// </summary>
+        /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
+        /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
+        /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
+        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
+        /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
+        /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
+        /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/></typeparam>
+        public static SolverState Solve<T>(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null, int maxTicks = 1000000)
+            where T : ITraversableGraphNode<T> 
+            => BreadthFirst<T>.Solve(origin, destination, out path, traverser, maxTicks);
+    }
+    
+    /// <summary>
+    ///  A graph solver which exhaustively searches a graph by only considering the distance searched
+    ///  so far.
+    /// </summary>
+    /// <remarks>
+    /// Useful in cases in which a estimation function is not possible or wildly inaccurate.
+    /// </remarks>
+    /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/></typeparam>
     public sealed class BreadthFirst<T> : SolverBase<T> where T : ITraversableGraphNode<T>
     {
         /// <summary>

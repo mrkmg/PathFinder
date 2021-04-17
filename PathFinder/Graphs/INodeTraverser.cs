@@ -7,6 +7,11 @@ namespace PathFinder.Graphs
     /// in <see cref="PathFinder.Solvers.Generic"/> may use instead of the
     /// default traverser.
     /// </summary>
+    /// <remarks>
+    /// A use case to create a separate Node Traverser may be provide
+    /// alternate map traversal patterns for different types of entities
+    /// in a game or simulation.
+    /// </remarks>
     /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
     public interface INodeTraverser<T> where T : ITraversableGraphNode<T>
     {
