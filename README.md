@@ -40,7 +40,7 @@ traversal through the graph.
 
 First, update your current "nodes" to
 implement [`ITraversableGraphNode`](PathFinder/Graphs/ITraversableGraphNode.cs).
-When implementing, it is important to make sure `EstimateTo` returns the
+When implementing, it is important to make sure `EstimatedCostTo` returns the
 **best case** cost for the best performance. A decent example can be found
 in [SimpleWorld.Map.Position](Extras/SimpleWorld/Map/Position.cs).
 

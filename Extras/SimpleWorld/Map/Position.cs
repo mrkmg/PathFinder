@@ -63,7 +63,7 @@ namespace SimpleWorld.Map
             => $"Position<{Cost}>({X},{Y})";
         
         public bool Equals(Position other) 
-            => other != null && World == other.World && X == other.X && Y == other.Y;
+            => other != null && X == other.X && Y == other.Y && World.Equals(other.World);
         
         
         public override int GetHashCode()
