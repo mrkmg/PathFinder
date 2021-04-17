@@ -2,3 +2,5 @@
 - exclude:
     hasAttribute:
       uid: PathFinder.Supplement.DocsHiddenAttribute
+- exclude:
+    uidRegex: ^PathFinder\.Supplement.*$
