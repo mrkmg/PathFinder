@@ -135,9 +135,10 @@ namespace PathFinder.Solvers.Generic
         }
 
         [NotNull]
-        protected GraphNodeMetaData<T> GetMeta(T node)
+        protected GraphNodeMetaData<T> GetMeta(T node, bool onlyExisting = false)
         {
             if (Meta.TryGetValue(node, out var meta)) return meta;
+            if (onlyExisting) throw new InvalidOperationException($"Meta data not found for {node}");
             var fromCost = Traverser.RealCost(CurrentMetaData.Node, node);
             meta = new GraphNodeMetaData<T>(node, _nextGraphNodeId++)
             {
@@ -199,7 +200,7 @@ namespace PathFinder.Solvers.Generic
             // add them from the back to the front, so the
             // returned path starts at the origin. 
             
-            var cMeta = GetMeta(node);
+            var cMeta = GetMeta(node, true);
             var path = new T[cMeta.PathLength];
             var pathIndex = cMeta.PathLength - 1;
             do
@@ -215,8 +216,7 @@ namespace PathFinder.Solvers.Generic
         private double GetCost()
         {
             if (State != SolverState.Success) return -1;
-            if (_cost.HasValue) return _cost.Value;
-            return _cost ??= GetMeta(Destination).FromCost;
+            return _cost ??= GetMeta(Destination, true).FromCost;
         }
     }
 
