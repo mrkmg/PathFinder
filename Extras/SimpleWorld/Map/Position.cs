@@ -59,9 +59,24 @@ namespace SimpleWorld.Map
             }
         }
 
-        public bool Equals(Position other) => other != null && X == other.X && Y == other.Y;
-        public override string ToString() => $"Position<{Cost}>({X},{Y})";
-        public override int GetHashCode() => 17 * (23 + X.GetHashCode()) * (1427 + Y.GetHashCode());
+        public override string ToString() 
+            => $"Position<{Cost}>({X},{Y})";
+        
+        public bool Equals(Position other) 
+            => other != null && World == other.World && X == other.X && Y == other.Y;
+        
+        
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = X;
+                hashCode = (hashCode * 397) ^ Y;
+                hashCode = (hashCode * 397) ^ (World != null ? World.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+        
     }
 
     public readonly struct Xy
