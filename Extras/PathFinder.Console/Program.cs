@@ -61,7 +61,6 @@ namespace PathFinder.Console
                         var manyTest = new ManyTest
                         {
                             NumberOfTests = numTests,
-                            CanDiag = true,
                             MapHeight = size,
                             MapWidth = size,
                             OutputFile = $"~/Documents/AStarTests/{dateStr}/{size}x{size} {numTests}.csv",

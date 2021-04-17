@@ -27,7 +27,6 @@ namespace PathFinder.Console.Tests.Many
             }
         }
 
-        public bool CanDiag = true;
         public int NumberOfTests;
         public int MapHeight;
         public int MapWidth;
@@ -52,10 +51,7 @@ namespace PathFinder.Console.Tests.Many
         private IEnumerable<Test> BuildTest(int testId)
         {
             // ReSharper disable twice InconsistentlySynchronizedField
-            var map = new World(MapWidth, MapHeight)
-            {
-                CanCutCorner = CanDiag
-            };
+            var map = new World(MapWidth, MapHeight);
 
             Position origin;
             Position destination;

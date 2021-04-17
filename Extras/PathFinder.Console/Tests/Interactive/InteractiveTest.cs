@@ -11,7 +11,6 @@ namespace PathFinder.Console.Tests.Interactive
     internal class InteractiveTest
     {
         private bool _bigJumps;
-        private bool _canDiag;
         private bool _showSearch;
         private bool _slowMode;
         private int _seed;
@@ -115,10 +114,7 @@ namespace PathFinder.Console.Tests.Interactive
 
         private void MakeWorld(Random rnd)
         {
-            _world = new World(System.Console.WindowWidth - 1, System.Console.WindowHeight, rnd)
-            {
-                CanCutCorner = _canDiag,
-            };
+            _world = new World(System.Console.WindowWidth - 1, System.Console.WindowHeight, rnd);
 
             _worldWriter = new SimpleWorldWriter(_world, _greedyFactors.Count);
         }
@@ -146,7 +142,6 @@ namespace PathFinder.Console.Tests.Interactive
             {
                 System.Console.ResetColor();
                 System.Console.Clear();
-                System.Console.WriteLine("(d) Can Diag: " + _canDiag);
                 System.Console.WriteLine("(s) Show Search: " + _showSearch);
                 System.Console.WriteLine("(l) Slow Mode: " + _slowMode);
                 System.Console.WriteLine("(j) Big Jumps: " + _bigJumps);
@@ -162,9 +157,6 @@ namespace PathFinder.Console.Tests.Interactive
                         return true;
                     case ConsoleKey.Enter:
                         return false;
-                    case ConsoleKey.D:
-                        _canDiag = !_canDiag;
-                        break;
                     case ConsoleKey.L:
                         _slowMode = !_slowMode;
                         break;

@@ -7,7 +7,6 @@ namespace SimpleWorld.Traversers
 {
     public class GridTraverser : INodeTraverser<Position>
     {
-        // return just one, as only traversing to adjacent nodes is allowed
         public double RealCost(Position fromNode, Position toNode)
             => fromNode.RealCostTo(toNode);
         
