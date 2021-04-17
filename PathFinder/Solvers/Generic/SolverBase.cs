@@ -106,7 +106,11 @@ namespace PathFinder.Solvers.Generic
             Ticks++;
 
             SetCurrentNode();
-            ProcessNeighbors();
+            
+            if (Current.Equals(Destination))
+                State = SolverState.Success;
+            else
+                ProcessNeighbors();
         }
         
         public void Stop() => _remainingTicks = 0;
@@ -175,10 +179,6 @@ namespace PathFinder.Solvers.Generic
                 // if a node somehow is connected to itself, do not check. Would leave to an infinite loop
                 if (CurrentMetaData.Equals(neighborMetaData)) continue;
                 ProcessNeighbor(neighborMetaData);
-                if (!neighbor.Equals(Destination)) continue;
-                // neighbor is the destination
-                State = SolverState.Success;
-                break;
             }
         }
 
