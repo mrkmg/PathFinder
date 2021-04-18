@@ -104,6 +104,7 @@ namespace PathFinder.Gui.Widgets
         public void ChangeScale(int scale)
         {
             _scale = scale;
+            if (_bitmaps.Count == 0) return;
             Clear();
             OnIsReady();
         }

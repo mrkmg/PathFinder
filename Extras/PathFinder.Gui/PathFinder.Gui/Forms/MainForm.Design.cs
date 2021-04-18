@@ -12,7 +12,8 @@ namespace PathFinder.Gui.Forms
         
         private readonly MapWidget _mapWidget = new()
         {
-            BackgroundColor = Colors.Black
+            BackgroundColor = Colors.Black,
+            Scale = 3
         };
         
         private readonly StatsWidget _statsWidget = new ();
@@ -42,14 +43,14 @@ namespace PathFinder.Gui.Forms
             Width = IsGtk ? 150 : 90,
             MinValue = 1,
             MaxValue = 8,
-            Value = 1
+            Value = 3
         };
         private readonly NumericStepper _stepSizeStepper = new ()
         {
             Width = IsGtk ? 150 : 60,
             MinValue = 1,
             MaxValue = 8,
-            Value = 2,
+            Value = 3,
             Increment = 1,
             DecimalPlaces = 0,
             Enabled = false
@@ -217,6 +218,10 @@ namespace PathFinder.Gui.Forms
                     }
                 });
 
+            // is there a better way to do this?
+            var sectionFont = Fonts.Sans(10f, FontStyle.Bold);
+            var titleFont = Fonts.Sans(12f, FontStyle.Bold);
+            
             // TODO: Separate this monster into smaller parts
             Content = new StackLayout
             {
@@ -235,10 +240,10 @@ namespace PathFinder.Gui.Forms
                         Items = {
                             new Label {
                                 Text = "Path Finder Playground",
-                                Font = new Font("", 12f, FontStyle.Bold)},
+                                Font = titleFont},
                             new Label {
                                 Text = "World Settings",
-                                Font = new Font("", 10f, FontStyle.Bold)},
+                                Font = sectionFont},
                             HStretched("Seeds"),
                             new StackLayout {
                                 Orientation = Orientation.Horizontal,
@@ -284,7 +289,7 @@ namespace PathFinder.Gui.Forms
                             HStretched(_newWorldButton),
                             new Label {
                                 Text = "Solver Settings",
-                                Font = new Font("", 10f, FontStyle.Bold)},
+                                Font = sectionFont},
                             new TableLayout { Rows = {
                                     new TableRow { Cells = {
                                         new TableCell { Control = "Solver"}, 
@@ -299,7 +304,7 @@ namespace PathFinder.Gui.Forms
                                     new TableCell(_traverserSelector), new TableCell(_stepSizeStepper)}}}},
                             new Label {
                                 Text = "Commands",
-                                Font = new Font("", 10f, FontStyle.Bold)},
+                                Font = sectionFont},
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
                                 Items = {_go, _pauseButton, _delayStepper}},

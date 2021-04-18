@@ -31,7 +31,7 @@ namespace PathFinder.Gui.Forms
         {
             if (_world == null) return;
             
-            var rnd = new Random(int.Parse((string) _pointsSeed.Text));
+            var rnd = new Random(int.Parse(_pointsSeed.Text));
             var worldSize = Math.Sqrt(_world.XSize * _world.XSize + _world.YSize * _world.YSize);
             var targetSize = (int)(worldSize * 0.75);
                 
