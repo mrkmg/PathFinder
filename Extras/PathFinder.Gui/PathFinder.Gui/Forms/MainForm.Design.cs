@@ -57,8 +57,8 @@ namespace PathFinder.Gui.Forms
         {
             MinValue = 0,
             MaxValue = 10000,
-            Value = 0,
-            ToolTip = "Max ticks per frame",
+            Value = 1000,
+            ToolTip = "Max TPF (0 for unlimited)",
             Width = 60
         };
         private readonly NumericStepper _moveCostStepper = new ()
