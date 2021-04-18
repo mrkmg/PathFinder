@@ -8,7 +8,8 @@ namespace PathFinder.Gui.Forms
     public partial class MainForm : Form
     {
         private static bool IsGtk => Application.Instance.Platform.IsGtk;
-
+        private static Random IRand = new Random();
+        
         private readonly MapWidget _mapWidget = new()
         {
             BackgroundColor = Colors.Black
@@ -74,7 +75,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initF1 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Frequency Layer 1"
         }; 
@@ -82,7 +83,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initF2 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Frequency Layer 2"
         }; 
@@ -90,7 +91,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initL1 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Lacunarity Layer 1"
         }; 
@@ -98,7 +99,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initL2 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Lacunarity Layer 2"
         }; 
@@ -106,7 +107,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initP1 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Persistence Layer 1"
         }; 
@@ -114,7 +115,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initP2 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Persistence Layer 2"
         }; 
@@ -122,7 +123,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initSX1 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "X Scale Layer 1"
         }; 
@@ -130,7 +131,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initSX2 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "X Scale Layer 2"
         }; 
@@ -138,7 +139,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initSY1 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Y Scale Layer 1"
         }; 
@@ -146,7 +147,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initSY2 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             Width = 80,
             ToolTip = "Y Scale Layer 2"
         }; 
@@ -154,7 +155,7 @@ namespace PathFinder.Gui.Forms
         private readonly Slider _initRatio12 = new () {
             MinValue = 0,
             MaxValue = 100,
-            Value = 50,
+            Value = IRand.Next(100),
             ToolTip = "Ratio between Layer 1 and 2"
         }; 
         
