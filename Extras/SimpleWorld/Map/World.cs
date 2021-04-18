@@ -115,7 +115,14 @@ namespace SimpleWorld.Map
         private NoiseMap DeadSpaceNoiseMap()
         {
             var noiseMap = new NoiseMap();
-            var noiseSource = new Perlin {Seed = _random.Next()};
+            var noiseSource = new Perlin
+            {
+                Seed = _random.Next(),
+                Frequency = _random.NextDouble() * 5d,
+                Lacunarity = _random.NextDouble() * 2d + 1.5d,
+                Quality = NoiseQuality.Fast,
+                Persistence = _random.NextDouble(),
+            };
             var noiseMapBuilder = new PlaneNoiseMapBuilder {DestNoiseMap = noiseMap, SourceModule = noiseSource};
             noiseMapBuilder.SetDestSize(XSize, YSize);
             noiseMapBuilder.SetBounds(-3, 3, -2, 2);
