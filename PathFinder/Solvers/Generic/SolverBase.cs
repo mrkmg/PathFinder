@@ -15,6 +15,7 @@ namespace PathFinder.Solvers.Generic
     /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
     public abstract class SolverBase<T> : IGraphSolver<T> where T : ITraversableGraphNode<T>
     {
+        [DocsHidden]
         protected SolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination, INodeTraverser<T> traverser = null)
         {
             Origin = origin;
