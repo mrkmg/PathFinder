@@ -55,10 +55,17 @@ namespace PathFinder.Gui.Forms
             _pointsSeed.KeyUp += OnPointsSeedChanged;
             
             _showSearchCheckbox.CheckedChanged += OnShowSearchCheckboxChanged;
+            _doBlindSearch.CheckedChanged += DoBlindSearchChanged;
             
             _scaleSelectorChangedDebounce.Fired += OnScaleSelectorChanged;
             _moveCostSelectorChangedDebounce.Fired += OnMoveCostSelectorChanged;
             _worldInitChanged.Fired += OnWorldInitChanged;
+        }
+
+        private void DoBlindSearchChanged(object? sender, EventArgs e)
+        {
+            if (_world == null) return;
+            Reset();
         }
 
         private void OnTraverserChanged(object? sender, EventArgs e)
@@ -119,7 +126,7 @@ namespace PathFinder.Gui.Forms
         private void OnShowSearchCheckboxChanged(object sender, EventArgs e)
         {
             if (_runnerThread != null)
-                _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
+                _runnerThread.RunToSolve = !ShowSearching;
         }
         private void OnPauseButtonClick(object sender, EventArgs e)
         {
@@ -127,7 +134,7 @@ namespace PathFinder.Gui.Forms
             {
                 solver.Stop();
                 _runnerThread.Kill();
-                _mapWidget.DrawRunning(_lastFrameData);
+                _mapWidget.DrawSearchPoints(_lastFrameData);
             }
             _timer.Stop();
         }

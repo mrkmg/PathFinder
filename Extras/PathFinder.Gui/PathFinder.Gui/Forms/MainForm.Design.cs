@@ -161,6 +161,7 @@ namespace PathFinder.Gui.Forms
         }; 
         
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
+        private readonly CheckBox _doBlindSearch = new() {Checked = false};
 
         private readonly ComboBox _solverSelector = new ()
         {
@@ -305,6 +306,8 @@ namespace PathFinder.Gui.Forms
                             new Label {
                                 Text = "Commands",
                                 Font = sectionFont},
+                            LabelInput(130, "Show Search", _showSearchCheckbox),
+                            LabelInput(130, "View as Solver", _doBlindSearch),
                             new StackLayout { 
                                 Orientation = Orientation.Horizontal, 
                                 Items = {_go, _pauseButton, _delayStepper}},

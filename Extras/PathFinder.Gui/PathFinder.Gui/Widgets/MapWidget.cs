@@ -22,6 +22,11 @@ namespace PathFinder.Gui.Widgets
             DrawAllPoints(0, world.GetAllNodes().AsMapDrawPoints());
         }
 
+        public void DrawWorldPoints(FrameData frameData)
+        {
+            DrawAllPoints(0, frameData.CheckedPositions.AsMapDrawPoints());
+        }
+
         public void ClearRunning()
         {
             _lastCheckedPoints = null;
@@ -29,15 +34,19 @@ namespace PathFinder.Gui.Widgets
             ClearLayer(1);
         }
 
-        public void DrawRunning(FrameData frameData)
+        public void DrawSearchPoints(FrameData frameData)
         {
             if (_lastCheckedPoints != null)
                 DrawAllPoints(1, _lastCheckedPoints.AsSearchDrawPoints());
             DrawAllPoints(1, frameData.CheckedPositions.AsActiveSearchDrawPoints());
+            _lastCheckedPoints = frameData.CheckedPositions;
+        }
+
+        public void DrawBestBath(FrameData frameData)
+        {
             DrawAllPoints(1, _lastBestPath != null
                 ? BestPathDiff(frameData.CurrentBestPath)
                 : frameData.CurrentBestPath.AsPathDrawPoints());
-            _lastCheckedPoints = frameData.CheckedPositions;
             _lastBestPath = frameData.CurrentBestPath;
         }
 

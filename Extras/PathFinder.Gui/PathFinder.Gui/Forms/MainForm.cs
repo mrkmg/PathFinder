@@ -16,6 +16,9 @@ namespace PathFinder.Gui.Forms
         private readonly UITimer _timer = new () { Interval = 1d / 60 };
         private FrameData _lastFrameData;
 
+        private bool ShowSearching => !(_doBlindSearch.Checked ?? false) && (_showSearchCheckbox.Checked ?? false);
+        private bool ShowBlindSearching => _doBlindSearch.Checked ?? false;
+
         public MainForm()
         {
             Title = "Path Finder Playground";
@@ -84,7 +87,7 @@ namespace PathFinder.Gui.Forms
         {
             Reset();
             if (_mapWidget.BitmapHeight == 0 || _mapWidget.BitmapWidth == 0) return;
-            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse((string) _worldSeed.Text)), new World.InitializationOptions
+            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), new World.InitializationOptions
             {
                 F1 = (double)_initF1.Value / 100 * 3d,
                 L1 = (double)_initL1.Value / 100 * 3d + 1d,
@@ -113,6 +116,9 @@ namespace PathFinder.Gui.Forms
             {
                 CreateNewRunner();
             }
+            
+            if (ShowBlindSearching) _mapWidget.ClearLayer(0);
+            else _mapWidget.DrawWorld(_world);
             
             _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
             _runnerThread.Start();
@@ -153,12 +159,17 @@ namespace PathFinder.Gui.Forms
                 case SolverState.Waiting:
                 case SolverState.Running:
                     _statsWidget.UpdateRunningStats(frameData);
-                    if (_showSearchCheckbox.Checked != null && _showSearchCheckbox.Checked.Value)
-                        _mapWidget.DrawRunning(frameData);
+                    if (ShowSearching)
+                        _mapWidget.DrawSearchPoints(frameData);
+                    else if (ShowBlindSearching)
+                        _mapWidget.DrawWorldPoints(frameData);
+                    _mapWidget.DrawBestBath(frameData);
                     break;
                 case SolverState.Success:
                     _statsWidget.UpdateSuccessStats(frameData);
                     _mapWidget.ClearRunning();
+                    if (ShowBlindSearching)
+                        _mapWidget.DrawWorldPoints(frameData);
                     _mapWidget.DrawPath(frameData.Path);
                     KillRunning();
                     break;
