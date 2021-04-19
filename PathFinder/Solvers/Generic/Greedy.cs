@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using PathFinder.Graphs;
@@ -16,12 +17,15 @@ namespace PathFinder.Solvers.Generic
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
+        /// <param name="traverser">
+        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
+        /// If no traverser if passed, T must extend <see cref="ITraversableGraphNode{T}"/>.
+        /// </param>
         /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
-        /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/></typeparam>
+        /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/> if traverser is null.</typeparam>
         public static SolverState Solve<T>(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null, int maxTicks = 1000000)
-            where T : ITraversableGraphNode<T>
+            where T : IEquatable<T>
             => Greedy<T>.Solve(origin, destination, out path, traverser, maxTicks);
     }
     
@@ -32,8 +36,8 @@ namespace PathFinder.Solvers.Generic
     /// This solver is useful to determine if a path is possible, or in graphs where there are little to no
     /// obstructions or differences in cost to traverse between nodes.
     /// </remarks>
-    /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/></typeparam>
-    public sealed class Greedy<T> : SolverBase<T> where T : ITraversableGraphNode<T>
+    /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableGraphNode{T}"/> if traverser is null.</typeparam>
+    public sealed class Greedy<T> : SolverBase<T> where T : IEquatable<T>
     {
         /// <summary>
         /// Finds a path between the origin and destination node.
@@ -41,7 +45,10 @@ namespace PathFinder.Solvers.Generic
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
+        /// <param name="traverser">
+        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
+        /// If no traverser if passed, T must extend <see cref="ITraversableGraphNode{T}"/>.
+        /// </param>
         /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         public static SolverState Solve(T origin, T destination, out IList<T> path, INodeTraverser<T> traverser = null, int maxTicks = 1000000)
@@ -60,7 +67,10 @@ namespace PathFinder.Solvers.Generic
         /// </summary>
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
-        /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
+        /// <param name="traverser">
+        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
+        /// If no traverser if passed, T must extend <see cref="ITraversableGraphNode{T}"/>.
+        /// </param>
         public Greedy(T origin, T destination, INodeTraverser<T> traverser = null) 
             : base(origin, destination, traverser) { }
 

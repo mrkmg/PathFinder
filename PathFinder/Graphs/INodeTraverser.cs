@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PathFinder.Graphs
 {
@@ -13,7 +14,7 @@ namespace PathFinder.Graphs
     /// in a game or simulation.
     /// </remarks>
     /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
-    public interface INodeTraverser<T> where T : ITraversableGraphNode<T>
+    public interface INodeTraverser<T> where T : IEquatable<T>
     {
         /// <summary>
         /// Calculate the real cost to another node.

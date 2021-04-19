@@ -41,11 +41,9 @@ reference.
 
 ### Simple Usage
 
-First, update your current "nodes" to
-implement [`ITraversableGraphNode`](PathFinder/Graphs/ITraversableGraphNode.cs).
-When implementing, it is important to make sure `EstimatedCostTo` returns the
-**best case** cost for the best performance. A decent example can be found
-in [SimpleWorld.Map.Position](Extras/SimpleWorld/Map/Position.cs).
+You can either update the "nodes" of your graph to implement
+[`ITraversableGraphNode`](PathFinder/Graphs/ITraversableGraphNode.cs), or
+create a [`INodeTraverser`](PathFinder/Graphs/INodeTraverser.cs).
 
 To find a path, use one of the included solvers.
 
@@ -60,8 +58,10 @@ var state = AStar.Solve(fromNode, toNode, out IList path);
 if (state == SolverState.Success)
     UsePath(path);
 
-// create a solver and run it manually
-var solver = new Greedy(fromNode, toNode);
+// create a greedy solver and run it manually
+// giving time every 100 ticks for other work
+// to be completed.
+var solver = new Greedy(fromNode, toNode, new YourNodeTraverser());
 solver.MaxTicks = 20000;
 while (solver.State == SolverState.Waiting) {
     solver.Start(100); // run 100 ticks
@@ -70,6 +70,19 @@ while (solver.State == SolverState.Waiting) {
 if (solver.State == SolverState.Success)
     MoveEntity(entity, solver.Path)
 ```
+
+For an example of `ITraversableGraphNode`, see
+[SimpleWorld.Map.Position](Extras/SimpleWorld/Map/Position.cs).
+
+For examples of `INodeTraverser`, see
+[Traversers](Extras/SimpleWorld/Traversers).
+
+*Note: When implementing, it is important to make sure `EstimatedCostTo` returns the
+**best case** cost for the best performance.*
+
+*Note 2: You must implement either a `INodeTraverser`, or implement `ITraversableGraphNode`
+on your existing graph. If no traverser is given to a solver, and the nodes do not implement
+`ITraversableGraphNode`, then the solver will throw an exception.
 
 ### Solver Types
 

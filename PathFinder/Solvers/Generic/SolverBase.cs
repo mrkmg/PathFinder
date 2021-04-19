@@ -12,15 +12,22 @@ namespace PathFinder.Solvers.Generic
     /// <summary>
     /// The base of the Generic Solvers, which handles all the common functionality.
     /// </summary>
-    /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
-    public abstract class SolverBase<T> : IGraphSolver<T>, IComparer<GraphNodeMetaData<T>> where T : ITraversableGraphNode<T>
+    /// <typeparam name="T">The type of the nodes to traverse.</typeparam>
+    public abstract class SolverBase<T> : IGraphSolver<T>, IComparer<GraphNodeMetaData<T>> where T : IEquatable<T>
     {
         [DocsHidden]
         protected SolverBase(T origin, T destination, INodeTraverser<T> traverser = null)
         {
+            if (origin == null) throw new ArgumentNullException(nameof(origin));
+            if (destination == null) throw new ArgumentNullException(nameof(destination));
+            if (traverser == null && origin is ITraversableGraphNode<T> && destination is ITraversableGraphNode<T>)
+            {
+                var defaultTraverserType = typeof(DefaultTraverser<>).MakeGenericType(origin.GetType());
+                traverser = (INodeTraverser<T>) Activator.CreateInstance(defaultTraverserType);
+            }
             Origin = origin;
             Destination = destination;
-            Traverser = traverser ?? new DefaultTraverser<T>();
+            Traverser = traverser ?? throw new ArgumentException("Either Traverser needs to be passed, or T must be an ITraversableGraphNode", nameof(traverser));
             // create the origin node metadata manually as the "GetMeta" method
             // needs to use the CurrentMetaData
             CurrentMetaData = new GraphNodeMetaData<T>(origin, 0)
@@ -235,7 +242,7 @@ namespace PathFinder.Solvers.Generic
     }
 
     [DocsHidden]
-    public class GraphNodeMetaData<T> : IEquatable<GraphNodeMetaData<T>> where T : ITraversableGraphNode<T>
+    public class GraphNodeMetaData<T> : IEquatable<GraphNodeMetaData<T>> where T : IEquatable<T>
     {
         public readonly T Node;
         public readonly long NodeId;
