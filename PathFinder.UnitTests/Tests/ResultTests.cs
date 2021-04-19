@@ -96,8 +96,6 @@ namespace PathFinder.UnitTests.Tests
         {
             var solver = new BreadthFirst<TestNode>(_start, _end);
             solver.Run();
-            DumpPath(solver.Open);
-            DumpPath(solver.Closed);
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
@@ -121,8 +119,6 @@ namespace PathFinder.UnitTests.Tests
         {
             var solver = new Greedy<TestNode>(_start, _end);
             solver.Run();
-            DumpPath(solver.Open);
-            DumpPath(solver.Closed);
             Assert.Multiple(() =>
             {
                 CollectionAssert.AreEqual(
