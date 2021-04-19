@@ -234,6 +234,8 @@ namespace PathFinder.Solvers.Generic
             return _cost ??= GetMeta(Destination, true).FromCost;
         }
 
+        // used internally by the implementations
+        [DocsHidden]
         public abstract int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y);
     }
 
