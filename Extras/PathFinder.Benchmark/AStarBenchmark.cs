@@ -1,5 +1,6 @@
 ﻿using System;
 using BenchmarkDotNet.Attributes;
+using PathFinder.Graphs;
 using PathFinder.Solvers.Generic;
 using SimpleWorld.Map;
 
@@ -15,11 +16,11 @@ namespace PathFinder.Benchmark
         [Params(1500)]
         public int Size;
         
-        [Params(0, 0.5, 1, 1.5)]
+        [Params(1)]
         public double Greed;
 
         // [Params(4967, 4969, 4973, 4987, 4993, 4999, 5003)]
-        [Params(111111)]
+        [Params(333333)]
         public int Seed;
 
         [Params(1.0)]
@@ -37,6 +38,12 @@ namespace PathFinder.Benchmark
         public void Baseline()
         {
             AStar<Position>.Solve(_from, _to, Greed, out _);
+        }
+        
+        [Benchmark]
+        public void WithTraverserPassed()
+        {
+            AStar<Position>.Solve(_from, _to, Greed, out _, new DefaultTraverser<Position>());
         }
     }
 }

@@ -16,7 +16,7 @@ namespace PathFinder.Benchmark
                     var a = new AStarBenchmark();
                     a.Size = int.Parse(args[1]);
                     a.Greed = double.Parse(args[2]);
-                    a.Seed = 500;
+                    a.Seed = 333333;
                     a.MoveFactor = 1.0;
                     a.Setup();
                     a.Baseline();
