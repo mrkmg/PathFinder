@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using PathFinder.Graphs;
 using PathFinder.Solvers.Generic;
+using PathFinder.UnitTests.Fixtures;
 
-namespace PathFinder.UnitTests
+namespace PathFinder.UnitTests.Tests
 {
     public class ThrowTests
     {

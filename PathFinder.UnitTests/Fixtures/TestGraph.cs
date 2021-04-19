@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using PathFinder.Graphs;
 
-namespace PathFinder.UnitTests
+namespace PathFinder.UnitTests.Fixtures
 {
     public class TestGraph
     {
@@ -17,8 +17,8 @@ namespace PathFinder.UnitTests
             new[] {1, 1, 1, 1, 0,  0,  1, 1, 1, 1},
             new[] {1, 1, 1, 1, 10, 10, 1, 1, 1, 1},
             new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1},
-            new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1},
-            new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1}
+            new[] {0, 0, 1, 1, 1,  0,  1, 1, 1, 1},
+            new[] {1, 0, 1, 1, 1,  0,  1, 1, 1, 1}
         };
 
         public TestNode GetNode(int x, int y) => new (x, y, _world[x][y], this);
