@@ -128,12 +128,14 @@ namespace PathFinder.Solvers.Generic
                 ProcessNeighbors();
         }
         
+        /// <inheritdoc cref="IGraphSolver{T}.Stop"/>
         public void Stop() => _remainingTicks = 0;
         
+        /// <inheritdoc cref="IGraphSolver{T}.Run"/>
         public SolverState Run(int numTicks = -1)
         {
             if (State != SolverState.Incomplete)
-                throw new InvalidOperationException("Graph Solver is not in a startable state");
+                throw new InvalidOperationException("Graph Solver is not in a runnable state");
             _remainingTicks = numTicks;
             State = SolverState.Running;
             while (State == SolverState.Running) 
