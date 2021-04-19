@@ -6,7 +6,7 @@ using PathFinder.Supplement;
 namespace PathFinder.Solvers.Generic
 {
     /// <summary>
-    /// Helper methods for the BreadthFirst graph solver. See <see cref="BreadthFirst{T}"/>.
+    /// Convenience methods for the BreadthFirst graph solver. See <see cref="BreadthFirst{T}"/>.
     /// </summary>
     public static class BreadthFirst
     {

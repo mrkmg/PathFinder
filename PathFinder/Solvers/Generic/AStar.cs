@@ -7,7 +7,7 @@ using PathFinder.Supplement;
 namespace PathFinder.Solvers.Generic
 {
     /// <summary>
-    /// Helper methods for the A* graph solver. See <see cref="AStar{T}"/>.
+    /// Convenience methods for the A* graph solver. See <see cref="AStar{T}"/>.
     /// </summary>
     public static class AStar
     {

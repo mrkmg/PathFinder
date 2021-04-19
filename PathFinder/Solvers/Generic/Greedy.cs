@@ -6,7 +6,7 @@ using PathFinder.Supplement;
 namespace PathFinder.Solvers.Generic
 {
     /// <summary>
-    /// Helper methods for the Greedy graph solver. See <see cref="Greedy{T}"/>.
+    /// Convenience methods for the Greedy graph solver. See <see cref="Greedy{T}"/>.
     /// </summary>
     public static class Greedy
     {
