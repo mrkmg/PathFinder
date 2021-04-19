@@ -8,7 +8,7 @@ namespace PathFinder.Graphs
     /// via any the graph solvers in the <c>PathFinder.Solvers.Generic</c>
     /// namespace.
     /// </summary>
-    public interface ITraversableGraphNode<T> : IEquatable<T>
+    public interface ITraversableNode<T> : IEquatable<T>
     {
         /// <summary>
         /// Calculate the real cost to another node.

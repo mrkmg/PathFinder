@@ -21,17 +21,17 @@ namespace PathFinder.UnitTests
             new[] {1, 1, 1, 1, 1,  0,  1, 1, 1, 1}
         };
 
-        public TestGraphNode GetNode(int x, int y) => new (x, y, _world[x][y], this);
+        public TestNode GetNode(int x, int y) => new (x, y, _world[x][y], this);
     }
 
-    public readonly struct TestGraphNode : ITraversableGraphNode<TestGraphNode>
+    public readonly struct TestNode : ITraversableNode<TestNode>
     {
         public readonly int X;
         public readonly int Y;
         private readonly int _cost;
         private readonly TestGraph _testGraph;
 
-        public TestGraphNode(int x, int y, int cost, TestGraph testGraph)
+        public TestNode(int x, int y, int cost, TestGraph testGraph)
         {
             X = x;
             Y = y;
@@ -39,19 +39,19 @@ namespace PathFinder.UnitTests
             _testGraph = testGraph;
         }
 
-        public double RealCostTo(TestGraphNode other)
+        public double RealCostTo(TestNode other)
         {
             return (_cost + other._cost) / 2d;
         }
 
-        public double EstimatedCostTo(TestGraphNode other)
+        public double EstimatedCostTo(TestNode other)
         {
             var dx = X - other.X;
             var dy = Y - other.Y;
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public IEnumerable<TestGraphNode> TraversableNodes()
+        public IEnumerable<TestNode> TraversableNodes()
         {
             var maxX = Math.Min(9, X + 1);
             var maxY = Math.Min(9, Y + 1);
@@ -63,14 +63,14 @@ namespace PathFinder.UnitTests
                     if (node._cost != 0) yield return node;
                 }
         }
-        public bool Equals(TestGraphNode other)
+        public bool Equals(TestNode other)
         {
             return X == other.X && Y == other.Y;
         }
 
         public override bool Equals(object? obj)
         {
-            return obj is TestGraphNode other && Equals(other);
+            return obj is TestNode other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -78,12 +78,12 @@ namespace PathFinder.UnitTests
             return HashCode.Combine(X, Y);
         }
 
-        public static bool operator ==(TestGraphNode left, TestGraphNode right)
+        public static bool operator ==(TestNode left, TestNode right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(TestGraphNode left, TestGraphNode right)
+        public static bool operator !=(TestNode left, TestNode right)
         {
             return !(left == right);
         }

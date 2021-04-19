@@ -36,7 +36,7 @@ namespace PathFinder.Gui
         private void Main()
         {
             _frameStopwatch.Start();
-            while (!_kill && GraphSolver.State == SolverState.Waiting)
+            while (!_kill && GraphSolver.State == SolverState.Incomplete)
             {
                 lock (_lock)
                 {

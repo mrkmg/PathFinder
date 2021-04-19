@@ -101,9 +101,9 @@ namespace PathFinder.Solvers.Generic
     public enum SolverState
     {
         /// <summary>
-        /// The solver is waiting to run.
+        /// The solver has more work to do.
         /// </summary>
-        Waiting = 0,
+        Incomplete = 0,
         
         /// <summary>
         /// The solver is currently running.

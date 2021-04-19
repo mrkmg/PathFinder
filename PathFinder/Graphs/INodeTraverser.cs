@@ -13,7 +13,7 @@ namespace PathFinder.Graphs
     /// alternate map traversal patterns for different types of entities
     /// in a game or simulation.
     /// </remarks>
-    /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
+    /// <typeparam name="T"><see cref="ITraversableNode{T}"/></typeparam>
     public interface INodeTraverser<T> where T : IEquatable<T>
     {
         /// <summary>

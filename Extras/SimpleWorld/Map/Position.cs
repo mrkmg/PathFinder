@@ -4,7 +4,7 @@ using PathFinder.Graphs;
 
 namespace SimpleWorld.Map
 {
-    public class Position : ITraversableGraphNode<Position>
+    public class Position : ITraversableNode<Position>
     {
         public readonly int X;
         public readonly int Y;

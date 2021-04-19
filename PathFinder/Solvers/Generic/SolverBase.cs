@@ -20,14 +20,14 @@ namespace PathFinder.Solvers.Generic
         {
             if (origin == null) throw new ArgumentNullException(nameof(origin));
             if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (traverser == null && origin is ITraversableGraphNode<T> && destination is ITraversableGraphNode<T>)
+            if (traverser == null && origin is ITraversableNode<T> && destination is ITraversableNode<T>)
             {
                 var defaultTraverserType = typeof(DefaultTraverser<>).MakeGenericType(origin.GetType());
                 traverser = (INodeTraverser<T>) Activator.CreateInstance(defaultTraverserType);
             }
             Origin = origin;
             Destination = destination;
-            Traverser = traverser ?? throw new ArgumentException("Either Traverser needs to be passed, or T must be an ITraversableGraphNode", nameof(traverser));
+            Traverser = traverser ?? throw new ArgumentException("Either Traverser needs to be passed, or T must be an ITraversableNode", nameof(traverser));
             // create the origin node metadata manually as the "GetMeta" method
             // needs to use the CurrentMetaData
             CurrentMetaData = new GraphNodeMetaData<T>(origin, 0)
@@ -62,7 +62,7 @@ namespace PathFinder.Solvers.Generic
         public double PathCost => GetCost();
 
         /// <inheritdoc cref="IGraphSolver{T}.State"/>
-        public SolverState State { get; protected set; } = SolverState.Waiting;
+        public SolverState State { get; protected set; } = SolverState.Incomplete;
 
         /// <inheritdoc cref="IGraphSolver{T}.Ticks"/>
         public int Ticks { get; private set; }
@@ -104,7 +104,7 @@ namespace PathFinder.Solvers.Generic
                 State = SolverState.Failure;
             // the current "start" ran out of remaining ticks and we did not succeed or fail
             else if (_remainingTicks == 0)
-                State = SolverState.Waiting;
+                State = SolverState.Incomplete;
             else if (Ticks > MaxTicks)
                 State = SolverState.Failure;
 
@@ -128,7 +128,7 @@ namespace PathFinder.Solvers.Generic
         
         public SolverState Run(int numTicks = -1)
         {
-            if (State != SolverState.Waiting)
+            if (State != SolverState.Incomplete)
                 throw new InvalidOperationException("Graph Solver is not in a startable state");
             _remainingTicks = numTicks;
             State = SolverState.Running;

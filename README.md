@@ -42,7 +42,7 @@ reference.
 ### Simple Usage
 
 You can either update the "nodes" of your graph to implement
-[`ITraversableGraphNode`](PathFinder/Graphs/ITraversableGraphNode.cs), or
+[`ITraversableNode`](PathFinder/Graphs/ITraversableNode.cs), or
 create a [`INodeTraverser`](PathFinder/Graphs/INodeTraverser.cs).
 
 To find a path, use one of the included solvers.
@@ -63,7 +63,7 @@ if (state == SolverState.Success)
 // to be completed.
 var solver = new Greedy(fromNode, toNode, new YourNodeTraverser());
 solver.MaxTicks = 20000;
-while (solver.State == SolverState.Waiting) {
+while (solver.State == SolverState.Incomplete) {
     solver.Start(100); // run 100 ticks
     DoOtherWork();
 }
@@ -71,7 +71,7 @@ if (solver.State == SolverState.Success)
     MoveEntity(entity, solver.Path)
 ```
 
-For an example of `ITraversableGraphNode`, see
+For an example of `ITraversableNode`, see
 [SimpleWorld.Map.Position](Extras/SimpleWorld/Map/Position.cs).
 
 For examples of `INodeTraverser`, see
@@ -80,9 +80,9 @@ For examples of `INodeTraverser`, see
 *Note: When implementing, it is important to make sure `EstimatedCostTo` returns the
 **best case** cost for the best performance.*
 
-*Note 2: You must implement either a `INodeTraverser`, or implement `ITraversableGraphNode`
+*Note 2: You must implement either a `INodeTraverser`, or implement `ITraversableNode`
 on your existing graph. If no traverser is given to a solver, and the nodes do not implement
-`ITraversableGraphNode`, then the solver will throw an exception.
+`ITraversableNode`, then the solver will throw an exception.
 
 ### Solver Types
 

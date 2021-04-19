@@ -156,7 +156,7 @@ namespace PathFinder.Gui.Forms
             var frameData = _runnerThread.GetFrameData();
             switch (frameData.State)
             {
-                case SolverState.Waiting:
+                case SolverState.Incomplete:
                 case SolverState.Running:
                     _statsWidget.UpdateRunningStats(frameData);
                     if (ShowSearching)
