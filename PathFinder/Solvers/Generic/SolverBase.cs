@@ -13,14 +13,13 @@ namespace PathFinder.Solvers.Generic
     /// The base of the Generic Solvers, which handles all the common functionality.
     /// </summary>
     /// <typeparam name="T"><see cref="ITraversableGraphNode{T}"/></typeparam>
-    public abstract class SolverBase<T> : IGraphSolver<T> where T : ITraversableGraphNode<T>
+    public abstract class SolverBase<T> : IGraphSolver<T>, IComparer<GraphNodeMetaData<T>> where T : ITraversableGraphNode<T>
     {
         [DocsHidden]
-        protected SolverBase(IComparer<GraphNodeMetaData<T>> comparer, T origin, T destination, INodeTraverser<T> traverser = null)
+        protected SolverBase(T origin, T destination, INodeTraverser<T> traverser = null)
         {
             Origin = origin;
             Destination = destination;
-            Comparer = comparer;
             Traverser = traverser ?? new DefaultTraverser<T>();
             // create the origin node metadata manually as the "GetMeta" method
             // needs to use the CurrentMetaData
@@ -29,7 +28,7 @@ namespace PathFinder.Solvers.Generic
                 ToCost = Traverser.EstimatedCost(origin, Destination),
                 PathLength = 0,
             };
-            OpenNodes = new C5.IntervalHeap<GraphNodeMetaData<T>>(comparer) {CurrentMetaData};
+            OpenNodes = new C5.IntervalHeap<GraphNodeMetaData<T>>(this) {CurrentMetaData};
             _closest = CurrentMetaData;
             // set to 1 because the origin is node 0
             _nextGraphNodeId = 1;
@@ -39,7 +38,7 @@ namespace PathFinder.Solvers.Generic
         public IEnumerable<T> Open => OpenNodes.Select(n => n.Node);
 
         /// <inheritdoc cref="IGraphSolver{T}.Closed"/>
-        public IEnumerable<T> Closed => Meta.Values
+        public IEnumerable<T> Closed => MetaDict.Values
             .Where(n => n.Status == NodeStatus.Closed)
             .Select(n => n.Node);
 
@@ -79,11 +78,9 @@ namespace PathFinder.Solvers.Generic
         [DocsHidden]
         protected C5.IntervalHeap<GraphNodeMetaData<T>> OpenNodes;
         [DocsHidden]
-        protected readonly Dictionary<T, GraphNodeMetaData<T>> Meta = new Dictionary<T, GraphNodeMetaData<T>>();
+        protected readonly Dictionary<T, GraphNodeMetaData<T>> MetaDict = new Dictionary<T, GraphNodeMetaData<T>>();
         [DocsHidden]
         protected GraphNodeMetaData<T> CurrentMetaData;
-        [DocsHidden]
-        protected readonly IComparer<GraphNodeMetaData<T>> Comparer;
         [DocsHidden]
         protected readonly INodeTraverser<T> Traverser;
         
@@ -145,8 +142,8 @@ namespace PathFinder.Solvers.Generic
         [NotNull, DocsHidden]
         protected GraphNodeMetaData<T> GetMeta(T node, bool onlyExisting = false)
         {
-            if (Meta.TryGetValue(node, out var meta)) return meta;
-            if (onlyExisting) throw new InvalidOperationException($"Meta data not found for {node}");
+            if (MetaDict.TryGetValue(node, out var meta)) return meta;
+            if (onlyExisting) throw new InvalidOperationException($"MetaDict data not found for {node}");
             var fromCost = Traverser.RealCost(CurrentMetaData.Node, node);
             meta = new GraphNodeMetaData<T>(node, _nextGraphNodeId++)
             {
@@ -155,7 +152,7 @@ namespace PathFinder.Solvers.Generic
                 Parent = CurrentMetaData,
                 PathLength = CurrentMetaData.PathLength + 1
             };
-            Meta.Add(node, meta);
+            MetaDict.Add(node, meta);
             // If the fromCost has a negative value, it is not actually traversable so
             // close the node to prevent it from being searched further.
             // TODO determine if this should actually be the case
@@ -225,6 +222,8 @@ namespace PathFinder.Solvers.Generic
             if (State != SolverState.Success) return -1;
             return _cost ??= GetMeta(Destination, true).FromCost;
         }
+
+        public abstract int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y);
     }
 
     [DocsHidden]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using PathFinder.Graphs;
+using PathFinder.Supplement;
 
 namespace PathFinder.Solvers.Generic
 {
@@ -102,7 +103,7 @@ namespace PathFinder.Solvers.Generic
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public AStar(T origin, T destination, INodeTraverser<T> traverser = null) 
-            : base(new NodeMetaComparer(), origin, destination, traverser) { }
+            : base(origin, destination, traverser) { }
 
         /// <summary>
         /// Creates a solver using the AStar method.
@@ -112,7 +113,7 @@ namespace PathFinder.Solvers.Generic
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public AStar(T origin, T destination, double greedFactor, INodeTraverser<T> traverser = null)
-            : base(new NodeMetaComparer(), origin, destination, traverser)
+            : base(origin, destination, traverser)
         {
             _greedFactor = greedFactor;
         }
@@ -161,23 +162,21 @@ namespace PathFinder.Solvers.Generic
             var didAdd = OpenNodes.Add(ref neighborMetaData.Handle, neighborMetaData);
             Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
         }
-
-        private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
+        
+        // For aStar, we want the node with a lowest total cost first
+        // If total costs are the same, then the node which has a lower "to cost"
+        // if to costs are the same, use the latest found node
+        [DocsHidden]
+        public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
         {
-            // For aStar, we want the node with a lowest total cost first
-            // If total costs are the same, then the node which has a lower "to cost"
-            // if to costs are the same, use the latest found node
-            public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
-            {
-                Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
-                return x.TotalCost <  y.TotalCost ? -1
-                     : x.TotalCost >  y.TotalCost ?  1
-                     : x.ToCost    <  y.ToCost    ? -1
-                     : x.ToCost    >  y.ToCost    ?  1
-                     : x.NodeId    == y.NodeId    ?  0
-                     : x.NodeId    <  y.NodeId    ?  1
-                     :                              -1;
-            }
+            Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
+            return x.TotalCost <  y.TotalCost ? -1
+                : x.TotalCost >  y.TotalCost ?  1
+                : x.ToCost    <  y.ToCost    ? -1
+                : x.ToCost    >  y.ToCost    ?  1
+                : x.NodeId    == y.NodeId    ?  0
+                : x.NodeId    <  y.NodeId    ?  1
+                :                              -1;
         }
     }
 }

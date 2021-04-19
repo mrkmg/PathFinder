@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using PathFinder.Graphs;
+using PathFinder.Supplement;
 
 namespace PathFinder.Solvers.Generic
 {
@@ -61,20 +62,18 @@ namespace PathFinder.Solvers.Generic
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="traverser">Use <see cref="INodeTraverser{T}"/> to traverse the graph instead of<see cref="ITraversableGraphNode{T}"/>'s default traversing.</param>
         public BreadthFirst(T origin, T destination, INodeTraverser<T> traverser = null) 
-            : base(new NodeMetaComparer(), origin, destination, traverser) { }
+            : base(origin, destination, traverser) { }
 
-        private class NodeMetaComparer : Comparer<GraphNodeMetaData<T>>
+        // breadth-first only cares about the from cost
+        [DocsHidden]
+        public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
         {
-            // breadth-first only cares about the from cost
-            public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
-            {
-                Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
-                return x.FromCost >  y.FromCost ?  1
-                     : x.FromCost <  y.FromCost ? -1
-                     : x.NodeId   == y.NodeId   ?  0
-                     : x.NodeId   >  y.NodeId   ?  1 
-                     :                            -1;
-            }
+            Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
+            return x.FromCost >  y.FromCost ?  1
+                 : x.FromCost <  y.FromCost ? -1
+                 : x.NodeId   == y.NodeId   ?  0
+                 : x.NodeId   >  y.NodeId   ?  1 
+                 :                            -1;
         }
     }
 }
