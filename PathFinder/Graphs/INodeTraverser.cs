@@ -9,7 +9,7 @@ namespace PathFinder.Graphs
     /// default traverser.
     /// </summary>
     /// <remarks>
-    /// A use case to create a separate Node Traverser may be provide
+    /// A use case to create a separate Node Traverser may be to provide
     /// alternate map traversal patterns for different types of entities
     /// in a game or simulation.
     /// </remarks>

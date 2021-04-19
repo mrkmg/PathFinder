@@ -11,7 +11,7 @@ namespace PathFinder.Solvers.Generic
     public interface IGraphSolver<T>
     {
         /// <summary>
-        /// The current state of the solver. See <see cref="SolverState"/>
+        /// The current <see cref="SolverState"/>.
         /// </summary>
         SolverState State { get; }
         
@@ -26,7 +26,7 @@ namespace PathFinder.Solvers.Generic
         int MaxTicks { get; set; }
         
         /// <summary>
-        /// The last node to be checked
+        /// The last node to be checked.
         /// </summary>
         T Current { get; }
         
@@ -54,27 +54,27 @@ namespace PathFinder.Solvers.Generic
         [CanBeNull] IList<T> Path { get; }
         
         /// <summary>
-        /// A List of nodes which still need to be checked
+        /// A List of nodes which still need to be checked.
         /// </summary>
         IEnumerable<T> Open { get; }
         
         /// <summary>
-        /// A list of nodes which have already been checked
+        /// A list of nodes which have already been checked.
         /// </summary>
         IEnumerable<T> Closed { get; }
         
         /// <summary>
-        /// Count of open nodes
+        /// Count of open nodes.
         /// </summary>
         int OpenCount { get; }
         
         /// <summary>
-        /// Count of closed nodes
+        /// Count of closed nodes.
         /// </summary>
         int ClosedCount { get; }
         
         /// <summary>
-        /// The cost to get from the Origin to the Destination via the path
+        /// The cost to get from the Origin to the Destination via the path.
         /// </summary>
         double PathCost { get; }
         

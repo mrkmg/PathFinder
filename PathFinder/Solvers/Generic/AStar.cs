@@ -150,7 +150,7 @@ namespace PathFinder.Solvers.Generic
         /// <list type="bullet">
         /// <item>0 is breadth-first search.</item>
         /// <item>1 is traditional A*.</item>
-        /// <item>>1 favors obtaining the goal over finding the cheapest path.</item>
+        /// <item>&gt;1 favors obtaining the goal over finding the cheapest path.</item>
         /// </list>
         /// </remarks>
         public double GreedFactor
