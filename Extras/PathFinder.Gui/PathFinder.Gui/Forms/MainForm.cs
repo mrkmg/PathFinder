@@ -115,11 +115,10 @@ namespace PathFinder.Gui.Forms
             if (_runnerThread == null)
             {
                 CreateNewRunner();
+                if (ShowBlindSearching) _mapWidget.ClearLayer(0);
+                else _mapWidget.DrawWorld(_world);
             }
-            
-            if (ShowBlindSearching) _mapWidget.ClearLayer(0);
-            else _mapWidget.DrawWorld(_world);
-            
+
             _runnerThread.RunToSolve = !(_showSearchCheckbox.Checked ?? false);
             _runnerThread.Start();
             _timer.Start();
