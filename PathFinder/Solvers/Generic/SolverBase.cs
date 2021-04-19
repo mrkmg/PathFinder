@@ -150,7 +150,7 @@ namespace PathFinder.Solvers.Generic
         protected GraphNodeMetaData<T> GetMeta(T node, bool onlyExisting = false)
         {
             if (MetaDict.TryGetValue(node, out var meta)) return meta;
-            if (onlyExisting) throw new InvalidOperationException($"MetaDict data not found for {node}");
+            Debug.Assert(!onlyExisting, $"MetaDict data not found for {node}");
             var fromCost = Traverser.RealCost(CurrentMetaData.Node, node);
             meta = new GraphNodeMetaData<T>(node, _nextGraphNodeId++)
             {
@@ -217,7 +217,7 @@ namespace PathFinder.Solvers.Generic
             do
             {
                 path[pathIndex--] = cMeta!.Node;
-                Debug.Assert(cMeta.Parent != null, "cMeta != null while building path");
+                Debug.Assert(cMeta.Parent != null, "cMeta.Parent should not be null while building path");
                 Debug.Assert(!cMeta.Node.Equals(Origin));
                 cMeta = cMeta.Parent;
             } while (pathIndex >= 0);
