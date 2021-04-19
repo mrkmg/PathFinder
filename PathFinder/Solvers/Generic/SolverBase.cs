@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PathFinder.Graphs;
@@ -15,19 +16,22 @@ namespace PathFinder.Solvers.Generic
     /// <typeparam name="T">The type of the nodes to traverse.</typeparam>
     public abstract class SolverBase<T> : IGraphSolver<T>, IComparer<GraphNodeMetaData<T>> where T : IEquatable<T>
     {
+        [CanBeNull]
+        private static INodeTraverser<T> MakeDefaultTraverser(T node)
+        {
+            if (!(node is ITraversableNode<T>)) return null;
+            return (INodeTraverser<T>) Activator.CreateInstance(typeof(DefaultTraverser<>).MakeGenericType(node.GetType()));
+        }
+        
         [DocsHidden]
         protected SolverBase(T origin, T destination, INodeTraverser<T> traverser = null)
         {
-            if (origin == null) throw new ArgumentNullException(nameof(origin));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (traverser == null && origin is ITraversableNode<T> && destination is ITraversableNode<T>)
-            {
-                var defaultTraverserType = typeof(DefaultTraverser<>).MakeGenericType(origin.GetType());
-                traverser = (INodeTraverser<T>) Activator.CreateInstance(defaultTraverserType);
-            }
-            Origin = origin;
-            Destination = destination;
-            Traverser = traverser ?? throw new ArgumentException("Either Traverser needs to be passed, or T must be an ITraversableNode", nameof(traverser));
+            Origin = origin ?? throw new ArgumentNullException(nameof(origin));
+            Destination = destination ?? throw new ArgumentNullException(nameof(destination));
+            Traverser = traverser ?? 
+                        MakeDefaultTraverser(origin) ?? 
+                        throw new ArgumentException("Either Traverser needs to be passed, or T must be an ITraversableNode", nameof(traverser));
+
             // create the origin node metadata manually as the "GetMeta" method
             // needs to use the CurrentMetaData
             CurrentMetaData = new GraphNodeMetaData<T>(origin, 0)
