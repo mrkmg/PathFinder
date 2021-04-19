@@ -6,28 +6,31 @@ using SimpleWorld.Map;
 
 namespace SimpleWorld.Traversers
 {
+    // Traverses the grid using larger steps than default.
+    // It is "cheaper" to take one large step, rather than many
+    // small steps.
     public class LargerStepTraverser : INodeTraverser<Position>
     {
         private readonly int _stepSize;
-        private readonly double _stepSizeBonusFactor;
+        private const double StepBaseCost = 0.5; 
 
         public LargerStepTraverser(int stepSize)
         {
             _stepSize = stepSize;
-            _stepSizeBonusFactor = Math.Sqrt(stepSize * 4d) * stepSize;
         }
         
         public double RealCost(Position fromNode, Position toNode)
         {
-            var originalCost = fromNode.RealCostTo(toNode);
-            var distanceCost = EstimatedCost(fromNode, toNode);
-            var ratio = (_stepSizeBonusFactor - distanceCost) / _stepSizeBonusFactor * 0.2d;
-            return originalCost * ratio;
+            return fromNode.RealCostTo(toNode) + StepBaseCost;
 
         }
 
-        public double EstimatedCost(Position fromNode, Position toNode) 
-            => fromNode.EstimatedCostTo(toNode) * 0.2d;
+        public double EstimatedCost(Position fromNode, Position toNode)
+        {
+            var estDist = fromNode.EstimatedCostTo(toNode);
+            var estNumSteps = Math.Ceiling(estDist / _stepSize);
+            return estDist + estNumSteps * StepBaseCost;
+        }
 
         public IEnumerable<Position> TraversableNodes(Position sourceNode)
         {

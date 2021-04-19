@@ -5,6 +5,7 @@ using SimpleWorld.Map;
 
 namespace SimpleWorld.Traversers
 {
+    // Traverses the grid by only moving along the grid in the cardinal directions.
     public class GridTraverser : INodeTraverser<Position>
     {
         public double RealCost(Position fromNode, Position toNode)
