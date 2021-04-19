@@ -12,7 +12,7 @@ namespace SimpleWorld.Traversers
         
         public double EstimatedCost(Position fromNode, Position toNode)
         {
-            return Math.Max(Math.Abs(fromNode.X - toNode.X), Math.Abs(fromNode.Y - toNode.Y));
+            return Math.Abs(fromNode.X - toNode.X) + Math.Abs(fromNode.Y - toNode.Y);
         }
 
         public IEnumerable<Position> TraversableNodes(Position sourceNode)
