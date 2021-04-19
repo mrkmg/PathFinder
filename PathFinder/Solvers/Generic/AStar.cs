@@ -7,7 +7,7 @@ using PathFinder.Supplement;
 namespace PathFinder.Solvers.Generic
 {
     /// <summary>
-    /// Convenience methods for the A* graph solver. See <see cref="AStar{T}"/>.
+    /// Convenience methods for the <see cref="AStar{T}"/> graph solver.
     /// </summary>
     public static class AStar
     {
@@ -18,8 +18,9 @@ namespace PathFinder.Solvers.Generic
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">
-        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
-        /// If no traverser if passed, T must extend <see cref="ITraversableNode{T}"/>.
+        /// <para>The <see cref="INodeTraverser{T}"/> implementation to use when traversing the graph</para>
+        /// <para>-or-</para>
+        /// <para><c>null</c> to use the <see cref="ITraversableNode{T}"/> implementation on each node.</para>
         /// </param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableNode{T}"/> if traverser is null.</typeparam>
@@ -35,8 +36,9 @@ namespace PathFinder.Solvers.Generic
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">
-        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
-        /// If no traverser if passed, T must extend <see cref="ITraversableNode{T}"/>.
+        /// <para>The <see cref="INodeTraverser{T}"/> implementation to use when traversing the graph</para>
+        /// <para>-or-</para>
+        /// <para><c>null</c> to use the <see cref="ITraversableNode{T}"/> implementation on each node.</para>
         /// </param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
         /// <typeparam name="T">The type of nodes to traverse. Must extend <see cref="ITraversableNode{T}"/> if traverser is null.</typeparam>
@@ -68,8 +70,9 @@ namespace PathFinder.Solvers.Generic
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">
-        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
-        /// If no traverser if passed, T must extend <see cref="ITraversableNode{T}"/>.
+        /// <para>The <see cref="INodeTraverser{T}"/> implementation to use when traversing the graph</para>
+        /// <para>-or-</para>
+        /// <para><c>null</c> to use the <see cref="ITraversableNode{T}"/> implementation on each node.</para>
         /// </param>
         /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
@@ -92,8 +95,9 @@ namespace PathFinder.Solvers.Generic
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
         /// <param name="path">The resulting path if <see cref="SolverState.Success"/>, otherwise <c>null</c></param>
         /// <param name="traverser">
-        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
-        /// If no traverser if passed, T must extend <see cref="ITraversableNode{T}"/>.
+        /// <para>The <see cref="INodeTraverser{T}"/> implementation to use when traversing the graph</para>
+        /// <para>-or-</para>
+        /// <para><c>null</c> to use the <see cref="ITraversableNode{T}"/> implementation on each node.</para>
         /// </param>
         /// <param name="maxTicks">The maximum number of ticks to run before failing.</param>
         /// <returns>The <see cref="SolverState"/> of the solver after running.</returns>
@@ -114,8 +118,9 @@ namespace PathFinder.Solvers.Generic
         /// <param name="origin"><see cref="SolverBase{T}.Origin"/></param>
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="traverser">
-        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
-        /// If no traverser if passed, T must extend <see cref="ITraversableNode{T}"/>.
+        /// <para>The <see cref="INodeTraverser{T}"/> implementation to use when traversing the graph</para>
+        /// <para>-or-</para>
+        /// <para><c>null</c> to use the <see cref="ITraversableNode{T}"/> implementation on each node.</para>
         /// </param>
         public AStar(T origin, T destination, INodeTraverser<T> traverser = null) 
             : base(origin, destination, traverser) { }
@@ -127,8 +132,9 @@ namespace PathFinder.Solvers.Generic
         /// <param name="destination"><see cref="SolverBase{T}.Destination"/></param>
         /// <param name="greedFactor"><see cref="AStar{T}.GreedFactor"/></param>
         /// <param name="traverser">
-        /// Use the passed <see cref="INodeTraverser{T}"/> to traverse the graph.
-        /// If no traverser if passed, T must extend <see cref="ITraversableNode{T}"/>.
+        /// <para>The <see cref="INodeTraverser{T}"/> implementation to use when traversing the graph</para>
+        /// <para>-or-</para>
+        /// <para><c>null</c> to use the <see cref="ITraversableNode{T}"/> implementation on each node.</para>
         /// </param>
         public AStar(T origin, T destination, double greedFactor, INodeTraverser<T> traverser = null)
             : base(origin, destination, traverser)
