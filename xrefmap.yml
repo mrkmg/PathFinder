@@ -1,0 +1,1016 @@
+### YamlMime:XRefMap
+sorted: true
+references:
+- uid: PathFinder.Graphs
+  name: PathFinder.Graphs
+  href: api/PathFinder.Graphs.html
+  commentId: N:PathFinder.Graphs
+  fullName: PathFinder.Graphs
+  nameWithType: PathFinder.Graphs
+- uid: PathFinder.Graphs.DefaultTraverser`1
+  name: DefaultTraverser<T>
+  href: api/PathFinder.Graphs.DefaultTraverser-1.html
+  commentId: T:PathFinder.Graphs.DefaultTraverser`1
+  name.vb: DefaultTraverser(Of T)
+  fullName: PathFinder.Graphs.DefaultTraverser<T>
+  fullName.vb: PathFinder.Graphs.DefaultTraverser(Of T)
+  nameWithType: DefaultTraverser<T>
+  nameWithType.vb: DefaultTraverser(Of T)
+- uid: PathFinder.Graphs.DefaultTraverser`1.EstimatedCost(`0,`0)
+  name: EstimatedCost(T, T)
+  href: api/PathFinder.Graphs.DefaultTraverser-1.html#PathFinder_Graphs_DefaultTraverser_1_EstimatedCost__0__0_
+  commentId: M:PathFinder.Graphs.DefaultTraverser`1.EstimatedCost(`0,`0)
+  fullName: PathFinder.Graphs.DefaultTraverser<T>.EstimatedCost(T, T)
+  fullName.vb: PathFinder.Graphs.DefaultTraverser(Of T).EstimatedCost(T, T)
+  nameWithType: DefaultTraverser<T>.EstimatedCost(T, T)
+  nameWithType.vb: DefaultTraverser(Of T).EstimatedCost(T, T)
+- uid: PathFinder.Graphs.DefaultTraverser`1.EstimatedCost*
+  name: EstimatedCost
+  href: api/PathFinder.Graphs.DefaultTraverser-1.html#PathFinder_Graphs_DefaultTraverser_1_EstimatedCost_
+  commentId: Overload:PathFinder.Graphs.DefaultTraverser`1.EstimatedCost
+  isSpec: "True"
+  fullName: PathFinder.Graphs.DefaultTraverser<T>.EstimatedCost
+  fullName.vb: PathFinder.Graphs.DefaultTraverser(Of T).EstimatedCost
+  nameWithType: DefaultTraverser<T>.EstimatedCost
+  nameWithType.vb: DefaultTraverser(Of T).EstimatedCost
+- uid: PathFinder.Graphs.DefaultTraverser`1.NeighborNodes(`0)
+  name: NeighborNodes(T)
+  href: api/PathFinder.Graphs.DefaultTraverser-1.html#PathFinder_Graphs_DefaultTraverser_1_NeighborNodes__0_
+  commentId: M:PathFinder.Graphs.DefaultTraverser`1.NeighborNodes(`0)
+  fullName: PathFinder.Graphs.DefaultTraverser<T>.NeighborNodes(T)
+  fullName.vb: PathFinder.Graphs.DefaultTraverser(Of T).NeighborNodes(T)
+  nameWithType: DefaultTraverser<T>.NeighborNodes(T)
+  nameWithType.vb: DefaultTraverser(Of T).NeighborNodes(T)
+- uid: PathFinder.Graphs.DefaultTraverser`1.NeighborNodes*
+  name: NeighborNodes
+  href: api/PathFinder.Graphs.DefaultTraverser-1.html#PathFinder_Graphs_DefaultTraverser_1_NeighborNodes_
+  commentId: Overload:PathFinder.Graphs.DefaultTraverser`1.NeighborNodes
+  isSpec: "True"
+  fullName: PathFinder.Graphs.DefaultTraverser<T>.NeighborNodes
+  fullName.vb: PathFinder.Graphs.DefaultTraverser(Of T).NeighborNodes
+  nameWithType: DefaultTraverser<T>.NeighborNodes
+  nameWithType.vb: DefaultTraverser(Of T).NeighborNodes
+- uid: PathFinder.Graphs.DefaultTraverser`1.RealCost(`0,`0)
+  name: RealCost(T, T)
+  href: api/PathFinder.Graphs.DefaultTraverser-1.html#PathFinder_Graphs_DefaultTraverser_1_RealCost__0__0_
+  commentId: M:PathFinder.Graphs.DefaultTraverser`1.RealCost(`0,`0)
+  fullName: PathFinder.Graphs.DefaultTraverser<T>.RealCost(T, T)
+  fullName.vb: PathFinder.Graphs.DefaultTraverser(Of T).RealCost(T, T)
+  nameWithType: DefaultTraverser<T>.RealCost(T, T)
+  nameWithType.vb: DefaultTraverser(Of T).RealCost(T, T)
+- uid: PathFinder.Graphs.DefaultTraverser`1.RealCost*
+  name: RealCost
+  href: api/PathFinder.Graphs.DefaultTraverser-1.html#PathFinder_Graphs_DefaultTraverser_1_RealCost_
+  commentId: Overload:PathFinder.Graphs.DefaultTraverser`1.RealCost
+  isSpec: "True"
+  fullName: PathFinder.Graphs.DefaultTraverser<T>.RealCost
+  fullName.vb: PathFinder.Graphs.DefaultTraverser(Of T).RealCost
+  nameWithType: DefaultTraverser<T>.RealCost
+  nameWithType.vb: DefaultTraverser(Of T).RealCost
+- uid: PathFinder.Graphs.INodeTraverser`1
+  name: INodeTraverser<T>
+  href: api/PathFinder.Graphs.INodeTraverser-1.html
+  commentId: T:PathFinder.Graphs.INodeTraverser`1
+  name.vb: INodeTraverser(Of T)
+  fullName: PathFinder.Graphs.INodeTraverser<T>
+  fullName.vb: PathFinder.Graphs.INodeTraverser(Of T)
+  nameWithType: INodeTraverser<T>
+  nameWithType.vb: INodeTraverser(Of T)
+- uid: PathFinder.Graphs.INodeTraverser`1.EstimatedCost(`0,`0)
+  name: EstimatedCost(T, T)
+  href: api/PathFinder.Graphs.INodeTraverser-1.html#PathFinder_Graphs_INodeTraverser_1_EstimatedCost__0__0_
+  commentId: M:PathFinder.Graphs.INodeTraverser`1.EstimatedCost(`0,`0)
+  fullName: PathFinder.Graphs.INodeTraverser<T>.EstimatedCost(T, T)
+  fullName.vb: PathFinder.Graphs.INodeTraverser(Of T).EstimatedCost(T, T)
+  nameWithType: INodeTraverser<T>.EstimatedCost(T, T)
+  nameWithType.vb: INodeTraverser(Of T).EstimatedCost(T, T)
+- uid: PathFinder.Graphs.INodeTraverser`1.EstimatedCost*
+  name: EstimatedCost
+  href: api/PathFinder.Graphs.INodeTraverser-1.html#PathFinder_Graphs_INodeTraverser_1_EstimatedCost_
+  commentId: Overload:PathFinder.Graphs.INodeTraverser`1.EstimatedCost
+  isSpec: "True"
+  fullName: PathFinder.Graphs.INodeTraverser<T>.EstimatedCost
+  fullName.vb: PathFinder.Graphs.INodeTraverser(Of T).EstimatedCost
+  nameWithType: INodeTraverser<T>.EstimatedCost
+  nameWithType.vb: INodeTraverser(Of T).EstimatedCost
+- uid: PathFinder.Graphs.INodeTraverser`1.NeighborNodes(`0)
+  name: NeighborNodes(T)
+  href: api/PathFinder.Graphs.INodeTraverser-1.html#PathFinder_Graphs_INodeTraverser_1_NeighborNodes__0_
+  commentId: M:PathFinder.Graphs.INodeTraverser`1.NeighborNodes(`0)
+  fullName: PathFinder.Graphs.INodeTraverser<T>.NeighborNodes(T)
+  fullName.vb: PathFinder.Graphs.INodeTraverser(Of T).NeighborNodes(T)
+  nameWithType: INodeTraverser<T>.NeighborNodes(T)
+  nameWithType.vb: INodeTraverser(Of T).NeighborNodes(T)
+- uid: PathFinder.Graphs.INodeTraverser`1.NeighborNodes*
+  name: NeighborNodes
+  href: api/PathFinder.Graphs.INodeTraverser-1.html#PathFinder_Graphs_INodeTraverser_1_NeighborNodes_
+  commentId: Overload:PathFinder.Graphs.INodeTraverser`1.NeighborNodes
+  isSpec: "True"
+  fullName: PathFinder.Graphs.INodeTraverser<T>.NeighborNodes
+  fullName.vb: PathFinder.Graphs.INodeTraverser(Of T).NeighborNodes
+  nameWithType: INodeTraverser<T>.NeighborNodes
+  nameWithType.vb: INodeTraverser(Of T).NeighborNodes
+- uid: PathFinder.Graphs.INodeTraverser`1.RealCost(`0,`0)
+  name: RealCost(T, T)
+  href: api/PathFinder.Graphs.INodeTraverser-1.html#PathFinder_Graphs_INodeTraverser_1_RealCost__0__0_
+  commentId: M:PathFinder.Graphs.INodeTraverser`1.RealCost(`0,`0)
+  fullName: PathFinder.Graphs.INodeTraverser<T>.RealCost(T, T)
+  fullName.vb: PathFinder.Graphs.INodeTraverser(Of T).RealCost(T, T)
+  nameWithType: INodeTraverser<T>.RealCost(T, T)
+  nameWithType.vb: INodeTraverser(Of T).RealCost(T, T)
+- uid: PathFinder.Graphs.INodeTraverser`1.RealCost*
+  name: RealCost
+  href: api/PathFinder.Graphs.INodeTraverser-1.html#PathFinder_Graphs_INodeTraverser_1_RealCost_
+  commentId: Overload:PathFinder.Graphs.INodeTraverser`1.RealCost
+  isSpec: "True"
+  fullName: PathFinder.Graphs.INodeTraverser<T>.RealCost
+  fullName.vb: PathFinder.Graphs.INodeTraverser(Of T).RealCost
+  nameWithType: INodeTraverser<T>.RealCost
+  nameWithType.vb: INodeTraverser(Of T).RealCost
+- uid: PathFinder.Graphs.ITraversableNode`1
+  name: ITraversableNode<T>
+  href: api/PathFinder.Graphs.ITraversableNode-1.html
+  commentId: T:PathFinder.Graphs.ITraversableNode`1
+  name.vb: ITraversableNode(Of T)
+  fullName: PathFinder.Graphs.ITraversableNode<T>
+  fullName.vb: PathFinder.Graphs.ITraversableNode(Of T)
+  nameWithType: ITraversableNode<T>
+  nameWithType.vb: ITraversableNode(Of T)
+- uid: PathFinder.Graphs.ITraversableNode`1.EstimatedCostTo(`0)
+  name: EstimatedCostTo(T)
+  href: api/PathFinder.Graphs.ITraversableNode-1.html#PathFinder_Graphs_ITraversableNode_1_EstimatedCostTo__0_
+  commentId: M:PathFinder.Graphs.ITraversableNode`1.EstimatedCostTo(`0)
+  fullName: PathFinder.Graphs.ITraversableNode<T>.EstimatedCostTo(T)
+  fullName.vb: PathFinder.Graphs.ITraversableNode(Of T).EstimatedCostTo(T)
+  nameWithType: ITraversableNode<T>.EstimatedCostTo(T)
+  nameWithType.vb: ITraversableNode(Of T).EstimatedCostTo(T)
+- uid: PathFinder.Graphs.ITraversableNode`1.EstimatedCostTo*
+  name: EstimatedCostTo
+  href: api/PathFinder.Graphs.ITraversableNode-1.html#PathFinder_Graphs_ITraversableNode_1_EstimatedCostTo_
+  commentId: Overload:PathFinder.Graphs.ITraversableNode`1.EstimatedCostTo
+  isSpec: "True"
+  fullName: PathFinder.Graphs.ITraversableNode<T>.EstimatedCostTo
+  fullName.vb: PathFinder.Graphs.ITraversableNode(Of T).EstimatedCostTo
+  nameWithType: ITraversableNode<T>.EstimatedCostTo
+  nameWithType.vb: ITraversableNode(Of T).EstimatedCostTo
+- uid: PathFinder.Graphs.ITraversableNode`1.NeighborNodes
+  name: NeighborNodes()
+  href: api/PathFinder.Graphs.ITraversableNode-1.html#PathFinder_Graphs_ITraversableNode_1_NeighborNodes
+  commentId: M:PathFinder.Graphs.ITraversableNode`1.NeighborNodes
+  fullName: PathFinder.Graphs.ITraversableNode<T>.NeighborNodes()
+  fullName.vb: PathFinder.Graphs.ITraversableNode(Of T).NeighborNodes()
+  nameWithType: ITraversableNode<T>.NeighborNodes()
+  nameWithType.vb: ITraversableNode(Of T).NeighborNodes()
+- uid: PathFinder.Graphs.ITraversableNode`1.NeighborNodes*
+  name: NeighborNodes
+  href: api/PathFinder.Graphs.ITraversableNode-1.html#PathFinder_Graphs_ITraversableNode_1_NeighborNodes_
+  commentId: Overload:PathFinder.Graphs.ITraversableNode`1.NeighborNodes
+  isSpec: "True"
+  fullName: PathFinder.Graphs.ITraversableNode<T>.NeighborNodes
+  fullName.vb: PathFinder.Graphs.ITraversableNode(Of T).NeighborNodes
+  nameWithType: ITraversableNode<T>.NeighborNodes
+  nameWithType.vb: ITraversableNode(Of T).NeighborNodes
+- uid: PathFinder.Graphs.ITraversableNode`1.RealCostTo(`0)
+  name: RealCostTo(T)
+  href: api/PathFinder.Graphs.ITraversableNode-1.html#PathFinder_Graphs_ITraversableNode_1_RealCostTo__0_
+  commentId: M:PathFinder.Graphs.ITraversableNode`1.RealCostTo(`0)
+  fullName: PathFinder.Graphs.ITraversableNode<T>.RealCostTo(T)
+  fullName.vb: PathFinder.Graphs.ITraversableNode(Of T).RealCostTo(T)
+  nameWithType: ITraversableNode<T>.RealCostTo(T)
+  nameWithType.vb: ITraversableNode(Of T).RealCostTo(T)
+- uid: PathFinder.Graphs.ITraversableNode`1.RealCostTo*
+  name: RealCostTo
+  href: api/PathFinder.Graphs.ITraversableNode-1.html#PathFinder_Graphs_ITraversableNode_1_RealCostTo_
+  commentId: Overload:PathFinder.Graphs.ITraversableNode`1.RealCostTo
+  isSpec: "True"
+  fullName: PathFinder.Graphs.ITraversableNode<T>.RealCostTo
+  fullName.vb: PathFinder.Graphs.ITraversableNode(Of T).RealCostTo
+  nameWithType: ITraversableNode<T>.RealCostTo
+  nameWithType.vb: ITraversableNode(Of T).RealCostTo
+- uid: PathFinder.Solvers.Generic
+  name: PathFinder.Solvers.Generic
+  href: api/PathFinder.Solvers.Generic.html
+  commentId: N:PathFinder.Solvers.Generic
+  fullName: PathFinder.Solvers.Generic
+  nameWithType: PathFinder.Solvers.Generic
+- uid: PathFinder.Solvers.Generic.AStar
+  name: AStar
+  href: api/PathFinder.Solvers.Generic.AStar.html
+  commentId: T:PathFinder.Solvers.Generic.AStar
+  fullName: PathFinder.Solvers.Generic.AStar
+  nameWithType: AStar
+- uid: PathFinder.Solvers.Generic.AStar.Solve*
+  name: Solve
+  href: api/PathFinder.Solvers.Generic.AStar.html#PathFinder_Solvers_Generic_AStar_Solve_
+  commentId: Overload:PathFinder.Solvers.Generic.AStar.Solve
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.AStar.Solve
+  nameWithType: AStar.Solve
+- uid: PathFinder.Solvers.Generic.AStar.Solve``1(``0,``0,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0})
+  name: Solve<T>(T, T, out IList<T>, INodeTraverser<T>)
+  href: api/PathFinder.Solvers.Generic.AStar.html#PathFinder_Solvers_Generic_AStar_Solve__1___0___0_IList___0___PathFinder_Graphs_INodeTraverser___0__
+  commentId: M:PathFinder.Solvers.Generic.AStar.Solve``1(``0,``0,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0})
+  name.vb: Solve(Of T)(T, T, ByRef IList(Of T), INodeTraverser(Of T))
+  fullName: PathFinder.Solvers.Generic.AStar.Solve<T>(T, T, out IList<T>, PathFinder.Graphs.INodeTraverser<T>)
+  fullName.vb: PathFinder.Solvers.Generic.AStar.Solve(Of T)(T, T, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T))
+  nameWithType: AStar.Solve<T>(T, T, out IList<T>, INodeTraverser<T>)
+  nameWithType.vb: AStar.Solve(Of T)(T, T, ByRef IList(Of T), INodeTraverser(Of T))
+- uid: PathFinder.Solvers.Generic.AStar.Solve``1(``0,``0,System.Double,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0})
+  name: Solve<T>(T, T, Double, out IList<T>, INodeTraverser<T>)
+  href: api/PathFinder.Solvers.Generic.AStar.html#PathFinder_Solvers_Generic_AStar_Solve__1___0___0_System_Double_IList___0___PathFinder_Graphs_INodeTraverser___0__
+  commentId: M:PathFinder.Solvers.Generic.AStar.Solve``1(``0,``0,System.Double,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0})
+  name.vb: Solve(Of T)(T, T, Double, ByRef IList(Of T), INodeTraverser(Of T))
+  fullName: PathFinder.Solvers.Generic.AStar.Solve<T>(T, T, System.Double, out IList<T>, PathFinder.Graphs.INodeTraverser<T>)
+  fullName.vb: PathFinder.Solvers.Generic.AStar.Solve(Of T)(T, T, System.Double, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T))
+  nameWithType: AStar.Solve<T>(T, T, Double, out IList<T>, INodeTraverser<T>)
+  nameWithType.vb: AStar.Solve(Of T)(T, T, Double, ByRef IList(Of T), INodeTraverser(Of T))
+- uid: PathFinder.Solvers.Generic.AStar`1
+  name: AStar<T>
+  href: api/PathFinder.Solvers.Generic.AStar-1.html
+  commentId: T:PathFinder.Solvers.Generic.AStar`1
+  name.vb: AStar(Of T)
+  fullName: PathFinder.Solvers.Generic.AStar<T>
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T)
+  nameWithType: AStar<T>
+  nameWithType.vb: AStar(Of T)
+- uid: PathFinder.Solvers.Generic.AStar`1.#ctor(`0,`0,PathFinder.Graphs.INodeTraverser{`0})
+  name: AStar(T, T, INodeTraverser<T>)
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1__ctor__0__0_PathFinder_Graphs_INodeTraverser__0__
+  commentId: M:PathFinder.Solvers.Generic.AStar`1.#ctor(`0,`0,PathFinder.Graphs.INodeTraverser{`0})
+  name.vb: AStar(T, T, INodeTraverser(Of T))
+  fullName: PathFinder.Solvers.Generic.AStar<T>.AStar(T, T, PathFinder.Graphs.INodeTraverser<T>)
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).AStar(T, T, PathFinder.Graphs.INodeTraverser(Of T))
+  nameWithType: AStar<T>.AStar(T, T, INodeTraverser<T>)
+  nameWithType.vb: AStar(Of T).AStar(T, T, INodeTraverser(Of T))
+- uid: PathFinder.Solvers.Generic.AStar`1.#ctor(`0,`0,System.Double,PathFinder.Graphs.INodeTraverser{`0})
+  name: AStar(T, T, Double, INodeTraverser<T>)
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1__ctor__0__0_System_Double_PathFinder_Graphs_INodeTraverser__0__
+  commentId: M:PathFinder.Solvers.Generic.AStar`1.#ctor(`0,`0,System.Double,PathFinder.Graphs.INodeTraverser{`0})
+  name.vb: AStar(T, T, Double, INodeTraverser(Of T))
+  fullName: PathFinder.Solvers.Generic.AStar<T>.AStar(T, T, System.Double, PathFinder.Graphs.INodeTraverser<T>)
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).AStar(T, T, System.Double, PathFinder.Graphs.INodeTraverser(Of T))
+  nameWithType: AStar<T>.AStar(T, T, Double, INodeTraverser<T>)
+  nameWithType.vb: AStar(Of T).AStar(T, T, Double, INodeTraverser(Of T))
+- uid: PathFinder.Solvers.Generic.AStar`1.#ctor*
+  name: AStar
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1__ctor_
+  commentId: Overload:PathFinder.Solvers.Generic.AStar`1.#ctor
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.AStar<T>.AStar
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).AStar
+  nameWithType: AStar<T>.AStar
+  nameWithType.vb: AStar(Of T).AStar
+- uid: PathFinder.Solvers.Generic.AStar`1.GreedFactor
+  name: GreedFactor
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1_GreedFactor
+  commentId: P:PathFinder.Solvers.Generic.AStar`1.GreedFactor
+  fullName: PathFinder.Solvers.Generic.AStar<T>.GreedFactor
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).GreedFactor
+  nameWithType: AStar<T>.GreedFactor
+  nameWithType.vb: AStar(Of T).GreedFactor
+- uid: PathFinder.Solvers.Generic.AStar`1.GreedFactor*
+  name: GreedFactor
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1_GreedFactor_
+  commentId: Overload:PathFinder.Solvers.Generic.AStar`1.GreedFactor
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.AStar<T>.GreedFactor
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).GreedFactor
+  nameWithType: AStar<T>.GreedFactor
+  nameWithType.vb: AStar(Of T).GreedFactor
+- uid: PathFinder.Solvers.Generic.AStar`1.ProcessNeighbor(PathFinder.Solvers.Generic.GraphNodeMetaData{`0})
+  name: ProcessNeighbor(GraphNodeMetaData<T>)
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1_ProcessNeighbor_PathFinder_Solvers_Generic_GraphNodeMetaData__0__
+  commentId: M:PathFinder.Solvers.Generic.AStar`1.ProcessNeighbor(PathFinder.Solvers.Generic.GraphNodeMetaData{`0})
+  name.vb: ProcessNeighbor(GraphNodeMetaData(Of T))
+  fullName: PathFinder.Solvers.Generic.AStar<T>.ProcessNeighbor(PathFinder.Solvers.Generic.GraphNodeMetaData<T>)
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).ProcessNeighbor(PathFinder.Solvers.Generic.GraphNodeMetaData(Of T))
+  nameWithType: AStar<T>.ProcessNeighbor(GraphNodeMetaData<T>)
+  nameWithType.vb: AStar(Of T).ProcessNeighbor(GraphNodeMetaData(Of T))
+- uid: PathFinder.Solvers.Generic.AStar`1.ProcessNeighbor*
+  name: ProcessNeighbor
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1_ProcessNeighbor_
+  commentId: Overload:PathFinder.Solvers.Generic.AStar`1.ProcessNeighbor
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.AStar<T>.ProcessNeighbor
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).ProcessNeighbor
+  nameWithType: AStar<T>.ProcessNeighbor
+  nameWithType.vb: AStar(Of T).ProcessNeighbor
+- uid: PathFinder.Solvers.Generic.AStar`1.Solve(`0,`0,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name: Solve(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1_Solve__0__0_IList__0___PathFinder_Graphs_INodeTraverser__0__System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.AStar`1.Solve(`0,`0,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name.vb: Solve(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+  fullName: PathFinder.Solvers.Generic.AStar<T>.Solve(T, T, out IList<T>, PathFinder.Graphs.INodeTraverser<T>, System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).Solve(T, T, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T), System.Int32)
+  nameWithType: AStar<T>.Solve(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  nameWithType.vb: AStar(Of T).Solve(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+- uid: PathFinder.Solvers.Generic.AStar`1.Solve(`0,`0,System.Double,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name: Solve(T, T, Double, out IList<T>, INodeTraverser<T>, Int32)
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1_Solve__0__0_System_Double_IList__0___PathFinder_Graphs_INodeTraverser__0__System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.AStar`1.Solve(`0,`0,System.Double,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name.vb: Solve(T, T, Double, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+  fullName: PathFinder.Solvers.Generic.AStar<T>.Solve(T, T, System.Double, out IList<T>, PathFinder.Graphs.INodeTraverser<T>, System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).Solve(T, T, System.Double, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T), System.Int32)
+  nameWithType: AStar<T>.Solve(T, T, Double, out IList<T>, INodeTraverser<T>, Int32)
+  nameWithType.vb: AStar(Of T).Solve(T, T, Double, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+- uid: PathFinder.Solvers.Generic.AStar`1.Solve*
+  name: Solve
+  href: api/PathFinder.Solvers.Generic.AStar-1.html#PathFinder_Solvers_Generic_AStar_1_Solve_
+  commentId: Overload:PathFinder.Solvers.Generic.AStar`1.Solve
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.AStar<T>.Solve
+  fullName.vb: PathFinder.Solvers.Generic.AStar(Of T).Solve
+  nameWithType: AStar<T>.Solve
+  nameWithType.vb: AStar(Of T).Solve
+- uid: PathFinder.Solvers.Generic.BreadthFirst
+  name: BreadthFirst
+  href: api/PathFinder.Solvers.Generic.BreadthFirst.html
+  commentId: T:PathFinder.Solvers.Generic.BreadthFirst
+  fullName: PathFinder.Solvers.Generic.BreadthFirst
+  nameWithType: BreadthFirst
+- uid: PathFinder.Solvers.Generic.BreadthFirst.Solve*
+  name: Solve
+  href: api/PathFinder.Solvers.Generic.BreadthFirst.html#PathFinder_Solvers_Generic_BreadthFirst_Solve_
+  commentId: Overload:PathFinder.Solvers.Generic.BreadthFirst.Solve
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.BreadthFirst.Solve
+  nameWithType: BreadthFirst.Solve
+- uid: PathFinder.Solvers.Generic.BreadthFirst.Solve``1(``0,``0,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0},System.Int32)
+  name: Solve<T>(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  href: api/PathFinder.Solvers.Generic.BreadthFirst.html#PathFinder_Solvers_Generic_BreadthFirst_Solve__1___0___0_IList___0___PathFinder_Graphs_INodeTraverser___0__System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.BreadthFirst.Solve``1(``0,``0,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0},System.Int32)
+  name.vb: Solve(Of T)(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+  fullName: PathFinder.Solvers.Generic.BreadthFirst.Solve<T>(T, T, out IList<T>, PathFinder.Graphs.INodeTraverser<T>, System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.BreadthFirst.Solve(Of T)(T, T, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T), System.Int32)
+  nameWithType: BreadthFirst.Solve<T>(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  nameWithType.vb: BreadthFirst.Solve(Of T)(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+- uid: PathFinder.Solvers.Generic.BreadthFirst`1
+  name: BreadthFirst<T>
+  href: api/PathFinder.Solvers.Generic.BreadthFirst-1.html
+  commentId: T:PathFinder.Solvers.Generic.BreadthFirst`1
+  name.vb: BreadthFirst(Of T)
+  fullName: PathFinder.Solvers.Generic.BreadthFirst<T>
+  fullName.vb: PathFinder.Solvers.Generic.BreadthFirst(Of T)
+  nameWithType: BreadthFirst<T>
+  nameWithType.vb: BreadthFirst(Of T)
+- uid: PathFinder.Solvers.Generic.BreadthFirst`1.#ctor(`0,`0,PathFinder.Graphs.INodeTraverser{`0})
+  name: BreadthFirst(T, T, INodeTraverser<T>)
+  href: api/PathFinder.Solvers.Generic.BreadthFirst-1.html#PathFinder_Solvers_Generic_BreadthFirst_1__ctor__0__0_PathFinder_Graphs_INodeTraverser__0__
+  commentId: M:PathFinder.Solvers.Generic.BreadthFirst`1.#ctor(`0,`0,PathFinder.Graphs.INodeTraverser{`0})
+  name.vb: BreadthFirst(T, T, INodeTraverser(Of T))
+  fullName: PathFinder.Solvers.Generic.BreadthFirst<T>.BreadthFirst(T, T, PathFinder.Graphs.INodeTraverser<T>)
+  fullName.vb: PathFinder.Solvers.Generic.BreadthFirst(Of T).BreadthFirst(T, T, PathFinder.Graphs.INodeTraverser(Of T))
+  nameWithType: BreadthFirst<T>.BreadthFirst(T, T, INodeTraverser<T>)
+  nameWithType.vb: BreadthFirst(Of T).BreadthFirst(T, T, INodeTraverser(Of T))
+- uid: PathFinder.Solvers.Generic.BreadthFirst`1.#ctor*
+  name: BreadthFirst
+  href: api/PathFinder.Solvers.Generic.BreadthFirst-1.html#PathFinder_Solvers_Generic_BreadthFirst_1__ctor_
+  commentId: Overload:PathFinder.Solvers.Generic.BreadthFirst`1.#ctor
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.BreadthFirst<T>.BreadthFirst
+  fullName.vb: PathFinder.Solvers.Generic.BreadthFirst(Of T).BreadthFirst
+  nameWithType: BreadthFirst<T>.BreadthFirst
+  nameWithType.vb: BreadthFirst(Of T).BreadthFirst
+- uid: PathFinder.Solvers.Generic.BreadthFirst`1.Solve(`0,`0,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name: Solve(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  href: api/PathFinder.Solvers.Generic.BreadthFirst-1.html#PathFinder_Solvers_Generic_BreadthFirst_1_Solve__0__0_IList__0___PathFinder_Graphs_INodeTraverser__0__System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.BreadthFirst`1.Solve(`0,`0,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name.vb: Solve(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+  fullName: PathFinder.Solvers.Generic.BreadthFirst<T>.Solve(T, T, out IList<T>, PathFinder.Graphs.INodeTraverser<T>, System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.BreadthFirst(Of T).Solve(T, T, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T), System.Int32)
+  nameWithType: BreadthFirst<T>.Solve(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  nameWithType.vb: BreadthFirst(Of T).Solve(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+- uid: PathFinder.Solvers.Generic.BreadthFirst`1.Solve*
+  name: Solve
+  href: api/PathFinder.Solvers.Generic.BreadthFirst-1.html#PathFinder_Solvers_Generic_BreadthFirst_1_Solve_
+  commentId: Overload:PathFinder.Solvers.Generic.BreadthFirst`1.Solve
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.BreadthFirst<T>.Solve
+  fullName.vb: PathFinder.Solvers.Generic.BreadthFirst(Of T).Solve
+  nameWithType: BreadthFirst<T>.Solve
+  nameWithType.vb: BreadthFirst(Of T).Solve
+- uid: PathFinder.Solvers.Generic.Greedy
+  name: Greedy
+  href: api/PathFinder.Solvers.Generic.Greedy.html
+  commentId: T:PathFinder.Solvers.Generic.Greedy
+  fullName: PathFinder.Solvers.Generic.Greedy
+  nameWithType: Greedy
+- uid: PathFinder.Solvers.Generic.Greedy.Solve*
+  name: Solve
+  href: api/PathFinder.Solvers.Generic.Greedy.html#PathFinder_Solvers_Generic_Greedy_Solve_
+  commentId: Overload:PathFinder.Solvers.Generic.Greedy.Solve
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.Greedy.Solve
+  nameWithType: Greedy.Solve
+- uid: PathFinder.Solvers.Generic.Greedy.Solve``1(``0,``0,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0},System.Int32)
+  name: Solve<T>(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  href: api/PathFinder.Solvers.Generic.Greedy.html#PathFinder_Solvers_Generic_Greedy_Solve__1___0___0_IList___0___PathFinder_Graphs_INodeTraverser___0__System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.Greedy.Solve``1(``0,``0,IList{``0}@,PathFinder.Graphs.INodeTraverser{``0},System.Int32)
+  name.vb: Solve(Of T)(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+  fullName: PathFinder.Solvers.Generic.Greedy.Solve<T>(T, T, out IList<T>, PathFinder.Graphs.INodeTraverser<T>, System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.Greedy.Solve(Of T)(T, T, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T), System.Int32)
+  nameWithType: Greedy.Solve<T>(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  nameWithType.vb: Greedy.Solve(Of T)(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+- uid: PathFinder.Solvers.Generic.Greedy`1
+  name: Greedy<T>
+  href: api/PathFinder.Solvers.Generic.Greedy-1.html
+  commentId: T:PathFinder.Solvers.Generic.Greedy`1
+  name.vb: Greedy(Of T)
+  fullName: PathFinder.Solvers.Generic.Greedy<T>
+  fullName.vb: PathFinder.Solvers.Generic.Greedy(Of T)
+  nameWithType: Greedy<T>
+  nameWithType.vb: Greedy(Of T)
+- uid: PathFinder.Solvers.Generic.Greedy`1.#ctor(`0,`0,PathFinder.Graphs.INodeTraverser{`0})
+  name: Greedy(T, T, INodeTraverser<T>)
+  href: api/PathFinder.Solvers.Generic.Greedy-1.html#PathFinder_Solvers_Generic_Greedy_1__ctor__0__0_PathFinder_Graphs_INodeTraverser__0__
+  commentId: M:PathFinder.Solvers.Generic.Greedy`1.#ctor(`0,`0,PathFinder.Graphs.INodeTraverser{`0})
+  name.vb: Greedy(T, T, INodeTraverser(Of T))
+  fullName: PathFinder.Solvers.Generic.Greedy<T>.Greedy(T, T, PathFinder.Graphs.INodeTraverser<T>)
+  fullName.vb: PathFinder.Solvers.Generic.Greedy(Of T).Greedy(T, T, PathFinder.Graphs.INodeTraverser(Of T))
+  nameWithType: Greedy<T>.Greedy(T, T, INodeTraverser<T>)
+  nameWithType.vb: Greedy(Of T).Greedy(T, T, INodeTraverser(Of T))
+- uid: PathFinder.Solvers.Generic.Greedy`1.#ctor*
+  name: Greedy
+  href: api/PathFinder.Solvers.Generic.Greedy-1.html#PathFinder_Solvers_Generic_Greedy_1__ctor_
+  commentId: Overload:PathFinder.Solvers.Generic.Greedy`1.#ctor
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.Greedy<T>.Greedy
+  fullName.vb: PathFinder.Solvers.Generic.Greedy(Of T).Greedy
+  nameWithType: Greedy<T>.Greedy
+  nameWithType.vb: Greedy(Of T).Greedy
+- uid: PathFinder.Solvers.Generic.Greedy`1.Solve(`0,`0,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name: Solve(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  href: api/PathFinder.Solvers.Generic.Greedy-1.html#PathFinder_Solvers_Generic_Greedy_1_Solve__0__0_IList__0___PathFinder_Graphs_INodeTraverser__0__System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.Greedy`1.Solve(`0,`0,IList{`0}@,PathFinder.Graphs.INodeTraverser{`0},System.Int32)
+  name.vb: Solve(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+  fullName: PathFinder.Solvers.Generic.Greedy<T>.Solve(T, T, out IList<T>, PathFinder.Graphs.INodeTraverser<T>, System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.Greedy(Of T).Solve(T, T, ByRef IList(Of T), PathFinder.Graphs.INodeTraverser(Of T), System.Int32)
+  nameWithType: Greedy<T>.Solve(T, T, out IList<T>, INodeTraverser<T>, Int32)
+  nameWithType.vb: Greedy(Of T).Solve(T, T, ByRef IList(Of T), INodeTraverser(Of T), Int32)
+- uid: PathFinder.Solvers.Generic.Greedy`1.Solve*
+  name: Solve
+  href: api/PathFinder.Solvers.Generic.Greedy-1.html#PathFinder_Solvers_Generic_Greedy_1_Solve_
+  commentId: Overload:PathFinder.Solvers.Generic.Greedy`1.Solve
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.Greedy<T>.Solve
+  fullName.vb: PathFinder.Solvers.Generic.Greedy(Of T).Solve
+  nameWithType: Greedy<T>.Solve
+  nameWithType.vb: Greedy(Of T).Solve
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1
+  name: IGraphSolver<T>
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html
+  commentId: T:PathFinder.Solvers.Generic.IGraphSolver`1
+  name.vb: IGraphSolver(Of T)
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T)
+  nameWithType: IGraphSolver<T>
+  nameWithType.vb: IGraphSolver(Of T)
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Closed
+  name: Closed
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Closed
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.Closed
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Closed
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Closed
+  nameWithType: IGraphSolver<T>.Closed
+  nameWithType.vb: IGraphSolver(Of T).Closed
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Closed*
+  name: Closed
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Closed_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Closed
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Closed
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Closed
+  nameWithType: IGraphSolver<T>.Closed
+  nameWithType.vb: IGraphSolver(Of T).Closed
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.ClosedCount
+  name: ClosedCount
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_ClosedCount
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.ClosedCount
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.ClosedCount
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).ClosedCount
+  nameWithType: IGraphSolver<T>.ClosedCount
+  nameWithType.vb: IGraphSolver(Of T).ClosedCount
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.ClosedCount*
+  name: ClosedCount
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_ClosedCount_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.ClosedCount
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.ClosedCount
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).ClosedCount
+  nameWithType: IGraphSolver<T>.ClosedCount
+  nameWithType.vb: IGraphSolver(Of T).ClosedCount
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Current
+  name: Current
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Current
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.Current
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Current
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Current
+  nameWithType: IGraphSolver<T>.Current
+  nameWithType.vb: IGraphSolver(Of T).Current
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Current*
+  name: Current
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Current_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Current
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Current
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Current
+  nameWithType: IGraphSolver<T>.Current
+  nameWithType.vb: IGraphSolver(Of T).Current
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.CurrentBestPath
+  name: CurrentBestPath
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_CurrentBestPath
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.CurrentBestPath
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.CurrentBestPath
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).CurrentBestPath
+  nameWithType: IGraphSolver<T>.CurrentBestPath
+  nameWithType.vb: IGraphSolver(Of T).CurrentBestPath
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.CurrentBestPath*
+  name: CurrentBestPath
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_CurrentBestPath_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.CurrentBestPath
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.CurrentBestPath
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).CurrentBestPath
+  nameWithType: IGraphSolver<T>.CurrentBestPath
+  nameWithType.vb: IGraphSolver(Of T).CurrentBestPath
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Destination
+  name: Destination
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Destination
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.Destination
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Destination
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Destination
+  nameWithType: IGraphSolver<T>.Destination
+  nameWithType.vb: IGraphSolver(Of T).Destination
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Destination*
+  name: Destination
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Destination_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Destination
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Destination
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Destination
+  nameWithType: IGraphSolver<T>.Destination
+  nameWithType.vb: IGraphSolver(Of T).Destination
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.MaxTicks
+  name: MaxTicks
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_MaxTicks
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.MaxTicks
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.MaxTicks
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).MaxTicks
+  nameWithType: IGraphSolver<T>.MaxTicks
+  nameWithType.vb: IGraphSolver(Of T).MaxTicks
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.MaxTicks*
+  name: MaxTicks
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_MaxTicks_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.MaxTicks
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.MaxTicks
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).MaxTicks
+  nameWithType: IGraphSolver<T>.MaxTicks
+  nameWithType.vb: IGraphSolver(Of T).MaxTicks
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Open
+  name: Open
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Open
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.Open
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Open
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Open
+  nameWithType: IGraphSolver<T>.Open
+  nameWithType.vb: IGraphSolver(Of T).Open
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Open*
+  name: Open
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Open_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Open
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Open
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Open
+  nameWithType: IGraphSolver<T>.Open
+  nameWithType.vb: IGraphSolver(Of T).Open
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.OpenCount
+  name: OpenCount
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_OpenCount
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.OpenCount
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.OpenCount
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).OpenCount
+  nameWithType: IGraphSolver<T>.OpenCount
+  nameWithType.vb: IGraphSolver(Of T).OpenCount
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.OpenCount*
+  name: OpenCount
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_OpenCount_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.OpenCount
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.OpenCount
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).OpenCount
+  nameWithType: IGraphSolver<T>.OpenCount
+  nameWithType.vb: IGraphSolver(Of T).OpenCount
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Origin
+  name: Origin
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Origin
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.Origin
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Origin
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Origin
+  nameWithType: IGraphSolver<T>.Origin
+  nameWithType.vb: IGraphSolver(Of T).Origin
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Origin*
+  name: Origin
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Origin_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Origin
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Origin
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Origin
+  nameWithType: IGraphSolver<T>.Origin
+  nameWithType.vb: IGraphSolver(Of T).Origin
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Path
+  name: Path
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Path
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.Path
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Path
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Path
+  nameWithType: IGraphSolver<T>.Path
+  nameWithType.vb: IGraphSolver(Of T).Path
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Path*
+  name: Path
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Path_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Path
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Path
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Path
+  nameWithType: IGraphSolver<T>.Path
+  nameWithType.vb: IGraphSolver(Of T).Path
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.PathCost
+  name: PathCost
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_PathCost
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.PathCost
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.PathCost
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).PathCost
+  nameWithType: IGraphSolver<T>.PathCost
+  nameWithType.vb: IGraphSolver(Of T).PathCost
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.PathCost*
+  name: PathCost
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_PathCost_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.PathCost
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.PathCost
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).PathCost
+  nameWithType: IGraphSolver<T>.PathCost
+  nameWithType.vb: IGraphSolver(Of T).PathCost
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Run(System.Int32)
+  name: Run(Int32)
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Run_System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.IGraphSolver`1.Run(System.Int32)
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Run(System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Run(System.Int32)
+  nameWithType: IGraphSolver<T>.Run(Int32)
+  nameWithType.vb: IGraphSolver(Of T).Run(Int32)
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Run*
+  name: Run
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Run_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Run
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Run
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Run
+  nameWithType: IGraphSolver<T>.Run
+  nameWithType.vb: IGraphSolver(Of T).Run
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.State
+  name: State
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_State
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.State
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.State
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).State
+  nameWithType: IGraphSolver<T>.State
+  nameWithType.vb: IGraphSolver(Of T).State
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.State*
+  name: State
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_State_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.State
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.State
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).State
+  nameWithType: IGraphSolver<T>.State
+  nameWithType.vb: IGraphSolver(Of T).State
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Stop
+  name: Stop()
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Stop
+  commentId: M:PathFinder.Solvers.Generic.IGraphSolver`1.Stop
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Stop()
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Stop()
+  nameWithType: IGraphSolver<T>.Stop()
+  nameWithType.vb: IGraphSolver(Of T).Stop()
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Stop*
+  name: Stop
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Stop_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Stop
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Stop
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Stop
+  nameWithType: IGraphSolver<T>.Stop
+  nameWithType.vb: IGraphSolver(Of T).Stop
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Ticks
+  name: Ticks
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Ticks
+  commentId: P:PathFinder.Solvers.Generic.IGraphSolver`1.Ticks
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Ticks
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Ticks
+  nameWithType: IGraphSolver<T>.Ticks
+  nameWithType.vb: IGraphSolver(Of T).Ticks
+- uid: PathFinder.Solvers.Generic.IGraphSolver`1.Ticks*
+  name: Ticks
+  href: api/PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_Ticks_
+  commentId: Overload:PathFinder.Solvers.Generic.IGraphSolver`1.Ticks
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.IGraphSolver<T>.Ticks
+  fullName.vb: PathFinder.Solvers.Generic.IGraphSolver(Of T).Ticks
+  nameWithType: IGraphSolver<T>.Ticks
+  nameWithType.vb: IGraphSolver(Of T).Ticks
+- uid: PathFinder.Solvers.Generic.SolverBase`1
+  name: SolverBase<T>
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html
+  commentId: T:PathFinder.Solvers.Generic.SolverBase`1
+  name.vb: SolverBase(Of T)
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T)
+  nameWithType: SolverBase<T>
+  nameWithType.vb: SolverBase(Of T)
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Closed
+  name: Closed
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Closed
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.Closed
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Closed
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Closed
+  nameWithType: SolverBase<T>.Closed
+  nameWithType.vb: SolverBase(Of T).Closed
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Closed*
+  name: Closed
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Closed_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Closed
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Closed
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Closed
+  nameWithType: SolverBase<T>.Closed
+  nameWithType.vb: SolverBase(Of T).Closed
+- uid: PathFinder.Solvers.Generic.SolverBase`1.ClosedCount
+  name: ClosedCount
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_ClosedCount
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.ClosedCount
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.ClosedCount
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).ClosedCount
+  nameWithType: SolverBase<T>.ClosedCount
+  nameWithType.vb: SolverBase(Of T).ClosedCount
+- uid: PathFinder.Solvers.Generic.SolverBase`1.ClosedCount*
+  name: ClosedCount
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_ClosedCount_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.ClosedCount
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.ClosedCount
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).ClosedCount
+  nameWithType: SolverBase<T>.ClosedCount
+  nameWithType.vb: SolverBase(Of T).ClosedCount
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Current
+  name: Current
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Current
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.Current
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Current
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Current
+  nameWithType: SolverBase<T>.Current
+  nameWithType.vb: SolverBase(Of T).Current
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Current*
+  name: Current
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Current_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Current
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Current
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Current
+  nameWithType: SolverBase<T>.Current
+  nameWithType.vb: SolverBase(Of T).Current
+- uid: PathFinder.Solvers.Generic.SolverBase`1.CurrentBestPath
+  name: CurrentBestPath
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_CurrentBestPath
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.CurrentBestPath
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.CurrentBestPath
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).CurrentBestPath
+  nameWithType: SolverBase<T>.CurrentBestPath
+  nameWithType.vb: SolverBase(Of T).CurrentBestPath
+- uid: PathFinder.Solvers.Generic.SolverBase`1.CurrentBestPath*
+  name: CurrentBestPath
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_CurrentBestPath_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.CurrentBestPath
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.CurrentBestPath
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).CurrentBestPath
+  nameWithType: SolverBase<T>.CurrentBestPath
+  nameWithType.vb: SolverBase(Of T).CurrentBestPath
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Destination
+  name: Destination
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Destination
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.Destination
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Destination
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Destination
+  nameWithType: SolverBase<T>.Destination
+  nameWithType.vb: SolverBase(Of T).Destination
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Destination*
+  name: Destination
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Destination_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Destination
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Destination
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Destination
+  nameWithType: SolverBase<T>.Destination
+  nameWithType.vb: SolverBase(Of T).Destination
+- uid: PathFinder.Solvers.Generic.SolverBase`1.MaxTicks
+  name: MaxTicks
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_MaxTicks
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.MaxTicks
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.MaxTicks
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).MaxTicks
+  nameWithType: SolverBase<T>.MaxTicks
+  nameWithType.vb: SolverBase(Of T).MaxTicks
+- uid: PathFinder.Solvers.Generic.SolverBase`1.MaxTicks*
+  name: MaxTicks
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_MaxTicks_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.MaxTicks
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.MaxTicks
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).MaxTicks
+  nameWithType: SolverBase<T>.MaxTicks
+  nameWithType.vb: SolverBase(Of T).MaxTicks
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Open
+  name: Open
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Open
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.Open
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Open
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Open
+  nameWithType: SolverBase<T>.Open
+  nameWithType.vb: SolverBase(Of T).Open
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Open*
+  name: Open
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Open_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Open
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Open
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Open
+  nameWithType: SolverBase<T>.Open
+  nameWithType.vb: SolverBase(Of T).Open
+- uid: PathFinder.Solvers.Generic.SolverBase`1.OpenCount
+  name: OpenCount
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_OpenCount
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.OpenCount
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.OpenCount
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).OpenCount
+  nameWithType: SolverBase<T>.OpenCount
+  nameWithType.vb: SolverBase(Of T).OpenCount
+- uid: PathFinder.Solvers.Generic.SolverBase`1.OpenCount*
+  name: OpenCount
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_OpenCount_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.OpenCount
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.OpenCount
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).OpenCount
+  nameWithType: SolverBase<T>.OpenCount
+  nameWithType.vb: SolverBase(Of T).OpenCount
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Origin
+  name: Origin
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Origin
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.Origin
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Origin
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Origin
+  nameWithType: SolverBase<T>.Origin
+  nameWithType.vb: SolverBase(Of T).Origin
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Origin*
+  name: Origin
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Origin_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Origin
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Origin
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Origin
+  nameWithType: SolverBase<T>.Origin
+  nameWithType.vb: SolverBase(Of T).Origin
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Path
+  name: Path
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Path
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.Path
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Path
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Path
+  nameWithType: SolverBase<T>.Path
+  nameWithType.vb: SolverBase(Of T).Path
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Path*
+  name: Path
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Path_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Path
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Path
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Path
+  nameWithType: SolverBase<T>.Path
+  nameWithType.vb: SolverBase(Of T).Path
+- uid: PathFinder.Solvers.Generic.SolverBase`1.PathCost
+  name: PathCost
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_PathCost
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.PathCost
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.PathCost
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).PathCost
+  nameWithType: SolverBase<T>.PathCost
+  nameWithType.vb: SolverBase(Of T).PathCost
+- uid: PathFinder.Solvers.Generic.SolverBase`1.PathCost*
+  name: PathCost
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_PathCost_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.PathCost
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.PathCost
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).PathCost
+  nameWithType: SolverBase<T>.PathCost
+  nameWithType.vb: SolverBase(Of T).PathCost
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Run(System.Int32)
+  name: Run(Int32)
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Run_System_Int32_
+  commentId: M:PathFinder.Solvers.Generic.SolverBase`1.Run(System.Int32)
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Run(System.Int32)
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Run(System.Int32)
+  nameWithType: SolverBase<T>.Run(Int32)
+  nameWithType.vb: SolverBase(Of T).Run(Int32)
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Run*
+  name: Run
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Run_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Run
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Run
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Run
+  nameWithType: SolverBase<T>.Run
+  nameWithType.vb: SolverBase(Of T).Run
+- uid: PathFinder.Solvers.Generic.SolverBase`1.State
+  name: State
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_State
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.State
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.State
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).State
+  nameWithType: SolverBase<T>.State
+  nameWithType.vb: SolverBase(Of T).State
+- uid: PathFinder.Solvers.Generic.SolverBase`1.State*
+  name: State
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_State_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.State
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.State
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).State
+  nameWithType: SolverBase<T>.State
+  nameWithType.vb: SolverBase(Of T).State
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Stop
+  name: Stop()
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Stop
+  commentId: M:PathFinder.Solvers.Generic.SolverBase`1.Stop
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Stop()
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Stop()
+  nameWithType: SolverBase<T>.Stop()
+  nameWithType.vb: SolverBase(Of T).Stop()
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Stop*
+  name: Stop
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Stop_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Stop
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Stop
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Stop
+  nameWithType: SolverBase<T>.Stop
+  nameWithType.vb: SolverBase(Of T).Stop
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Ticks
+  name: Ticks
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Ticks
+  commentId: P:PathFinder.Solvers.Generic.SolverBase`1.Ticks
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Ticks
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Ticks
+  nameWithType: SolverBase<T>.Ticks
+  nameWithType.vb: SolverBase(Of T).Ticks
+- uid: PathFinder.Solvers.Generic.SolverBase`1.Ticks*
+  name: Ticks
+  href: api/PathFinder.Solvers.Generic.SolverBase-1.html#PathFinder_Solvers_Generic_SolverBase_1_Ticks_
+  commentId: Overload:PathFinder.Solvers.Generic.SolverBase`1.Ticks
+  isSpec: "True"
+  fullName: PathFinder.Solvers.Generic.SolverBase<T>.Ticks
+  fullName.vb: PathFinder.Solvers.Generic.SolverBase(Of T).Ticks
+  nameWithType: SolverBase<T>.Ticks
+  nameWithType.vb: SolverBase(Of T).Ticks
+- uid: PathFinder.Solvers.Generic.SolverState
+  name: SolverState
+  href: api/PathFinder.Solvers.Generic.SolverState.html
+  commentId: T:PathFinder.Solvers.Generic.SolverState
+  fullName: PathFinder.Solvers.Generic.SolverState
+  nameWithType: SolverState
+- uid: PathFinder.Solvers.Generic.SolverState.Failure
+  name: Failure
+  href: api/PathFinder.Solvers.Generic.SolverState.html#PathFinder_Solvers_Generic_SolverState_Failure
+  commentId: F:PathFinder.Solvers.Generic.SolverState.Failure
+  fullName: PathFinder.Solvers.Generic.SolverState.Failure
+  nameWithType: SolverState.Failure
+- uid: PathFinder.Solvers.Generic.SolverState.Incomplete
+  name: Incomplete
+  href: api/PathFinder.Solvers.Generic.SolverState.html#PathFinder_Solvers_Generic_SolverState_Incomplete
+  commentId: F:PathFinder.Solvers.Generic.SolverState.Incomplete
+  fullName: PathFinder.Solvers.Generic.SolverState.Incomplete
+  nameWithType: SolverState.Incomplete
+- uid: PathFinder.Solvers.Generic.SolverState.Running
+  name: Running
+  href: api/PathFinder.Solvers.Generic.SolverState.html#PathFinder_Solvers_Generic_SolverState_Running
+  commentId: F:PathFinder.Solvers.Generic.SolverState.Running
+  fullName: PathFinder.Solvers.Generic.SolverState.Running
+  nameWithType: SolverState.Running
+- uid: PathFinder.Solvers.Generic.SolverState.Success
+  name: Success
+  href: api/PathFinder.Solvers.Generic.SolverState.html#PathFinder_Solvers_Generic_SolverState_Success
+  commentId: F:PathFinder.Solvers.Generic.SolverState.Success
+  fullName: PathFinder.Solvers.Generic.SolverState.Success
+  nameWithType: SolverState.Success

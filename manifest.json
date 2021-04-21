@@ -1,0 +1,248 @@
+{
+  "homepages": [],
+  "source_base_path": "/home/runner/work/PathFinder/PathFinder/Extras/PathFinder.DocFx",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Graphs.DefaultTraverser-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Graphs.DefaultTraverser-1.html",
+          "hash": "zVqik8lHXtpSqlbYrCVr4ad7sxt0nrHX6C4ShHHgafg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Graphs.INodeTraverser-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Graphs.INodeTraverser-1.html",
+          "hash": "KNGhvKVxRPFCDoR+iqJZ+PlxOlMAww0pa/z4kYM0A9I="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Graphs.ITraversableNode-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Graphs.ITraversableNode-1.html",
+          "hash": "9odF0Rz5tjY00pBvcP9M49qrn1jhITS5gqusCVgLgpY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Graphs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Graphs.html",
+          "hash": "YuKYPSWHRWgvzz0P5/kceSLx3yOE9jsl8V0Yc1y1RZ0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.AStar-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.AStar-1.html",
+          "hash": "kT4rcoqtNHP8fZlZ9oJh4zs1qj5rtqc6t+ap/fVUhnA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.AStar.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.AStar.html",
+          "hash": "dAFp4dQvGTqWY68HxxwrZ5zen1zueYJXlUAPzqcKzmc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.BreadthFirst-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.BreadthFirst-1.html",
+          "hash": "KUZ1/pBIEuLmHLnRE6i8Q2vn+5wzB/BM/XGOdORTSJc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.BreadthFirst.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.BreadthFirst.html",
+          "hash": "Gi9ccyFZ9agyeNOzjcLAE+ToES3CkM45i4vow96GxZM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.Greedy-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.Greedy-1.html",
+          "hash": "oM6S1uexvIRdK3NxzxaYkewEX79M7W04ifnnkMvEex8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.Greedy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.Greedy.html",
+          "hash": "v9wLKUP5ypk5tT9HcpkFWZiHBjuC6MF8Fn3EKR/VcXM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.IGraphSolver-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.IGraphSolver-1.html",
+          "hash": "Y4eEo26OVyS2AFxsU1CIa9SSrD0vCDfj3l+2e8SEu1o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.SolverBase-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.SolverBase-1.html",
+          "hash": "JVeke4dap9T/xhU0Y9MeHqmpHXC00yH6OZW/G8h/wWc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.SolverState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.SolverState.html",
+          "hash": "ohNkwsaYbDldc7uc/Fyz7BZYZ6OB4T1ZqXjM0mO6IfQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/PathFinder.Solvers.Generic.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/PathFinder.Solvers.Generic.html",
+          "hash": "sTNrN2CqxRNb1pBN7uPmVUycDsnDrELAys/Rzp0jPSw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "aATI5DcS2lhj6jyYRWdt01OaWvd23oUFPbzzPElH5nM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "JuAgXsTaE/fkxCBeofENJj8Oh9hxfHF22dWAp7XD7xo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "NoAvailableBuildCache"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 1,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 14,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: last post processor info is null.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

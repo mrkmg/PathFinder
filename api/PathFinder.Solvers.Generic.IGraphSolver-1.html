@@ -1,0 +1,631 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IGraphSolver&lt;T&gt;
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IGraphSolver&lt;T&gt;
+   ">
+    <meta name="generator" content="docfx 2.57.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1">
+  
+  
+  <h1 id="PathFinder_Solvers_Generic_IGraphSolver_1" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1" class="text-break">Interface IGraphSolver&lt;T&gt;
+  </h1>
+  <div class="markdown level0 summary"><p>All Generic Graph Solvers implement this interface. This ensures solvers
+can be used interchangeably depending on need.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="PathFinder.Solvers.Generic.html">PathFinder.Solvers.Generic</a></h6>
+  <h6><strong>Assembly</strong>: PathFinder.dll</h6>
+  <h5 id="PathFinder_Solvers_Generic_IGraphSolver_1_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IGraphSolver&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Closed.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Closed%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L64">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Closed_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Closed*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Closed" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Closed">Closed</h4>
+  <div class="markdown level1 summary"><p>A list of nodes which have already been checked.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IEnumerable&lt;T&gt; Closed { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_ClosedCount.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.ClosedCount%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L74">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_ClosedCount_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.ClosedCount*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_ClosedCount" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.ClosedCount">ClosedCount</h4>
+  <div class="markdown level1 summary"><p>Count of closed nodes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int ClosedCount { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Current.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Current%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L31">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Current_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Current*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Current" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Current">Current</h4>
+  <div class="markdown level1 summary"><p>The last node to be checked.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">T Current { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_CurrentBestPath.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.CurrentBestPath%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L49">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_CurrentBestPath_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.CurrentBestPath*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_CurrentBestPath" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.CurrentBestPath">CurrentBestPath</h4>
+  <div class="markdown level1 summary"><p>The current best path to get as close as possible to the Destination.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IList&lt;T&gt; CurrentBestPath { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IList</span>&lt;T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="PathFinder_Solvers_Generic_IGraphSolver_1_CurrentBestPath_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Not guaranteed to be a &quot;good&quot; path, and may vary greatly each tick.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Destination.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Destination%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L41">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Destination_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Destination*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Destination" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Destination">Destination</h4>
+  <div class="markdown level1 summary"><p>The destination node to search for.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">T Destination { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_MaxTicks.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.MaxTicks%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L26">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_MaxTicks_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.MaxTicks*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_MaxTicks" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.MaxTicks">MaxTicks</h4>
+  <div class="markdown level1 summary"><p>The maximum number of ticks this solver can perform before giving up.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int MaxTicks { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Open.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Open%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L59">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Open_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Open*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Open" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Open">Open</h4>
+  <div class="markdown level1 summary"><p>A List of nodes which still need to be checked.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IEnumerable&lt;T&gt; Open { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_OpenCount.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.OpenCount%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L69">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_OpenCount_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.OpenCount*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_OpenCount" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.OpenCount">OpenCount</h4>
+  <div class="markdown level1 summary"><p>Count of open nodes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int OpenCount { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Origin.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Origin%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L36">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Origin_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Origin*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Origin" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Origin">Origin</h4>
+  <div class="markdown level1 summary"><p>The starting node to search from.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">T Origin { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Path.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Path%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L54">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Path_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Path*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Path" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Path">Path</h4>
+  <div class="markdown level1 summary"><p>The path from the Origin to the Destination. Will be null if <a class="xref" href="PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_State">State</a> is not <a class="xref" href="PathFinder.Solvers.Generic.SolverState.html#PathFinder_Solvers_Generic_SolverState_Success">Success</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IList&lt;T&gt; Path { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IList</span>&lt;T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_PathCost.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.PathCost%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L79">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_PathCost_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.PathCost*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_PathCost" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.PathCost">PathCost</h4>
+  <div class="markdown level1 summary"><p>The cost to get from the Origin to the Destination via the path.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">double PathCost { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_State.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.State%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L16">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_State_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.State*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_State" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.State">State</h4>
+  <div class="markdown level1 summary"><p>The current <a class="xref" href="PathFinder.Solvers.Generic.SolverState.html">SolverState</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">SolverState State { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="PathFinder.Solvers.Generic.SolverState.html">SolverState</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Ticks.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Ticks%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L21">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Ticks_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Ticks*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Ticks" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Ticks">Ticks</h4>
+  <div class="markdown level1 summary"><p>The number of ticks this solver has performed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int Ticks { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Run_System_Int32_.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Run(System.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L95">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Run_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Run*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Run_System_Int32_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Run(System.Int32)">Run(Int32)</h4>
+  <div class="markdown level1 summary"><p>Runs the solver until a path is found, the allotted ticks is exhausted, or a path could not be found.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">SolverState Run(int ticks = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">ticks</span></td>
+        <td><p>Number of ticks to run. Any number less than zero means run until <a class="xref" href="PathFinder.Solvers.Generic.IGraphSolver-1.html#PathFinder_Solvers_Generic_IGraphSolver_1_MaxTicks">MaxTicks</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="PathFinder.Solvers.Generic.SolverState.html">SolverState</a></td>
+        <td><p>The <a class="xref" href="PathFinder.Solvers.Generic.SolverState.html">SolverState</a> the solver is in after the run.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1_Stop.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601.Stop%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L84">View Source</a>
+  </span>
+  <a id="PathFinder_Solvers_Generic_IGraphSolver_1_Stop_" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Stop*"></a>
+  <h4 id="PathFinder_Solvers_Generic_IGraphSolver_1_Stop" data-uid="PathFinder.Solvers.Generic.IGraphSolver`1.Stop">Stop()</h4>
+  <div class="markdown level1 summary"><p>Stop the current solver.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Stop()</code></pre>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/mrkmg/PathFinder/new/master/apiSpec/new?filename=PathFinder_Solvers_Generic_IGraphSolver_1.md&amp;value=---%0Auid%3A%20PathFinder.Solvers.Generic.IGraphSolver%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/mrkmg/PathFinder/blob/master/PathFinder/Solvers/Generic/IGraphSolver.cs/#L11" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="toggle-mode">
+                <div class="icon">
+                  <i aria-hidden="true">☀</i>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="switch-style">
+                  <span class="slider round"></span>
+                </label>
+                <div class="icon">
+                  <i aria-hidden="true">☾</i>
+                </div>
+                <script type="text/javascript" src="../styles/toggle-theme.js"></script>
+              </div>
+          
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
