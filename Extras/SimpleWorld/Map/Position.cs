@@ -41,7 +41,7 @@ namespace SimpleWorld.Map
             return Math.Sqrt(dX * dX + dY * dY);
         }
 
-        public IEnumerable<Position> TraversableNodes()
+        public IEnumerable<Position> NeighborNodes()
         {
             for (var x = X-1; x <= X+1; x++)
             for (var y = Y-1; y <= Y+1; y++)

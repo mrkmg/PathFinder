@@ -10,6 +10,6 @@ namespace PathFinder.Graphs
     {
         public double EstimatedCost(T fromNode, T toNode) => fromNode.EstimatedCostTo(toNode);
         public double RealCost(T fromNode, T toNode) => fromNode.RealCostTo(toNode);
-        public IEnumerable<T> TraversableNodes(T sourceNode) => sourceNode.TraversableNodes();
+        public IEnumerable<T> NeighborNodes(T sourceNode) => sourceNode.NeighborNodes();
     }
 }

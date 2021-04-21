@@ -52,7 +52,7 @@ namespace PathFinder.UnitTests.Tests
 
         public double EstimatedCostTo(NodeWhichReturnsNullNeighbors other) => 1;
 
-        public IEnumerable<NodeWhichReturnsNullNeighbors> TraversableNodes()
+        public IEnumerable<NodeWhichReturnsNullNeighbors> NeighborNodes()
         {
             yield break;
         }

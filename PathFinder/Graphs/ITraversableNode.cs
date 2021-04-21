@@ -33,6 +33,6 @@ namespace PathFinder.Graphs
         /// Get nodes that are accessible from this node.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<T> TraversableNodes();
+        IEnumerable<T> NeighborNodes();
     }
 }

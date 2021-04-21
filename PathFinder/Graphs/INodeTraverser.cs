@@ -43,9 +43,9 @@ namespace PathFinder.Graphs
         double EstimatedCost(T fromNode, T toNode);
         
         /// <summary>
-        /// Get nodes that are accessible from sourceNode.
+        /// Get nodes that are neighbors of (immediately traversable to) sourceNode.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<T> TraversableNodes(T sourceNode);
+        IEnumerable<T> NeighborNodes(T sourceNode);
     }
 }

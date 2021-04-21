@@ -16,7 +16,7 @@ namespace SimpleWorld.Traversers
             return Math.Abs(fromNode.X - toNode.X) + Math.Abs(fromNode.Y - toNode.Y);
         }
 
-        public IEnumerable<Position> TraversableNodes(Position sourceNode)
+        public IEnumerable<Position> NeighborNodes(Position sourceNode)
         {
             var n1 = sourceNode.World.GetPosition(sourceNode.X - 1, sourceNode.Y);
             var n2 = sourceNode.World.GetPosition(sourceNode.X + 1, sourceNode.Y);

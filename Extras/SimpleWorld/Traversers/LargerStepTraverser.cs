@@ -31,7 +31,7 @@ namespace SimpleWorld.Traversers
             return estDist + estNumSteps * StepBaseCost;
         }
 
-        public IEnumerable<Position> TraversableNodes(Position sourceNode)
+        public IEnumerable<Position> NeighborNodes(Position sourceNode)
         {
             for (var x = sourceNode.X-_stepSize; x <= sourceNode.X+_stepSize; x++)
             for (var y = sourceNode.Y-_stepSize; y <= sourceNode.Y+_stepSize; y++)

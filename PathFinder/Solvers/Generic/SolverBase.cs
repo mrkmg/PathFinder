@@ -16,7 +16,7 @@ namespace PathFinder.Solvers.Generic
     public abstract class SolverBase<T> : IGraphSolver<T>, IComparer<GraphNodeMetaData<T>> where T : IEquatable<T>
     {
         [CanBeNull]
-        private static INodeTraverser<T> MakeDefaultTraverser(T node)
+        private static INodeTraverser<T> GetDefaultTraverser(T node)
         {
             if (!(node is ITraversableNode<T>)) return null;
             return (INodeTraverser<T>) Activator.CreateInstance(typeof(DefaultTraverser<>).MakeGenericType(node.GetType()));
@@ -28,7 +28,7 @@ namespace PathFinder.Solvers.Generic
             Origin = origin ?? throw new ArgumentNullException(nameof(origin));
             Destination = destination ?? throw new ArgumentNullException(nameof(destination));
             Traverser = traverser ?? 
-                        MakeDefaultTraverser(origin) ?? 
+                        GetDefaultTraverser(origin) ?? 
                         throw new ArgumentException("Either Traverser needs to be passed, or T must be an ITraversableNode", nameof(traverser));
 
             // create the origin node metadata manually as the "GetMeta" method
@@ -155,7 +155,8 @@ namespace PathFinder.Solvers.Generic
         protected GraphNodeMetaData<T> GetMeta(T node, bool onlyExisting = false)
         {
             if (MetaDict.TryGetValue(node, out var meta)) return meta;
-            Debug.Assert(!onlyExisting, $"MetaDict data not found for {node}");
+            if (onlyExisting)
+                throw new InvalidOperationException($"MetaDict data not found for {node}. The Equals or GetHashCode function on {typeof(T).Name} is likely invalid");
             var fromCost = Traverser.RealCost(CurrentMetaData.Node, node);
             meta = new GraphNodeMetaData<T>(node, _nextGraphNodeId++)
             {
@@ -187,7 +188,7 @@ namespace PathFinder.Solvers.Generic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ProcessNeighbors()
         {
-            foreach (var neighbor in Traverser.TraversableNodes(Current))
+            foreach (var neighbor in Traverser.NeighborNodes(Current))
             {
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
                 var neighborMetaData = GetMeta(neighbor);

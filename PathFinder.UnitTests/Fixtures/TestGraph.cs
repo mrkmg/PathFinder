@@ -51,7 +51,7 @@ namespace PathFinder.UnitTests.Fixtures
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public IEnumerable<TestNode> TraversableNodes()
+        public IEnumerable<TestNode> NeighborNodes()
         {
             var maxX = Math.Min(9, X + 1);
             var maxY = Math.Min(9, Y + 1);
