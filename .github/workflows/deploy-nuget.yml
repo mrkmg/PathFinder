@@ -24,7 +24,7 @@ jobs:
         with:
           PROJECT_FILE_PATH: PathFinder/PathFinder.csproj
           PACKAGE_NAME: PathFinder
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
+          VERSION_REGEX: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
           TAG_COMMIT: true
           TAG_FORMAT: v*
           NUGET_KEY: ${{secrets.NUGET_KEY}}
