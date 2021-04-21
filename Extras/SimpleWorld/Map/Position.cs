@@ -41,11 +41,6 @@ namespace SimpleWorld.Map
             return Math.Sqrt(dX * dX + dY * dY);
         }
 
-        private double GridDistanceTo(Position other)
-        {
-            return Math.Max(Math.Abs(X - other.X), Math.Abs(Y - other.Y));
-        }
-
         public IEnumerable<Position> TraversableNodes()
         {
             for (var x = X-1; x <= X+1; x++)
