@@ -43,6 +43,7 @@ namespace PathFinder.UnitTests.Tests
         public override int GetHashCode() => throw new NotImplementedException();
     }
 
+    #nullable enable
     internal class NodeWhichReturnsNullNeighbors : ITraversableNode<NodeWhichReturnsNullNeighbors>
     {
         public bool Equals(NodeWhichReturnsNullNeighbors? other) => false;
@@ -53,7 +54,8 @@ namespace PathFinder.UnitTests.Tests
 
         public IEnumerable<NodeWhichReturnsNullNeighbors> TraversableNodes()
         {
-            yield return null;
+            yield break;
         }
     }
+    #nullable disable
 }
