@@ -17,7 +17,7 @@ jobs:
       - name: Restore dependencies (PathFinder)
         run: dotnet restore PathFinder
       - name: Build
-        run: dotnet build --no-restore PathFinder
+        run: dotnet build -c Release --no-restore PathFinder
       - name: Publish on NuGet and Tag
         id: publish_nuget
         uses: Rebel028/publish-nuget@2.6.1
