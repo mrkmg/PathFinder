@@ -21,7 +21,6 @@ namespace SimpleWorld.Traversers
         public double RealCost(Position fromNode, Position toNode)
         {
             return fromNode.RealCostTo(toNode) + StepBaseCost;
-
         }
 
         public double EstimatedCost(Position fromNode, Position toNode)

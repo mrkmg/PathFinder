@@ -11,6 +11,8 @@ namespace SimpleWorld.Map
         public readonly int Cost;
         public readonly World World;
 
+        private IList<Position> _neighborsCache;
+
         public Position(World world, int x, int y, int cost)
         {
             World = world;
@@ -24,6 +26,9 @@ namespace SimpleWorld.Map
 
         public double EstimatedCostTo(Position other) 
             => BestCaseCornering(other);
+
+        public IEnumerable<Position> NeighborNodes() 
+            => _neighborsCache ??= FindNeighbors();
 
         private double BestCaseCornering(Position other)
         {
@@ -41,16 +46,18 @@ namespace SimpleWorld.Map
             return Math.Sqrt(dX * dX + dY * dY);
         }
 
-        public IEnumerable<Position> NeighborNodes()
+        private IList<Position> FindNeighbors()
         {
+            var list = new List<Position>(8);
             for (var x = X-1; x <= X+1; x++)
             for (var y = Y-1; y <= Y+1; y++)
             {
                 if (x == X && y == Y) continue;
 
                 var node = World.GetPosition(x, y);
-                if (node != null) yield return node;
+                if (node != null) list.Add(node);
             }
+            return list;
         }
 
         public override string ToString() 

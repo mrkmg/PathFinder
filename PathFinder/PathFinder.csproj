@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>0.1.1-alpha</PackageVersion>
+    <PackageVersion>0.1.2-alpha</PackageVersion>
     <Title>PathFinder</Title>
     <Authors>Kevin Gravier</Authors>
     <Description>A simple to use collection of various path finding algorithms.
@@ -20,6 +20,7 @@ Currently a work in progress and API's may change until version 1.</Description>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Path Finding, A*, AStar, Breadth-First, Graph</PackageTags>
     <PackageId>Gravy.PathFinder</PackageId>
+    <PackageIconUrl>https://raw.githubusercontent.com/mrkmg/PathFinder/master/icon.png</PackageIconUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
