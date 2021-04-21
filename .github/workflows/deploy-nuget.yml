@@ -19,7 +19,7 @@ jobs:
         uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: PathFinder/PathFinder.csproj
-          PACKAGE_NAME: PathFinder
+          PACKAGE_NAME: Gravy.PathFinder
           VERSION_REGEX: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
           TAG_COMMIT: true
           TAG_FORMAT: v*

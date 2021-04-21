@@ -19,6 +19,7 @@ Currently a work in progress and API's may change until version 1.</Description>
     <RepositoryUrl>https://github.com/mrkmg/PathFinder.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Path Finding, A*, AStar, Breadth-First, Graph</PackageTags>
+    <PackageId>Gravy.PathFinder</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
