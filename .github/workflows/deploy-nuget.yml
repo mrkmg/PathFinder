@@ -14,13 +14,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
-      - name: Restore dependencies (PathFinder)
-        run: dotnet restore PathFinder
-      - name: Build
-        run: dotnet build -c Release --no-restore PathFinder
       - name: Publish on NuGet and Tag
         id: publish_nuget
-        uses: Rebel028/publish-nuget@2.6.1
+        uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: PathFinder/PathFinder.csproj
           PACKAGE_NAME: PathFinder
