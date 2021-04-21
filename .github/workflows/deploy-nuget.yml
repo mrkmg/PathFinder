@@ -20,7 +20,7 @@ jobs:
         run: dotnet build --no-restore PathFinder
       - name: Publish on NuGet and Tag
         id: publish_nuget
-        uses: Rebel028/publish-nuget@2.6.0
+        uses: Rebel028/publish-nuget@2.6.1
         with:
           PROJECT_FILE_PATH: PathFinder/PathFinder.csproj
           PACKAGE_NAME: PathFinder
