@@ -18,11 +18,11 @@ jobs:
         id: publish_nuget
         uses: drusellers/publish-nuget@master
         with:
-          PROJECT_FILE_PATH: PathFinder/PathFinder.csproj
-          PACKAGE_NAME: Gravy.PathFinder
-          VERSION_REGEX: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
-          TAG_COMMIT: true
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_KEY}}
-          NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
+          project-file-path: PathFinder/PathFinder.csproj
+          project-name: Gravy.PathFinder
+          version-regex: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
+          tag-commit: true
+          tag-format: v*
+          nuget-key: ${{secrets.NUGET_KEY}}
+          nuget-source: https://api.nuget.org
+          include-symbols: true
