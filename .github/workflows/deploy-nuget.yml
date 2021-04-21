@@ -16,7 +16,7 @@ jobs:
           dotnet-version: 5.0.x
       - name: Publish on NuGet and Tag
         id: publish_nuget
-        uses: rohith/publish-nuget@v2.5.5
+        uses: drusellers/publish-nuget@master
         with:
           PROJECT_FILE_PATH: PathFinder/PathFinder.csproj
           PACKAGE_NAME: Gravy.PathFinder
