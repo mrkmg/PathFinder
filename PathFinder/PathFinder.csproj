@@ -15,7 +15,7 @@ Currently a work in progress and API's may change until version 1.</Description>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Copyright>Kevin Gravier 2020-2021</Copyright>
     <PackageProjectUrl>https://github.com/mrkmg/PathFinder</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/mrkmg/PathFinder/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/mrkmg/PathFinder.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Path Finding, A*, AStar, Breadth-First, Graph</PackageTags>
