@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>0.1.0-alpha</PackageVersion>
+    <PackageVersion>0.1.1-alpha</PackageVersion>
     <Title>PathFinder</Title>
     <Authors>Kevin Gravier</Authors>
     <Description>A simple to use collection of various path finding algorithms.

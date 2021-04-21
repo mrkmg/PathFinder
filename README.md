@@ -1,5 +1,9 @@
 ﻿# Path Finder
 
+![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/gravy.pathfinder?style=flat-square)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/mrkmg/pathfinder/Run%20Unit%20Tests/master?label=Tests&style=flat-square)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/mrkmg/pathfinder/Deploy%20API%20Documentation/master?label=API%20Docs&style=flat-square)
+
 A simple to use collection of various path finding algorithms.
 
 This is a work in progress. All API's are subject to change **significantly**.
@@ -22,11 +26,22 @@ frustration.
 
 ## Installing
 
-Currently Path Finder is not published to NuGet. Once it is in a more stable
-state, it will be published.
+[Install from NuGet](https://www.nuget.org/packages/Gravy.PathFinder/)
 
-To test it out in its current state, build and reference PathFinder.dll, and
-install C5 from NuGet.
+via .NET CLI
+
+```
+dotnet add package Gravy.PathFinder --version 0.1.1-alpha
+```
+
+via PackageReference
+
+```xml
+
+<PackageReference Include="Gravy.PathFinder" Version="0.1.1-alpha"/>
+```
+
+**WARNING** Until v1 is release, the API is subject to breaking changes.
 
 ## Usage
 
@@ -42,8 +57,10 @@ reference.
 ### Simple Usage
 
 You can either update the "nodes" of your graph to implement
-[`ITraversableNode`](PathFinder/Graphs/ITraversableNode.cs), or
-create a [`INodeTraverser`](PathFinder/Graphs/INodeTraverser.cs).
+[`ITraversableNode`](https://mrkmg.github.io/PathFinder/api/PathFinder.Graphs.ITraversableNode-1.html)
+, or create
+a [`INodeTraverser`](https://mrkmg.github.io/PathFinder/api/PathFinder.Graphs.INodeTraverser-1.html)
+.
 
 To find a path, use one of the included solvers.
 
@@ -72,24 +89,28 @@ if (solver.State == SolverState.Success)
 ```
 
 For an example of `ITraversableNode`, see
-[SimpleWorld.Map.Position](Extras/SimpleWorld/Map/Position.cs).
+[SimpleWorld.Map.Position](https://github.com/mrkmg/PathFinder/blob/master/Extras/SimpleWorld/Map/Position.cs)
+.
 
 For examples of `INodeTraverser`, see
-[Traversers](Extras/SimpleWorld/Traversers).
+[Traversers](https://github.com/mrkmg/PathFinder/tree/master/Extras/SimpleWorld/Traversers)
+.
 
-*Note: When implementing, it is important to make sure `EstimatedCostTo` returns the
-**best case** cost for the best performance.*
+*Note: When implementing, it is important to make sure `EstimatedCostTo`
+/`EstimatedCost` returns the **best case** cost for the best performance.*
 
-*Note 2: You must implement either a `INodeTraverser`, or implement `ITraversableNode`
-on your existing graph. If no traverser is given to a solver, and the nodes do not implement
-`ITraversableNode`, then the solver will throw an exception.
+*Note 2: You must implement either a `INodeTraverser`, or
+implement `ITraversableNode` on your existing graph. If no traverser is given to
+a solver, and the nodes do not implement `ITraversableNode`, then the solver
+will throw an exception.
 
 ### Solver Types
 
 All Generic solvers
-implement [IGraphSolver](PathFinder/Solvers/Generic/IGraphSolver.cs).
+implement [IGraphSolver](https://mrkmg.github.io/PathFinder/api/PathFinder.Solvers.Generic.IGraphSolver-1.html)
+.
 
-[Solvers.Generic.AStar](PathFinder/Solvers/Generic/AStar.cs)
+[Solvers.Generic.AStar](https://mrkmg.github.io/PathFinder/api/PathFinder.Solvers.Generic.AStar-1.html)
 
 An implementation of the traditional A* algorithm with an adjustable greed
 factor.
@@ -100,14 +121,14 @@ favor reducing the estimated. A greed factor of one is equivalent to the
 standard A*
 method.
 
-[Solvers.Generic.Greedy](PathFinder/Solvers/Generic/Greedy.cs)
+[Solvers.Generic.Greedy](https://mrkmg.github.io/PathFinder/api/PathFinder.Solvers.Generic.Greedy-1.html)
 
 The greedy solvers traverses a graph ignoring any travel costs and attempts to
 reduce the remaining distance only. This can be useful to determine if a path is
 even possible, or in very open graphs with little to no obstacles or movement
 costs.
 
-[Solvers.Generic.BreadthFirst](PathFinder/Solvers/Generic/BreadthFirst.cs)
+[Solvers.Generic.BreadthFirst](https://mrkmg.github.io/PathFinder/api/PathFinder.Solvers.Generic.BreadthFirst-1.html)
 
 An exhaustive graph searcher, or crawler. Starts at node and searches every
 found node until the destination is found. This is really only useful in graphs
@@ -117,7 +138,7 @@ will always find the best path, at a fraction of the cost of Breadth First.
 ### Node Traversers
 
 All of the generic solvers can be given
-an [INodeTraverser](PathFinder/Graphs/INodeTraverser.cs)
+an [INodeTraverser](https://mrkmg.github.io/PathFinder/api/PathFinder.Graphs.INodeTraverser-1.html)
 to replace or augment the graphs own traversal methods. An example of when to
 use an INodeTraverser could be to implement custom traversal patterns in a game
 on the entities themselves.
@@ -132,7 +153,6 @@ on the entities themselves.
 - Adding Thread Safety to the solvers (or maybe thread safe alternatives at the
   cost of performance).
 - Testing in Unity and MonoGame.
-- Publishing to NuGet.
 
 ## License
 
