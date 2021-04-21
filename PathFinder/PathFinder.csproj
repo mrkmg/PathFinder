@@ -1,12 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>0.1.0</PackageVersion>
+    <PackageVersion>0.1.0-alpha</PackageVersion>
     <Title>PathFinder</Title>
     <Authors>Kevin Gravier</Authors>
-    <Description>A generic, customizable A-Star path finding implementation.</Description>
+    <Description>A simple to use collection of various path finding algorithms.
+
+Includes a A*, Breadth-First, and Greedy graph traversing path finding implementations.
+
+Currently a work in progress and API's may change until version 1.</Description>
     <LangVersion>8</LangVersion>
     <TargetFramework>netstandard1.0</TargetFramework>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Copyright>Kevin Gravier 2020-2021</Copyright>
+    <PackageProjectUrl>https://github.com/mrkmg/PathFinder</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/mrkmg/PathFinder/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/mrkmg/PathFinder.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Path Finding, A*, AStar, Breadth-First, Graph</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="C5" Version="2.5.3" />
