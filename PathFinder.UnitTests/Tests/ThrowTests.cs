@@ -54,7 +54,7 @@ namespace PathFinder.UnitTests.Tests
 
         public IEnumerable<NodeWhichReturnsNullNeighbors> NeighborNodes()
         {
-            yield break;
+            yield return null;
         }
     }
     #nullable disable
