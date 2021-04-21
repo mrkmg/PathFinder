@@ -19,8 +19,8 @@ jobs:
         uses: drusellers/publish-nuget@master
         with:
           project-file-path: PathFinder/PathFinder.csproj
-          project-name: Gravy.PathFinder
-          version-regex: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
+          package-name: Gravy.PathFinder
+          extract-version-regex: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
           tag-commit: true
           tag-format: v*
           nuget-key: ${{secrets.NUGET_KEY}}
