@@ -174,14 +174,14 @@ namespace PathFinder.Gui.Forms
                     if (ShowSearching)
                         _mapWidget.DrawSearchPoints(frameData);
                     else if (ShowBlindSearching)
-                        _mapWidget.DrawWorldPoints(frameData);
+                        _mapWidget.DrawWorldPoints(frameData, _world);
                     _mapWidget.DrawBestBath(frameData);
                     break;
                 case SolverState.Success:
                     _statsWidget.UpdateSuccessStats(frameData);
                     _mapWidget.ClearRunning();
                     if (ShowBlindSearching)
-                        _mapWidget.DrawWorldPoints(frameData);
+                        _mapWidget.DrawWorldPoints(frameData, _world);
                     _mapWidget.DrawPath(frameData.Path);
                     KillRunning();
                     break;

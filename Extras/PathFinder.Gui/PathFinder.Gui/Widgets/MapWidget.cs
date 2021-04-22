@@ -32,9 +32,19 @@ namespace PathFinder.Gui.Widgets
             }
         }
 
-        public void DrawWorldPoints(FrameData frameData)
+        public void DrawWorldPoints(FrameData frameData, World world)
         {
-            DrawAllPoints(0, frameData.CheckedPositions.AsMapDrawPoints());
+            switch (world.Type)
+            {
+                case WorldType.Maze:
+                    DrawAllPoints(0, frameData.CheckedPositions.AsMazeDrawPoints());
+                    break;
+                case WorldType.Standard:
+                    DrawAllPoints(0, frameData.CheckedPositions.AsMapDrawPoints());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void ClearRunning()

@@ -69,9 +69,26 @@ namespace PathFinder.Gui.Forms
 
         private void WorldGenChanged(object? sender, EventArgs e)
         {
-            _standardWorldOptions.Visible = _worldGenType.Text == "Standard";
-            _initRatio12.Visible = _worldGenType.Text == "Standard";
-            _mazeWorldOptions.Visible = _worldGenType.Text == "Maze";
+            switch (_worldGenType.Text)
+            {
+                case "Standard":
+                    _standardWorldOptions.Visible = true;
+                    _initRatio12.Visible = true;
+                    _mazeWorldOptions.Visible = false;
+                    _traverserSelector.Text = "Default";
+                    _traverserTable.Visible = true;
+                    break;
+                case "Maze":
+                    _standardWorldOptions.Visible = false;
+                    _initRatio12.Visible = false;
+                    _mazeWorldOptions.Visible = true;
+                    _traverserSelector.Text = "Grid";
+                    _traverserTable.Visible = false;
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+            
             KillRunning();
             MakeWorld();
         }

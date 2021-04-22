@@ -240,6 +240,7 @@ namespace PathFinder.Gui.Forms
 
         private TableLayout _standardWorldOptions;
         private TableLayout _mazeWorldOptions;
+        private TableLayout _traverserTable;
 
         private void InitUi()
         {
@@ -298,6 +299,13 @@ namespace PathFinder.Gui.Forms
                     new TableCell { Control = "Fork"},
                     new TableCell { Control = _initMF}}}}};
             
+            _traverserTable = new TableLayout { Rows = {
+                new TableRow { Cells = {
+                    new TableCell { Control = "Traverser"}, 
+                    new TableCell { Control = "Step Size"}}},
+                new TableRow { Cells = {
+                    new TableCell(_traverserSelector), new TableCell(_stepSizeStepper)}}}};
+            
             // TODO: Separate this monster into smaller parts
             Content = new StackLayout
             {
@@ -339,6 +347,7 @@ namespace PathFinder.Gui.Forms
                             _standardWorldOptions,
                             _mazeWorldOptions,
                             LabelInput(50, "Ratio", _initRatio12),
+                            LabelInput(80, "World Type", _worldGenType),
                             HStretched(_newWorldButton),
                             new Label {
                                 Text = "Solver Settings",
@@ -349,13 +358,7 @@ namespace PathFinder.Gui.Forms
                                         new TableCell { Control = "Greed"}}},
                                     new TableRow { Cells = {
                                         new TableCell(_solverSelector), new TableCell(_greedStepper)}}}},
-                            new TableLayout { Rows = {
-                                new TableRow { Cells = {
-                                    new TableCell { Control = "Traverser"}, 
-                                    new TableCell { Control = "Step Size"}}},
-                                new TableRow { Cells = {
-                                    new TableCell(_traverserSelector), new TableCell(_stepSizeStepper)}}}},
-                            LabelInput(80, "World Type", _worldGenType),
+                            _traverserTable,
                             new Label {
                                 Text = "Commands",
                                 Font = sectionFont},

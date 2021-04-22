@@ -45,16 +45,22 @@ namespace SimpleWorld.Map
                 _open.Add((x, y));
             }
 
+            // set out first node with a random direction
+            // TODO: check to see if that direction is valid
             Grid[_startX, _startY] = (byte) RandomDirection();
-            SnakePathFrom(_startX, _startY);
             
+            CarveFromPoint(_startX, _startY);
             FillEmpty();
         }
 
         private void FillEmpty()
         {
+            // check if there are any open nodes
             while (_open.Any())
             {
+                // find an open node which is "next to" a closed node
+                // then carve a path from it to the closed node, then
+                // carve a path in open nodes
                 foreach (var (cx, cy) in _open)
                 {
                     Debug.Assert(Grid[cx, cy] == 0);
@@ -68,7 +74,7 @@ namespace SimpleWorld.Map
                             var (nx, ny) = GetPositionInDirection(cx, cy, d);
                             Grid[nx, ny] |= (byte) OppositeDirection(d);
                             Grid[cx, cy] |= (byte) d;
-                            SnakePathFrom(cx, cy);
+                            CarveFromPoint(cx, cy);
                             didFind = true;
                             break;
                         }
@@ -88,18 +94,22 @@ namespace SimpleWorld.Map
             }
         }
 
-        private void SnakePathFrom(int x, int y)
+        private void CarveFromPoint(int x, int y)
         {
             var exits = new List<(int X, int Y, Direction D)>{(x, y, (Direction) Grid[x, y])};
             _open.Remove((x, y));
 
-            // get the start point
+            // keep going while we have "exits" from this path
             while (exits.Any())
             {
+                // get the first exit in the path
                 var (cx, cy, previousDirection) = exits[0];
                 exits.RemoveAt(0);
                 _open.Remove((cx, cy));
                 
+                // get a random mode (from the weights)
+                // try to find a move using that mode. If not, check "lesser"
+                // modes. Order is Fork, Turn, Line
                 while (true)
                 {
                     Direction currentDirection = previousDirection;
@@ -110,6 +120,7 @@ namespace SimpleWorld.Map
                     var foundMove = false;
                     while (!foundMove && (!triedTurn || !triedLine))
                     {
+                        // try to carve a path straight through node
                         if (mode == Mode.Line)
                         {
                             triedLine = true;
@@ -125,6 +136,7 @@ namespace SimpleWorld.Map
                             foundMove = true;
                         }
 
+                        // try to carve a single turn through the node
                         if (mode == Mode.Turn)
                         {
                             triedTurn = true;
@@ -144,6 +156,7 @@ namespace SimpleWorld.Map
                             foundMove = true;
                         }
                         
+                        // try to carve a fork (one entrance, two exits) through the node
                         if (mode == Mode.Fork)
                         {
                             var nextDirection = RandomDirection(new[] {previousDirection});
