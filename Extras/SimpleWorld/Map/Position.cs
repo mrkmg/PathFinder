@@ -12,6 +12,7 @@ namespace SimpleWorld.Map
         public readonly World World;
 
         private IList<Position> _neighborsCache;
+        private readonly int _hashCode;
 
         public Position(World world, int x, int y, int cost)
         {
@@ -19,6 +20,12 @@ namespace SimpleWorld.Map
             X = x;
             Y = y;
             Cost = cost;
+            
+            // precalculate hashcode
+            var hashCode = X;
+            hashCode = (hashCode * 397) ^ Y;
+            hashCode = (hashCode * 397) ^ (World?.GetHashCode() ?? 0);
+            _hashCode = hashCode;
         }
 
         public double RealCostTo(Position other) 
@@ -60,23 +67,22 @@ namespace SimpleWorld.Map
             return list;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Position) obj);
+        }
+
+        public override int GetHashCode() => _hashCode;
+
         public override string ToString() 
             => $"Position<{Cost}>({X},{Y})";
         
         public bool Equals(Position other) 
             => other != null && X == other.X && Y == other.Y && World.Equals(other.World);
         
-        
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = X;
-                hashCode = (hashCode * 397) ^ Y;
-                hashCode = (hashCode * 397) ^ (World != null ? World.GetHashCode() : 0);
-                return hashCode;
-            }
-        }
         
     }
 
