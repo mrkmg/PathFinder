@@ -33,7 +33,7 @@ namespace PathFinder.Gui.Forms
         private void SetRandomPoints()
         {
             if (_world == null) return;
-            
+
             var rnd = new Random(int.Parse(_pointsSeed.Text));
             var worldSize = Math.Sqrt(_world.XSize * _world.XSize + _world.YSize * _world.YSize);
             var targetSize = (int)(worldSize * 0.75);
@@ -47,14 +47,17 @@ namespace PathFinder.Gui.Forms
             {
                 tries++;
 
-                if (tries > 5000) break;
-                    
-                do randomFromNode = _world.GetPosition(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
-                while (randomFromNode == null);
-                    
-                do randomToNode = _world.GetPosition(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
-                while (randomToNode == null);
+                if (tries > 100) break;
 
+                var t1 = 5000;
+                do randomFromNode = _world.GetPosition(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
+                while (randomFromNode == null && --t1 > 0);
+
+                t1 = 5000;
+                do randomToNode = _world.GetPosition(rnd.Next(0, _world.XSize - 1), rnd.Next(0, _world.YSize - 1));
+                while (randomToNode == null && --t1 > 0);
+
+                if (randomFromNode == null || randomToNode == null) break;
                 var x = Math.Abs(randomFromNode.X - randomToNode.X);
                 var y = Math.Abs(randomFromNode.Y - randomToNode.Y);
                 var dist = Math.Sqrt(x*x + y*y);
@@ -87,25 +90,35 @@ namespace PathFinder.Gui.Forms
         {
             Reset();
             if (_mapWidget.BitmapHeight == 0 || _mapWidget.BitmapWidth == 0) return;
-            _world = new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, new Random(int.Parse(_worldSeed.Text)), new World.InitializationOptions
-            {
-                F1 = (double)_initF1.Value / 100 * 3d,
-                L1 = (double)_initL1.Value / 100 * 3d + 1d,
-                P1 = (double)_initP1.Value / 100,
-                SX1 = (double)_initSX1.Value / 100 * 5d,
-                SY1 = (double)_initSY1.Value / 100 * 5d,
-                
-                F2 = (double)_initF2.Value / 100 * 10d,
-                L2 = (double)_initL2.Value / 100 * 3d + 1d,
-                P2 = (double)_initP2.Value / 100,
-                SX2 = (double)_initSX2.Value / 100 * 5d,
-                SY2 = (double)_initSY2.Value / 100 * 5d,
-                
-                Ratio12 = (double)_initRatio12.Value / 100 * 4d - 2d
-            } ,_moveCostStepper.Value);
-            SetRandomPoints();
-            _mapWidget.ClearPath();
+            _mapWidget.ClearLayer(0);
             _mapWidget.ClearRunning();
+            _mapWidget.ClearPath();
+
+            _world = _worldGenType.SelectedValue switch
+            {
+                "Standard" => new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, _moveCostStepper.Value,
+                    new World.StandardInitializationOptions
+                    {
+                        F1 = (double) _initF1.Value / 100 * 3d,
+                        L1 = (double) _initL1.Value / 100 * 3d + 1d,
+                        P1 = (double) _initP1.Value / 100,
+                        SX1 = (double) _initSX1.Value / 100 * 5d,
+                        SY1 = (double) _initSY1.Value / 100 * 5d,
+                        F2 = (double) _initF2.Value / 100 * 10d,
+                        L2 = (double) _initL2.Value / 100 * 3d + 1d,
+                        P2 = (double) _initP2.Value / 100,
+                        SX2 = (double) _initSX2.Value / 100 * 5d,
+                        SY2 = (double) _initSY2.Value / 100 * 5d,
+                        Ratio12 = (double) _initRatio12.Value / 100 * 4d - 2d,
+                    }, new Random(int.Parse(_worldSeed.Text))),
+                "Maze" => new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, _moveCostStepper.Value,
+                    new World.MazeInitializationOptions
+                    {
+                        MLW = _initML.Value, MTW = _initMT.Value, MFW = _initMF.Value,
+                    }, new Random(int.Parse(_worldSeed.Text))),
+                _ => _world
+            };
+            SetRandomPoints();
             _mapWidget.DrawWorld(_world);
         }
 

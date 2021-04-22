@@ -51,7 +51,7 @@ namespace PathFinder.Console.Tests.Many
         private IEnumerable<Test> BuildTest(int testId)
         {
             // ReSharper disable twice InconsistentlySynchronizedField
-            var map = new World(MapWidth, MapHeight);
+            var map = new World(MapWidth, MapHeight, 1, World.DefaultStandardInit);
 
             Position origin;
             Position destination;

@@ -114,7 +114,7 @@ namespace PathFinder.Console.Tests.Interactive
 
         private void MakeWorld(Random rnd)
         {
-            _world = new World(System.Console.WindowWidth - 1, System.Console.WindowHeight, rnd);
+            _world = new World(System.Console.WindowWidth - 1, System.Console.WindowHeight, 1, World.DefaultStandardInit, rnd);
 
             _worldWriter = new SimpleWorldWriter(_world, _greedyFactors.Count);
         }

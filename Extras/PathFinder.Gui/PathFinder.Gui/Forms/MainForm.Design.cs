@@ -160,6 +160,31 @@ namespace PathFinder.Gui.Forms
             ToolTip = "Ratio between Layer 1 and 2"
         }; 
         
+        
+
+        private readonly Slider _initML = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = IRand.Next(100),
+            Width = 80,
+            ToolTip = "Maze Line Weight"
+        }; 
+
+        private readonly Slider _initMT = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = IRand.Next(100),
+            Width = 80,
+            ToolTip = "Maze Turn Weight"
+        }; 
+
+        private readonly Slider _initMF = new () {
+            MinValue = 0,
+            MaxValue = 100,
+            Value = IRand.Next(100),
+            ToolTip = "Maze Fork Weight"
+        }; 
+        
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
         private readonly CheckBox _doBlindSearch = new() {Checked = false};
 
@@ -177,21 +202,31 @@ namespace PathFinder.Gui.Forms
             ReadOnly = true
         };
 
+        private readonly ComboBox _worldGenType = new()
+        {
+            DataStore = new[] {"Standard", "Maze"},
+            Text = "Standard",
+            ReadOnly = true
+        };
+
         private readonly Button _newSeedButton = new () 
         {
             Text = "New Seed",
             Width = 90
         };
+        
         private readonly Button _newPointsButton = new () 
         {
             Text = "New Points",
             Width = 90
         };
+        
         private readonly Button _go = new()
         {
             Text = "Start",
             Width = 60
         };
+        
         private readonly Button _pauseButton = new()
         {
             Text = "Stop",
@@ -202,6 +237,9 @@ namespace PathFinder.Gui.Forms
         {
             Text = "New World Options",
         };
+
+        private TableLayout _standardWorldOptions;
+        private TableLayout _mazeWorldOptions;
 
         private void InitUi()
         {
@@ -222,6 +260,43 @@ namespace PathFinder.Gui.Forms
             // is there a better way to do this?
             var sectionFont = Fonts.Sans(10f, FontStyle.Bold);
             var titleFont = Fonts.Sans(12f, FontStyle.Bold);
+            
+            _standardWorldOptions = new TableLayout { Rows = {
+                new TableRow { Cells = {
+                    new TableCell { Control = ""},
+                    new TableCell { Control = new Label {Text = "1", TextAlignment = TextAlignment.Center, Width = 80}},
+                    new TableCell { Control = new Label {Text = "2", TextAlignment = TextAlignment.Center, Width = 80}}}},
+                new TableRow { Cells = {
+                    new TableCell { Control = "F"},
+                    new TableCell { Control = _initF1},
+                    new TableCell { Control = _initF2}}},
+                new TableRow { Cells = {
+                    new TableCell { Control = "L"},
+                    new TableCell { Control = _initL1},
+                    new TableCell { Control = _initL2}}},
+                new TableRow { Cells = {
+                    new TableCell { Control = "P"},
+                    new TableCell { Control = _initP1},
+                    new TableCell { Control = _initP2}}},
+                new TableRow { Cells = {
+                    new TableCell { Control = "SX"},
+                    new TableCell { Control = _initSX1},
+                    new TableCell { Control = _initSX2}}},
+                new TableRow { Cells = {
+                    new TableCell { Control = "SY"},
+                    new TableCell { Control = _initSY1},
+                    new TableCell { Control = _initSY2}}}}};
+            
+            _mazeWorldOptions = new TableLayout {Rows ={
+                new TableRow { Cells = {
+                    new TableCell { Control = "Line"},
+                    new TableCell { Control = _initML}}},
+                new TableRow { Cells = {
+                    new TableCell { Control = "Turn"},
+                    new TableCell { Control = _initMT}}},
+                new TableRow { Cells = {
+                    new TableCell { Control = "Fork"},
+                    new TableCell { Control = _initMF}}}}};
             
             // TODO: Separate this monster into smaller parts
             Content = new StackLayout
@@ -261,31 +336,8 @@ namespace PathFinder.Gui.Forms
                                     new StackLayout { Items = {
                                         "Scale",
                                         _scaleStepper }}}},
-                            new TableLayout { Rows = {
-                                new TableRow { Cells = {
-                                    new TableCell { Control = ""},
-                                    new TableCell { Control = new Label {Text = "1", TextAlignment = TextAlignment.Center, Width = 80}},
-                                    new TableCell { Control = new Label {Text = "2", TextAlignment = TextAlignment.Center, Width = 80}}}},
-                                new TableRow { Cells = {
-                                    new TableCell { Control = "F"},
-                                    new TableCell { Control = _initF1},
-                                    new TableCell { Control = _initF2}}},
-                                new TableRow { Cells = {
-                                    new TableCell { Control = "L"},
-                                    new TableCell { Control = _initL1},
-                                    new TableCell { Control = _initL2}}},
-                                new TableRow { Cells = {
-                                    new TableCell { Control = "P"},
-                                    new TableCell { Control = _initP1},
-                                    new TableCell { Control = _initP2}}},
-                                new TableRow { Cells = {
-                                    new TableCell { Control = "SX"},
-                                    new TableCell { Control = _initSX1},
-                                    new TableCell { Control = _initSX2}}},
-                                new TableRow { Cells = {
-                                    new TableCell { Control = "SY"},
-                                    new TableCell { Control = _initSY1},
-                                    new TableCell { Control = _initSY2}}}}},
+                            _standardWorldOptions,
+                            _mazeWorldOptions,
                             LabelInput(50, "Ratio", _initRatio12),
                             HStretched(_newWorldButton),
                             new Label {
@@ -303,6 +355,7 @@ namespace PathFinder.Gui.Forms
                                     new TableCell { Control = "Step Size"}}},
                                 new TableRow { Cells = {
                                     new TableCell(_traverserSelector), new TableCell(_stepSizeStepper)}}}},
+                            LabelInput(80, "World Type", _worldGenType),
                             new Label {
                                 Text = "Commands",
                                 Font = sectionFont},

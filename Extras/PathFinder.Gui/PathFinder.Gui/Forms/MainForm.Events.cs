@@ -23,6 +23,7 @@ namespace PathFinder.Gui.Forms
             
             _solverSelector.TextChanged += OnSolverSelectorChanged;
             _traverserSelector.TextChanged += OnTraverserChanged;
+            _worldGenType.TextChanged += WorldGenChanged;
             
             _newSeedButton.Click += OnNewSeedClick;
             _newPointsButton.Click += OnNewPointsClick;
@@ -49,6 +50,10 @@ namespace PathFinder.Gui.Forms
             
             _initRatio12.ValueChanged += _worldInitChanged.Handle;
             
+            _initML.ValueChanged += _worldInitChanged.Handle;
+            _initMT.ValueChanged += _worldInitChanged.Handle;
+            _initMF.ValueChanged += _worldInitChanged.Handle;
+            
             _newWorldButton.Click += OnNewWorldClick;
             
             _worldSeed.KeyUp += OnWorldSeedChanged;
@@ -60,6 +65,15 @@ namespace PathFinder.Gui.Forms
             _scaleSelectorChangedDebounce.Fired += OnScaleSelectorChanged;
             _moveCostSelectorChangedDebounce.Fired += OnMoveCostSelectorChanged;
             _worldInitChanged.Fired += OnWorldInitChanged;
+        }
+
+        private void WorldGenChanged(object? sender, EventArgs e)
+        {
+            _standardWorldOptions.Visible = _worldGenType.Text == "Standard";
+            _initRatio12.Visible = _worldGenType.Text == "Standard";
+            _mazeWorldOptions.Visible = _worldGenType.Text == "Maze";
+            KillRunning();
+            MakeWorld();
         }
 
         private void DoBlindSearchChanged(object? sender, EventArgs e)
@@ -99,6 +113,11 @@ namespace PathFinder.Gui.Forms
             _initSY1.Value = random.Next(100);
             _initSY2.Value = random.Next(100);
             _initRatio12.Value = random.Next(100);
+            
+            _initML.Value = random.Next(100);
+            _initMT.Value = random.Next(100);
+            _initMF.Value = random.Next(100);
+            
             KillRunning();
             _mapWidget.Clear();
         }
@@ -162,9 +181,8 @@ namespace PathFinder.Gui.Forms
         private void OnMoveCostSelectorChanged(object sender, EventArgs args)
         {
             if (_world == null) return;
-
-            _world.MoveCost = _moveCostStepper.Value;
-            Reset();
+            KillRunning();
+            MakeWorld();
         }
         private void OnScaleSelectorChanged(object sender, EventArgs args)
         {

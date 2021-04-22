@@ -10,7 +10,7 @@ namespace SimpleWorld.Map
 {
     public class World
     {
-        public struct InitializationOptions
+        public struct StandardInitializationOptions
         {
             public double F1;
             public double L1;
@@ -27,7 +27,14 @@ namespace SimpleWorld.Map
             public double Ratio12;
         }
 
-        public static readonly InitializationOptions DefaultInit = new ()
+        public struct MazeInitializationOptions
+        {
+            public int MLW;
+            public int MTW;
+            public int MFW;
+        }
+
+        public static readonly StandardInitializationOptions DefaultStandardInit = new ()
         {
             F1 = 2,
             L1 = 2,
@@ -39,27 +46,51 @@ namespace SimpleWorld.Map
             P2 = 0.25d,
             SX2 = 1, SY2 = 1,
             
-            Ratio12 = 0,
+            Ratio12 = 0
+        };
+
+        public static readonly MazeInitializationOptions DefaultMazeInit = new()
+        {
+            MLW = 50,
+            MTW = 50,
+            MFW = 50
         };
         
-        public double MoveCost { get; set; }
+        public double MoveCost { get; private set; }
 
         public readonly int XSize;
         public readonly int YSize;
 
+        public readonly WorldType Type;
+
         private readonly Random _random;
         private readonly Position[][] _allNodes;
+        private Maze _maze;
 
-        public World(int xSize, int ySize, Random random = null, InitializationOptions? init = null, double moveCost = 1)
+        private World(int xSize, int ySize, double moveCost, Random random = null)
         {
             XSize = xSize;
             YSize = ySize;
             MoveCost = moveCost;
             _allNodes = new Position[XSize][];
+            for (var i = 0; i < XSize; i++)
+                _allNodes[i] = new Position[YSize];
 
             _random = random ?? new Random();
-            
-            Standard(init ?? DefaultInit);
+        }
+        
+        public World(int xSize, int ySize, double moveCost, StandardInitializationOptions init, Random random = null) 
+            : this(xSize, ySize, moveCost, random)
+        {
+            Type = WorldType.Standard;
+            Standard(init);
+        }
+
+        public World(int xSize, int ySize, double moveCost, MazeInitializationOptions init, Random random = null) 
+            : this(xSize, ySize, moveCost, random)
+        {
+            Type = WorldType.Maze;
+            Maze(init);
         }
 
         [CanBeNull]
@@ -73,33 +104,57 @@ namespace SimpleWorld.Map
 
         public IEnumerable<Position> GetAllNodes()
         {
-            return _allNodes.SelectMany(a => a).Where(a => a != null);
+	        return _allNodes.SelectMany(a => a).Where(a => a != null);
         }
 
-        // TODO - Implement more types of world
-        // ReSharper disable UnusedMember.Local
-        // ReSharper disable UnusedParameter.Local
-        // ReSharper disable UnusedVariable
-        private void Maze(int cellSize = 5, int wallSize = 1)
+        private void Maze(MazeInitializationOptions init)
         {
-            var width = XSize / cellSize;
-            var height = YSize / cellSize;
 
-            var cx = _random.Next(width);
-            var cy = _random.Next(height);
-        }
-        // ReSharper restore UnusedVariable
-        // ReSharper restore UnusedParameter.Local
-        // ReSharper enable UnusedMember.Local
+            var cols = XSize / 3;
+            var rows = YSize / 3;
+            _maze = new Maze(cols, rows, _random, 0, 0)
+            {
+                LineWeight = init.MLW, 
+                TurnWeight = init.MTW, 
+                ForkWeight = init.MFW
+            };
+            _maze.Generate();
+            for (var x = 0; x < cols; x++)
+			{
+				for (var y = 0; y < rows; y++)
+				{
+					var xOff = x * 3;
+					var yOff = y * 3;
+					var type = _maze.Grid[x, y];
+                    if (type != 0)
+					    _allNodes[xOff + 1][yOff + 1] = new Position(this, xOff + 1, yOff + 1, 1);
+					if ((type & (byte)Direction.North) != 0)
+					{
+						_allNodes[xOff + 1][yOff] = new Position(this, xOff + 1, yOff, 1);
+					}
+					if ((type & (byte)Direction.South) != 0)
+					{
+						_allNodes[xOff + 1][yOff + 2] = new Position(this, xOff + 1, yOff + 2, 1);
+					}
+					if ((type & (byte)Direction.West) != 0)
+					{
+						_allNodes[xOff][yOff + 1] = new Position(this, xOff, yOff + 1, 1);
+					}
+					if ((type & (byte)Direction.East) != 0)
+					{
+						_allNodes[xOff + 2][yOff + 1] = new Position(this, xOff + 2, yOff + 1, 1);
+					}
+				}
+			}
+		} // Generate
 
-        private void Standard(InitializationOptions initializationOptions)
+        private void Standard(StandardInitializationOptions standardInitializationOptions)
         {
             var deadSpaceNoiseMap = DeadSpaceNoiseMap();
-            var hillsNoiseMap = HillsNoiseMap(initializationOptions);
+            var hillsNoiseMap = HillsNoiseMap(standardInitializationOptions);
             
             for (var x = 0; x < XSize; x++)
             {
-                _allNodes[x] = new Position[YSize];
                 for (var y = 0; y < YSize; y++)
                 {
                     if (deadSpaceNoiseMap.GetValue(x, y) > 0.5) continue;
@@ -130,7 +185,7 @@ namespace SimpleWorld.Map
             return noiseMap;
         }
 
-        private NoiseMap HillsNoiseMap(InitializationOptions initializationOptions)
+        private NoiseMap HillsNoiseMap(StandardInitializationOptions standardInitializationOptions)
         {
             var noiseMap = new NoiseMap();
             var noiseMapBuilder = new PlaneNoiseMapBuilder {
@@ -140,32 +195,38 @@ namespace SimpleWorld.Map
                         LowerBound = -1,
                         UpperBound = 1,
                         Source0 = new ScalePoint { 
-                            XScale = initializationOptions.SX1, 
-                            ZScale = initializationOptions.SY1,
+                            XScale = standardInitializationOptions.SX1, 
+                            ZScale = standardInitializationOptions.SY1,
                             Source0 = new Perlin {
-                                Frequency = initializationOptions.F1,
-                                Lacunarity = initializationOptions.L1,
+                                Frequency = standardInitializationOptions.F1,
+                                Lacunarity = standardInitializationOptions.L1,
                                 Quality = NoiseQuality.Fast,
-                                Persistence = initializationOptions.P1,
+                                Persistence = standardInitializationOptions.P1,
                                 Seed = _random.Next() }}},
                     Source1 = new Clamp {
                         LowerBound = -1,
                         UpperBound = 1,
                         Source0 = new ScalePoint {
-                            XScale = initializationOptions.SX2, 
-                            ZScale = initializationOptions.SY2,
+                            XScale = standardInitializationOptions.SX2, 
+                            ZScale = standardInitializationOptions.SY2,
                             Source0 = new Perlin {
-                                Frequency = initializationOptions.F2,
-                                Lacunarity = initializationOptions.L2,
+                                Frequency = standardInitializationOptions.F2,
+                                Lacunarity = standardInitializationOptions.L2,
                                 Quality = NoiseQuality.Fast,
-                                Persistence = initializationOptions.P2,
+                                Persistence = standardInitializationOptions.P2,
                                 Seed = _random.Next() }}},
-                    Control = new Constant {ConstantValue = initializationOptions.Ratio12}}};
+                    Control = new Constant {ConstantValue = standardInitializationOptions.Ratio12}}};
             
             noiseMapBuilder.SetDestSize(XSize, YSize);
             noiseMapBuilder.SetBounds(-3, 3, -2, 2);
             noiseMapBuilder.Build();
             return noiseMap;
         }
+    }
+
+    public enum WorldType
+    {
+        Maze,
+        Standard
     }
 }

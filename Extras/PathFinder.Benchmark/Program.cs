@@ -19,10 +19,12 @@ namespace PathFinder.Benchmark
                     a.Greed = double.Parse(args[2]);
                     a.Seed = 333333;
                     a.MoveFactor = 1.0;
-                    a.Setup();
                     JetBrains.Profiler.Api.MeasureProfiler.StartCollectingData();
-                    a.Baseline();
+                    a.SetupAsMaze();
                     JetBrains.Profiler.Api.MeasureProfiler.StopCollectingData();
+                    // JetBrains.Profiler.Api.MeasureProfiler.StartCollectingData();
+                    // a.Baseline();
+                    // JetBrains.Profiler.Api.MeasureProfiler.StopCollectingData();
                     break;
             }
         }

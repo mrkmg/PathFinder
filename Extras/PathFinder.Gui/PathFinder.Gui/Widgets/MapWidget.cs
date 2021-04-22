@@ -19,7 +19,17 @@ namespace PathFinder.Gui.Widgets
         public void DrawWorld(World world)
         {
             if (world == null) return;
-            DrawAllPoints(0, world.GetAllNodes().AsMapDrawPoints());
+            switch (world.Type)
+            {
+                case WorldType.Maze:
+                    DrawAllPoints(0, world.GetAllNodes().AsMazeDrawPoints());
+                    break;
+                case WorldType.Standard:
+                    DrawAllPoints(0, world.GetAllNodes().AsMapDrawPoints());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void DrawWorldPoints(FrameData frameData)
@@ -73,19 +83,26 @@ namespace PathFinder.Gui.Widgets
 
         public void DrawMarkers(Position startPoint, Position endPoint)
         {
-            var p1 = startPoint
-                .ToMarkerPoints(10 / Scale)
-                .Where(IsPointInBitmap)
-                .Select(xy => xy.AsMarkerDrawPoint());
+            if (startPoint != null)
+            {
+                var p1 = startPoint
+                    .ToMarkerPoints(10 / Scale)
+                    .Where(IsPointInBitmap)
+                    .Select(xy => xy.AsMarkerDrawPoint());
 
-            DrawAllPoints(2, p1);
+                DrawAllPoints(2, p1);
+            }
 
-            var p2 = endPoint
-                .ToMarkerPoints(10 / Scale)
-                .Where(IsPointInBitmap)
-                .Select(xy => xy.AsMarkerDrawPoint());
+            if (endPoint != null)
+            {
 
-            DrawAllPoints(2, p2);
+                var p2 = endPoint
+                    .ToMarkerPoints(10 / Scale)
+                    .Where(IsPointInBitmap)
+                    .Select(xy => xy.AsMarkerDrawPoint());
+
+                DrawAllPoints(2, p2);
+            }
         }
 
         public void ClearPath() => ClearLayer(3);
@@ -130,6 +147,9 @@ namespace PathFinder.Gui.Widgets
             };
             return Color.FromArgb(0, intensity, 0);
         }
+
+        internal static IEnumerable<DrawPoint> AsMazeDrawPoints(this IEnumerable<Position> positions)
+            => positions.Select(p => new DrawPoint(p.X, p.Y, Colors.Gray));
         
         internal static IEnumerable<DrawPoint> AsMapDrawPoints(this IEnumerable<Position> positions) 
             => positions.Select(AsMapDrawPoint);
