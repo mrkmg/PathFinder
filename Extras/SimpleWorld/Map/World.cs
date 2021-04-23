@@ -29,9 +29,11 @@ namespace SimpleWorld.Map
 
         public struct MazeInitializationOptions
         {
-            public int MLW;
-            public int MTW;
-            public int MFW;
+            public int LineWeight;
+            public int TurnWeight;
+            public int ForkWeight;
+            public bool FillEmpty;
+            public bool IncludeDemoRooms;
         }
 
         public static readonly StandardInitializationOptions DefaultStandardInit = new ()
@@ -51,9 +53,9 @@ namespace SimpleWorld.Map
 
         public static readonly MazeInitializationOptions DefaultMazeInit = new()
         {
-            MLW = 50,
-            MTW = 50,
-            MFW = 50
+            LineWeight = 50,
+            TurnWeight = 50,
+            ForkWeight = 50
         };
         
         public double MoveCost { get; private set; }
@@ -109,44 +111,104 @@ namespace SimpleWorld.Map
 
         private void Maze(MazeInitializationOptions init)
         {
-
+            static bool IsFullWidth(NodeFlag self, NodeFlag other) =>
+                self.IsRoomEdge() && other.IsRoomFloor() || 
+                self.IsRoomExit() && !other.IsRoom() ||
+                !self.IsRoom() && other.IsRoomExit();
+            
             var cols = XSize / 3;
             var rows = YSize / 3;
-            _maze = new Maze(cols, rows, _random, 0, 0)
+            _maze = new Maze(cols, rows, _random)
             {
-                LineWeight = init.MLW, 
-                TurnWeight = init.MTW, 
-                ForkWeight = init.MFW
+                LineWeight = init.LineWeight, 
+                TurnWeight = init.TurnWeight, 
+                ForkWeight = init.ForkWeight,
+                FillEmpty = init.FillEmpty
             };
+            if (init.IncludeDemoRooms)
+            {
+                if (cols > 20 && rows > 20)
+                    _maze.AddRoom(
+                        new [] { (3,3), (3, 20), (20, 20), (20, 3) }, 
+                        new [] { (3, 10), (10, 3), (20, 10), (10, 20) }
+                    );
+                if (cols > 100 && rows > 100)
+                    _maze.AddRoom(
+                        new [] { (50, 50), (50, 80), (80, 80), (80, 90), (90, 90), (90, 50) },
+                        new [] { (50, 51) }
+                    );
+                if (cols > 120 && rows > 40)
+                    _maze.AddRoom(
+                        new [] { (100, 20), (100, 25), (105, 25), (105, 30), (100, 30), (100, 40), (120, 40),
+                            (120, 35), (115, 35), (115, 30), (120, 30), (120, 20) },
+                        new [] { (105, 26), (115, 33) }
+                    );
+            }
             _maze.Generate();
             for (var x = 0; x < cols; x++)
-			{
-				for (var y = 0; y < rows; y++)
-				{
-					var xOff = x * 3;
-					var yOff = y * 3;
-					var type = _maze.Grid[x, y];
-                    if (type != 0)
-					    _allNodes[xOff + 1][yOff + 1] = new Position(this, xOff + 1, yOff + 1, 1);
-					if ((type & (byte)Direction.North) != 0)
-					{
-						_allNodes[xOff + 1][yOff] = new Position(this, xOff + 1, yOff, 1);
-					}
-					if ((type & (byte)Direction.South) != 0)
-					{
-						_allNodes[xOff + 1][yOff + 2] = new Position(this, xOff + 1, yOff + 2, 1);
-					}
-					if ((type & (byte)Direction.West) != 0)
-					{
-						_allNodes[xOff][yOff + 1] = new Position(this, xOff, yOff + 1, 1);
-					}
-					if ((type & (byte)Direction.East) != 0)
-					{
-						_allNodes[xOff + 2][yOff + 1] = new Position(this, xOff + 2, yOff + 1, 1);
-					}
-				}
-			}
-		} // Generate
+            for (var y = 0; y < rows; y++)
+            {
+                var xOff = x * 3;
+                var yOff = y * 3;
+                var type = _maze.Grid[x, y];
+                if (type != 0)
+                    _allNodes[xOff + 1][yOff + 1] = new Position(this, xOff + 1, yOff + 1, 1);
+                else
+                    continue;
+
+                if (type.IsRoomFloor())
+                {
+                    _allNodes[xOff][yOff] = new Position(this, xOff, yOff, 1);
+                    _allNodes[xOff + 2][yOff] = new Position(this, xOff + 2, yOff, 1);
+                    _allNodes[xOff][yOff + 2] = new Position(this, xOff, yOff + 2, 1);
+                    _allNodes[xOff + 2][yOff + 2] = new Position(this, xOff + 2, yOff + 2, 1);
+                }
+
+                if (type.Has(NodeFlag.North))
+                {
+                    _allNodes[xOff + 1][yOff] = new Position(this, xOff + 1, yOff, 1);
+
+                    if (IsFullWidth(type, _maze.Grid[x, y - 1]))
+                    {
+                        _allNodes[xOff][yOff] = new Position(this, xOff, yOff, 1);
+                        _allNodes[xOff + 2][yOff] = new Position(this, xOff + 2, yOff, 1);
+                    }
+                }
+
+                if (type.Has(NodeFlag.South))
+                {
+                    _allNodes[xOff + 1][yOff + 2] = new Position(this, xOff + 1, yOff + 2, 1);
+                    
+                    if (IsFullWidth(type, _maze.Grid[x, y + 1]))
+                    {
+                        _allNodes[xOff][yOff + 2] = new Position(this, xOff, yOff + 2, 1);
+                        _allNodes[xOff + 2][yOff + 2] = new Position(this, xOff + 2, yOff + 2, 1);
+                    }
+                }
+
+                if (type.Has(NodeFlag.West))
+                {
+                    _allNodes[xOff][yOff + 1] = new Position(this, xOff, yOff + 1, 1);
+                    
+                    if (IsFullWidth(type, _maze.Grid[x - 1, y]))
+                    {
+                        _allNodes[xOff][yOff] = new Position(this, xOff, yOff, 1);
+                        _allNodes[xOff][yOff + 2] = new Position(this, xOff, yOff + 2, 1);
+                    }
+                }
+
+                if (type.Has(NodeFlag.East))
+                {
+                    _allNodes[xOff + 2][yOff + 1] = new Position(this, xOff + 2, yOff + 1, 1);
+                    
+                    if (IsFullWidth(type, _maze.Grid[x + 1, y]))
+                    {
+                        _allNodes[xOff + 2][yOff] = new Position(this, xOff + 2, yOff, 1);
+                        _allNodes[xOff + 2][yOff + 2] = new Position(this, xOff + 2, yOff + 2, 1);
+                    }
+                }
+            }
+        }
 
         private void Standard(StandardInitializationOptions standardInitializationOptions)
         {

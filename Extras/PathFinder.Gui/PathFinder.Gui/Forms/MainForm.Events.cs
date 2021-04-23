@@ -53,6 +53,8 @@ namespace PathFinder.Gui.Forms
             _initML.ValueChanged += _worldInitChanged.Handle;
             _initMT.ValueChanged += _worldInitChanged.Handle;
             _initMF.ValueChanged += _worldInitChanged.Handle;
+            _initMFE.CheckedChanged += _worldInitChanged.Handle;
+            _initMDR.CheckedChanged += _worldInitChanged.Handle;
             
             _newWorldButton.Click += OnNewWorldClick;
             
@@ -116,24 +118,21 @@ namespace PathFinder.Gui.Forms
 
         private void OnNewWorldClick(object? sender, EventArgs e)
         {
-            var seed = new Random().Next(100000, 999999);
-            _worldSeed.Text = seed.ToString();
-            var random = new Random(seed);
-            _initF1.Value = random.Next(50);
-            _initF2.Value = random.Next(50) + 50;
-            _initL1.Value = random.Next(100);
-            _initL2.Value = random.Next(100);
-            _initP1.Value = random.Next(100);
-            _initP2.Value = random.Next(100);
-            _initSX1.Value = random.Next(100);
-            _initSX2.Value = random.Next(100);
-            _initSY1.Value = random.Next(100);
-            _initSY2.Value = random.Next(100);
-            _initRatio12.Value = random.Next(100);
+            _initF1.Value = StaticRandom.Next(StandardOptionsMax/2);
+            _initF2.Value = StaticRandom.Next(StandardOptionsMax/2) + StandardOptionsMax/2;
+            _initL1.Value = StaticRandom.Next(StandardOptionsMax);
+            _initL2.Value = StaticRandom.Next(StandardOptionsMax);
+            _initP1.Value = StaticRandom.Next(StandardOptionsMax);
+            _initP2.Value = StaticRandom.Next(StandardOptionsMax);
+            _initSX1.Value = StaticRandom.Next(StandardOptionsMax);
+            _initSX2.Value = StaticRandom.Next(StandardOptionsMax);
+            _initSY1.Value = StaticRandom.Next(StandardOptionsMax);
+            _initSY2.Value = StaticRandom.Next(StandardOptionsMax);
+            _initRatio12.Value = StaticRandom.Next(StandardOptionsMax);
             
-            _initML.Value = random.Next(100);
-            _initMT.Value = random.Next(100);
-            _initMF.Value = random.Next(100);
+            _initML.Value = StaticRandom.Next(MazeOptionsMax);
+            _initMT.Value = StaticRandom.Next(MazeOptionsMax);
+            _initMF.Value = StaticRandom.Next(MazeOptionsMax);
             
             KillRunning();
             _mapWidget.Clear();

@@ -8,7 +8,7 @@ namespace PathFinder.Gui.Forms
     public partial class MainForm : Form
     {
         private static bool IsGtk => Application.Instance.Platform.IsGtk;
-        private static Random IRand = new Random();
+        private static readonly Random StaticRandom = new ();
         
         private readonly MapWidget _mapWidget = new()
         {
@@ -75,88 +75,88 @@ namespace PathFinder.Gui.Forms
 
         private readonly Slider _initF1 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Frequency Layer 1"
         }; 
 
         private readonly Slider _initF2 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Frequency Layer 2"
         }; 
 
         private readonly Slider _initL1 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Lacunarity Layer 1"
         }; 
 
         private readonly Slider _initL2 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Lacunarity Layer 2"
         }; 
 
         private readonly Slider _initP1 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Persistence Layer 1"
         }; 
 
         private readonly Slider _initP2 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Persistence Layer 2"
         }; 
 
         private readonly Slider _initSX1 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "X Scale Layer 1"
         }; 
 
         private readonly Slider _initSX2 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "X Scale Layer 2"
         }; 
 
         private readonly Slider _initSY1 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Y Scale Layer 1"
         }; 
 
         private readonly Slider _initSY2 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             Width = 80,
             ToolTip = "Y Scale Layer 2"
         }; 
 
         private readonly Slider _initRatio12 = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = StandardOptionsMax,
+            Value = StaticRandom.Next(StandardOptionsMax),
             ToolTip = "Ratio between Layer 1 and 2"
         }; 
         
@@ -164,26 +164,36 @@ namespace PathFinder.Gui.Forms
 
         private readonly Slider _initML = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = MazeOptionsMax,
+            Value = StaticRandom.Next(MazeOptionsMax),
             Width = 80,
             ToolTip = "Maze Line Weight"
         }; 
 
         private readonly Slider _initMT = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = MazeOptionsMax,
+            Value = StaticRandom.Next(MazeOptionsMax),
             Width = 80,
             ToolTip = "Maze Turn Weight"
         }; 
 
         private readonly Slider _initMF = new () {
             MinValue = 0,
-            MaxValue = 100,
-            Value = IRand.Next(100),
+            MaxValue = MazeOptionsMax,
+            Value = StaticRandom.Next(MazeOptionsMax),
             ToolTip = "Maze Fork Weight"
-        }; 
+        };
+
+        private readonly CheckBox _initMFE = new()
+        {
+            ToolTip = "Maze Fill Empty"
+        };
+
+        private readonly CheckBox _initMDR = new()
+        {
+            ToolTip = "Include Demo Rooms in Maze"
+        };
         
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
         private readonly CheckBox _doBlindSearch = new() {Checked = false};
@@ -288,16 +298,24 @@ namespace PathFinder.Gui.Forms
                     new TableCell { Control = _initSY1},
                     new TableCell { Control = _initSY2}}}}};
             
-            _mazeWorldOptions = new TableLayout {Rows ={
-                new TableRow { Cells = {
-                    new TableCell { Control = "Line"},
-                    new TableCell { Control = _initML}}},
-                new TableRow { Cells = {
-                    new TableCell { Control = "Turn"},
-                    new TableCell { Control = _initMT}}},
-                new TableRow { Cells = {
-                    new TableCell { Control = "Fork"},
-                    new TableCell { Control = _initMF}}}}};
+            _mazeWorldOptions = new TableLayout {
+                Visible = false,
+                Rows ={
+                    new TableRow { Cells = {
+                        new TableCell { Control = "Line"},
+                        new TableCell { Control = _initML}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "Turn"},
+                        new TableCell { Control = _initMT}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "Fork"},
+                        new TableCell { Control = _initMF}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "Fill"},
+                        new TableCell { Control = _initMFE}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "Rooms"},
+                        new TableCell { Control = _initMDR}}},}};
             
             _traverserTable = new TableLayout { Rows = {
                 new TableRow { Cells = {

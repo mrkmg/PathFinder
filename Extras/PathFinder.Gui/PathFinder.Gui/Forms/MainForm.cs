@@ -9,6 +9,10 @@ namespace PathFinder.Gui.Forms
 {
     public partial class MainForm
     {
+        private const int MazeOptionsMax = 20;
+        private const double MazeOptionsScale = 2.5;
+        private const int StandardOptionsMax = 100;
+        
         private SolverRunnerThread _runnerThread;
         private World _world;
         private Position _startPoint;
@@ -99,22 +103,26 @@ namespace PathFinder.Gui.Forms
                 "Standard" => new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, _moveCostStepper.Value,
                     new World.StandardInitializationOptions
                     {
-                        F1 = (double) _initF1.Value / 100 * 3d,
-                        L1 = (double) _initL1.Value / 100 * 3d + 1d,
-                        P1 = (double) _initP1.Value / 100,
-                        SX1 = (double) _initSX1.Value / 100 * 5d,
-                        SY1 = (double) _initSY1.Value / 100 * 5d,
-                        F2 = (double) _initF2.Value / 100 * 10d,
-                        L2 = (double) _initL2.Value / 100 * 3d + 1d,
-                        P2 = (double) _initP2.Value / 100,
-                        SX2 = (double) _initSX2.Value / 100 * 5d,
-                        SY2 = (double) _initSY2.Value / 100 * 5d,
-                        Ratio12 = (double) _initRatio12.Value / 100 * 4d - 2d,
+                        F1 = (double) _initF1.Value / StandardOptionsMax * 3d,
+                        L1 = (double) _initL1.Value / StandardOptionsMax * 3d + 1d,
+                        P1 = (double) _initP1.Value / StandardOptionsMax,
+                        SX1 = (double) _initSX1.Value / StandardOptionsMax * 5d,
+                        SY1 = (double) _initSY1.Value / StandardOptionsMax * 5d,
+                        F2 = (double) _initF2.Value / StandardOptionsMax * 10d,
+                        L2 = (double) _initL2.Value / StandardOptionsMax * 3d + 1d,
+                        P2 = (double) _initP2.Value / StandardOptionsMax,
+                        SX2 = (double) _initSX2.Value / StandardOptionsMax * 5d,
+                        SY2 = (double) _initSY2.Value / StandardOptionsMax * 5d,
+                        Ratio12 = (double) _initRatio12.Value / StandardOptionsMax * 4d - 2d,
                     }, new Random(int.Parse(_worldSeed.Text))),
                 "Maze" => new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, _moveCostStepper.Value,
                     new World.MazeInitializationOptions
                     {
-                        MLW = _initML.Value, MTW = _initMT.Value, MFW = _initMF.Value,
+                        LineWeight = (int) Math.Pow(_initML.Value, MazeOptionsScale), 
+                        TurnWeight = (int) Math.Pow(_initMT.Value, MazeOptionsScale), 
+                        ForkWeight = (int) Math.Pow(_initMF.Value, MazeOptionsScale),
+                        FillEmpty = _initMFE.Checked ?? false,
+                        IncludeDemoRooms = _initMDR.Checked ?? false,
                     }, new Random(int.Parse(_worldSeed.Text))),
                 _ => _world
             };
