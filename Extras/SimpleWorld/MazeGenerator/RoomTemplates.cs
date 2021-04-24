@@ -10,6 +10,7 @@ namespace SimpleWorld.MazeGenerator
     
     internal static class RoomTemplates
     {
+        
         public static TemplateAndExits Square = (
             new XYList { (-2, -2), (2, -2), (2, 2), (-2, 2) },
             new XYList { (0, -2), (-2, 0), (0, 2), (2, 0)}   
@@ -34,14 +35,27 @@ namespace SimpleWorld.MazeGenerator
             new XYList { (-1, -4), (-1, -1), (-4, -1), (-4, 1), (-1, 1), (-1, 4), (1, 4), (1, 1), (4, 1), (4, -1), (1, -1), (1, -4) },
             new XYList { (0, 4), (0, -4), (4, 0), (-4, 0) }
         );
-
-        // TODO: very inefficient, make more performant
-        public static (int X, int Y) Min(this XYList template) =>
-            (template.Min(point => point.X), template.Min(point => point.Y));
         
-        // TODO: very inefficient, make more performant
-        public static (int X, int Y) Max(this XYList template) =>
-            (template.Max(point => point.X), template.Max(point => point.Y));
+        public static readonly TemplateAndExits[] AllTemplates =
+        {
+            Square, Plus, H, L, U
+        };
+
+        public static (int minX, int minY, int maxX, int maxY) MinMax(this XYIEnumerable template)
+        {
+            var minX = int.MaxValue;
+            var minY = int.MaxValue;
+            var maxX = int.MinValue;
+            var maxY = int.MinValue;
+            foreach (var (x, y) in template)
+            {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+            }
+            return (minX, minY, maxX, maxY);
+        }
         
         public static TemplateAndExits Scale(this TemplateAndExits te, double amount) =>
             (te.Item1.Scale(amount).ToList(), te.Item2.Scale(amount).ToList());

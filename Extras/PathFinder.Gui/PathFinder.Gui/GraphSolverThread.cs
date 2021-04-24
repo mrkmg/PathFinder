@@ -55,7 +55,7 @@ namespace PathFinder.Gui
                     }
                 }
 
-                Thread.Sleep(5);
+                Thread.Sleep(1);
             }
             _frameStopwatch.Stop();
             _thread = null;

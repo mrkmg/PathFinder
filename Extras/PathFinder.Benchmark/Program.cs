@@ -1,4 +1,6 @@
-﻿using BenchmarkDotNet.Running;
+﻿using System;
+using BenchmarkDotNet.Running;
+using static JetBrains.Profiler.Api.MeasureProfiler;
 
 namespace PathFinder.Benchmark
 {
@@ -13,20 +15,40 @@ namespace PathFinder.Benchmark
                     BenchmarkRunner.Run<AStarBenchmark>();
                     break;
                 case "profile":
-                    JetBrains.Profiler.Api.MeasureProfiler.StopCollectingData();
-                    var a = new AStarBenchmark();
-                    a.Size = int.Parse(args[1]);
-                    a.Greed = double.Parse(args[2]);
-                    a.Seed = 333333;
-                    a.MoveFactor = 1.0;
-                    JetBrains.Profiler.Api.MeasureProfiler.StartCollectingData();
-                    a.SetupAsMaze();
-                    JetBrains.Profiler.Api.MeasureProfiler.StopCollectingData();
-                    // JetBrains.Profiler.Api.MeasureProfiler.StartCollectingData();
-                    // a.Baseline();
-                    // JetBrains.Profiler.Api.MeasureProfiler.StopCollectingData();
+                    Profile(int.Parse(args[1]), double.Parse(args[2]), args[3], args[4]);
                     break;
             }
+        }
+
+        public static void Profile(int size, double greed, string type, string profileType)
+        {
+
+            var a = new AStarBenchmark
+            {
+                Size = size, 
+                Greed = greed, 
+                Seed = 333333, 
+                MoveFactor = 1.0
+            };
+
+            if (profileType == "setup") StartCollectingData();
+            switch (type)
+            {
+                case "standard":
+                    a.SetupStandard();
+                    break;
+                case "maze":
+                    a.SetupAsMaze();
+                    break;
+                default:
+                    throw new ArgumentException("Unknown profile type", nameof(profileType));
+                    
+            }
+            if (profileType == "setup") StopCollectingData();
+            
+            if (profileType == "solve") StartCollectingData();
+            a.Baseline();
+            if (profileType == "solve") StopCollectingData();
         }
     }
 }

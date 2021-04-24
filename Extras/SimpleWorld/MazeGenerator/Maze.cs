@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace SimpleWorld.MazeGenerator
 {
@@ -33,12 +34,13 @@ namespace SimpleWorld.MazeGenerator
         public readonly NodeFlag[,] Grid;
         
         private readonly Random _random;
-        private readonly HashSet<(int X, int Y)> _open = new (new NodeComparer());
+        private readonly C5.HashSet<(int X, int Y)> _open = new (new NodeComparer());
         private readonly List<(int MinX, int MinY, int MaxX, int MaxY)> _roomRects = new ();
         private readonly Queue<(int X, int Y, NodeFlag Direction)> _openPathExits = new ();
         private readonly Queue<(int X, int Y, NodeFlag Direction)> _roomExits = new ();
-
-
+        
+        private static readonly NodeFlag[] Directions = {NodeFlag.North, NodeFlag.South, NodeFlag.West, NodeFlag.East};
+        
         public Maze(int width, int height, Random random = null, int? startX = null, int? startY = null)
         {
             Width = width;
@@ -59,15 +61,7 @@ namespace SimpleWorld.MazeGenerator
                 Within(px, minx, maxx) && Within(py, miny, maxy);
             const int buffer = 3;
 
-            var templateAndExits = _random.Next(5) switch
-            {
-                0 => RoomTemplates.Square,
-                1 => RoomTemplates.H,
-                2 => RoomTemplates.L,
-                3 => RoomTemplates.U,
-                4 => RoomTemplates.Plus,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            var templateAndExits = RoomTemplates.AllTemplates[_random.Next(RoomTemplates.AllTemplates.Length)];
             
             for (var triesLeft = 50; triesLeft > 0; triesLeft--)
             {
@@ -82,8 +76,11 @@ namespace SimpleWorld.MazeGenerator
                         Height / 2 + _random.Next(-(Height / 2), Height / 2)));
                 
                 // get min/max with buffer of room
-                var (minX, minY) = template.Min().Translate((-buffer, -buffer));
-                var (maxX, maxY) = template.Max().Translate((buffer, buffer));
+                var (minX, minY, maxX, maxY) = template.MinMax();
+                minX -= buffer;
+                minY -= buffer;
+                maxX += buffer;
+                maxY += buffer;
                 
                 // the room is too close to the center
                 if (PointWithinRect(StartX, StartY, minX, minY, maxX, maxY)) continue;
@@ -125,58 +122,25 @@ namespace SimpleWorld.MazeGenerator
         /// Adds the given room to the maze. 
         /// </summary>
         /// <param name="corners">a list of points which represents the corners.</param>
-        /// <param name="exits">a collection of points which represents exits of the room.</param>
+        /// <param name="exits">points which represents exits of the room.</param>
         /// <exception cref="ArgumentException"></exception>
-        public void AddRoom(IList<(int X, int Y)> corners, ICollection<(int X, int Y)> exits)
+        public void AddRoom(IList<(int X, int Y)> corners, IEnumerable<(int X, int Y)> exits)
         {
             var currentPoint = corners[corners.Count - 1];
 
-            var (minX, minY) = corners[0];
-            var (maxX, maxY) = corners[0];
             var wallPoints = new HashSet<(int, int)>(new NodeComparer());
             foreach (var targetPoint in corners)
             {
                 if (currentPoint.X != targetPoint.X && currentPoint.Y != targetPoint.Y)
                     throw new ArgumentException("Invalid edges. Edges must not be diagonal", nameof(corners));
-                if (currentPoint.X < minX) minX = currentPoint.X;
-                if (currentPoint.X > maxX) maxX = currentPoint.X;
-                if (currentPoint.Y < minY) minY = currentPoint.Y;
-                if (currentPoint.Y > maxY) maxY = currentPoint.Y;
                 var points = MakeRoomWall(currentPoint, targetPoint);
                 foreach (var p in points) wallPoints.Add(p);
                 currentPoint = targetPoint;
             }
+            var (minX, minY, maxX, maxY) = wallPoints.MinMax();
             _roomRects.Add((minX, minY, maxX, maxY));
-
-            (int X, int Y)? insidePoint = null;
-            for (var x = minX + 1; x < maxX && insidePoint == null; x++)
-            for (var y = minY + 1; y < maxY && insidePoint == null; y++)
-            {
-                if (Grid[x, y] != 0) continue;
-                var intersections = 0;
-                var lastWasIntersection = false;
-                for (var tX = x; tX <= maxX; tX++)
-                {
-                    if (wallPoints.Contains((tX, y)))
-                    {
-                        if (!lastWasIntersection)
-                            intersections++;
-                        lastWasIntersection = true;
-                    }
-                    else
-                    {
-                        lastWasIntersection = false;
-                    }
-                }
-
-                if (intersections % 2 == 1) 
-                    insidePoint = (x, y);
-            }
-
-            if (!insidePoint.HasValue) return;
+            TryFillRoom(minX, maxX, minY, maxY, wallPoints, exits);
             
-            // makes exits a hashset to improve lookup performance
-            FillRoom(insidePoint.Value.X, insidePoint.Value.Y, new HashSet<(int X, int Y)>(exits, new NodeComparer()));
         }
 
         public void Generate()
@@ -196,11 +160,37 @@ namespace SimpleWorld.MazeGenerator
             _openPathExits.Enqueue((StartX, StartY, Grid[StartX, StartY]));
             
             ProcessOpenExits();
-            
-            if (FillEmpty)
-                CloseEmptyNodes();
-            
+            if (FillEmpty) CloseEmptyNodes();
             ProcessRoomExits();
+        }
+
+        private void TryFillRoom(int minX, int maxX, int minY, int maxY, HashSet<(int, int)> wallPoints,
+            IEnumerable<(int X, int Y)> exits)
+        {
+            for (var x = minX + 1; x < maxX; x++)
+            for (var y = minY + 1; y < maxY; y++)
+            {
+                if (Grid[x, y] != 0) continue;
+                var intersections = 0;
+                var lastWasIntersection = false;
+                for (var tX = x; tX <= maxX; tX++)
+                {
+                    if (wallPoints.Contains((tX, y)))
+                    {
+                        if (!lastWasIntersection) intersections++;
+                        lastWasIntersection = true;
+                    }
+                    else
+                    {
+                        lastWasIntersection = false;
+                    }
+                }
+
+                if (intersections % 2 != 1) continue;
+
+                FillRoom(x, y, new HashSet<(int X, int Y)>(exits, new NodeComparer()));
+                return;
+            }
         }
 
         private List<(int X, int Y)> MakeRoomWall((int X, int Y) start, (int X, int Y) end)
@@ -226,7 +216,6 @@ namespace SimpleWorld.MazeGenerator
             return points;
         }
 
-        private static readonly NodeFlag[] Directions = {NodeFlag.North, NodeFlag.South, NodeFlag.West, NodeFlag.East};
         private void FillRoom(int sX, int sY, ICollection<(int X, int Y)> exits)
         {
             var openRoomPositions = new Queue<(int X, int Y)>();
@@ -272,41 +261,30 @@ namespace SimpleWorld.MazeGenerator
             // check if there are any open nodes
             while (_open.Count > 0)
             {
+                
                 // find an open node which is "next to" a closed node
                 // then carve a path from it to the closed node, then
                 // carve a path in open nodes
                 var didFind = false;
-                foreach (var (x, y) in _open)
+                var (x, y) = _open.Choose();
+                Debug.Assert(Grid[x, y] == 0);
+                var i = 0;
+                var ii = _random.Next(4);
+                do
                 {
-                    Debug.Assert(Grid[x, y] == 0);
-                    var i = 0;
-                    var d = RandomDirection();
-                    do
-                    {
-                        var (nx, ny) = GetPositionInDirection(x, y, d);
-                        if (IsClosed(nx, ny) && !IsRoomEdge(nx, ny))
-                        {
-                            Grid[nx, ny] |= OppositeDirection(d);
-                            Grid[x, y] |= d;
-                            _openPathExits.Enqueue((x, y, Grid[x, y]));
-                            _open.Remove((x, y));
-                            ProcessOpenExits();
-                            didFind = true;
-                            break;
-                        }
-
-                        d = d switch
-                        {
-                            NodeFlag.North => NodeFlag.West,
-                            NodeFlag.West => NodeFlag.South,
-                            NodeFlag.South => NodeFlag.East,
-                            NodeFlag.East => NodeFlag.North,
-                            _ => throw new ArgumentOutOfRangeException()
-                        };
-                    } while (++i < 4);
-                    if (didFind) break;
-                }
-                if (!didFind) break;
+                    var d = Directions[(i + ii) % 4];
+                    var (nx, ny) = GetPositionInDirection(x, y, d);
+                    if (!IsClosed(nx, ny) || IsRoomEdge(nx, ny)) continue;
+                    
+                    Grid[nx, ny] |= OppositeDirection(d);
+                    Grid[x, y] |= d;
+                    _openPathExits.Enqueue((x, y, Grid[x, y]));
+                    _open.Remove((x, y));
+                    ProcessOpenExits();
+                    didFind = true;
+                    break;
+                } while (++i < 4);
+                Debug.Assert(didFind);
             }
         }
 
@@ -321,23 +299,22 @@ namespace SimpleWorld.MazeGenerator
 
                 while (true)
                 {
-
                     var nextDirection = TryCarve(cx, cy, previousDirection);
                     if (nextDirection == null) break;
 
-                    if (!IsOpenInDirection(cx, cy, nextDirection.Value)) break;
+                    if (!IsOpen(GetPositionInDirection(cx, cy, nextDirection.Value))) break;
                     (cx, cy) = GetPositionInDirection(cx, cy, nextDirection.Value);
                     previousDirection = OppositeDirection(nextDirection.Value);
                     Grid[cx, cy] = previousDirection;
                     _open.Remove((cx, cy));
                     
-                    if (IsOpenInDirection(cx, cy, NodeFlag.North))
+                    if (IsOpen(GetPositionInDirection(cx, cy, NodeFlag.North)))
                         _open.Add(GetPositionInDirection(cx, cy, NodeFlag.North));
-                    if (IsOpenInDirection(cx, cy, NodeFlag.South))
+                    if (IsOpen(GetPositionInDirection(cx, cy, NodeFlag.South)))
                         _open.Add(GetPositionInDirection(cx, cy, NodeFlag.South));
-                    if (IsOpenInDirection(cx, cy, NodeFlag.East))
+                    if (IsOpen(GetPositionInDirection(cx, cy, NodeFlag.East)))
                         _open.Add(GetPositionInDirection(cx, cy, NodeFlag.East));
-                    if (IsOpenInDirection(cx, cy, NodeFlag.West))
+                    if (IsOpen(GetPositionInDirection(cx, cy, NodeFlag.West)))
                         _open.Add(GetPositionInDirection(cx, cy, NodeFlag.West));
                 }
             }
@@ -387,7 +364,7 @@ namespace SimpleWorld.MazeGenerator
         private NodeFlag? TryCarveLine(int x, int y, NodeFlag fromNodeFlag)
         {
             var toDirection = OppositeDirection(fromNodeFlag);
-            if (!IsOpenInDirection(x, y, toDirection)) return null;
+            if (!IsOpen(GetPositionInDirection(x, y, toDirection))) return null;
             Grid[x, y] |= toDirection;
             return toDirection;
         }
@@ -396,10 +373,10 @@ namespace SimpleWorld.MazeGenerator
         {
             var toDirection = RandomDirection(new[] {fromNodeFlag, OppositeDirection(fromNodeFlag)});
 
-            if (!IsOpenInDirection(x, y, toDirection))
+            if (!IsOpen(GetPositionInDirection(x, y, toDirection)))
                 toDirection = OppositeDirection(toDirection);
 
-            if (!IsOpenInDirection(x, y, toDirection)) return null;
+            if (!IsOpen(GetPositionInDirection(x, y, toDirection))) return null;
             Grid[x, y] |= toDirection;
             return toDirection;
         }
@@ -408,7 +385,7 @@ namespace SimpleWorld.MazeGenerator
         {
             var nextDirection = RandomDirection(new[] {fromNodeFlag});
             var exitDirection = RandomDirection(new[] {fromNodeFlag, nextDirection});
-            if (!IsOpenInDirection(x, y, nextDirection) || !IsOpenInDirection(x, y, exitDirection)) return null;
+            if (!IsOpen(GetPositionInDirection(x, y, nextDirection)) || !IsOpen(GetPositionInDirection(x, y, exitDirection))) return null;
             Grid[x, y] |= nextDirection | exitDirection;
             var (ex, ey) = GetPositionInDirection(x, y, exitDirection);
             Grid[ex, ey] = OppositeDirection(exitDirection);
@@ -432,15 +409,24 @@ namespace SimpleWorld.MazeGenerator
             return _random.Next(LineWeight + TurnWeight) < LineWeight ? Mode.Line : Mode.Turn;
         }
 
-        private bool IsOpenInDirection(int x, int y, NodeFlag d)
-        {
-            var (dx, dy) = GetPositionInDirection(x, y, d);
-            return IsOpen(dx, dy);
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsInMaze((int X, int Y) point) => IsInMaze(point.X, point.Y);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsInMaze(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsClosed((int X, int Y) point) => IsClosed(point.X, point.Y);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsClosed(int x, int y) => IsInMaze(x, y) && Grid[x, y] != 0;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsRoomEdge((int X, int Y) point) => IsRoomEdge(point.X, point.Y);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsRoomEdge(int x, int y) => IsInMaze(x, y) && Grid[x, y].IsRoomEdge();
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsOpen((int X, int Y) point) => IsOpen(point.X, point.Y);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsOpen(int x, int y) => IsInMaze(x, y) && Grid[x, y] == 0;
 
         private static (int X, int Y) GetPositionInDirection(int x, int y, NodeFlag d) => 
@@ -503,6 +489,7 @@ namespace SimpleWorld.MazeGenerator
                 }
             }
         }
+        
     }
 
     public static class NodeFlagsExtensions

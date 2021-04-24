@@ -31,6 +31,13 @@ namespace PathFinder.Solvers.Generic
                         GetDefaultTraverser(origin) ?? 
                         throw new ArgumentException("Either Traverser needs to be passed, or T must be an ITraversableNode", nameof(traverser));
 
+            // TODO: Make the initial size configurable.
+            // dictionary will "double" its size, clamped to prime numbers
+            // for very large search spaces, it may be beneficial to allow
+            // this to be configured to a larger starting number to prevent
+            // many resizes.
+            MetaDict = new Dictionary<T, GraphNodeMetaData<T>>(53);
+            
             // create the origin node metadata manually as the "GetMeta" method
             // needs to use the CurrentMetaData
             CurrentMetaData = new GraphNodeMetaData<T>(origin, 0)

@@ -27,7 +27,7 @@ namespace PathFinder.Benchmark
         public double MoveFactor;
         
         [IterationSetup]
-        public void Setup()
+        public void SetupStandard()
         {
             _world = new World(Size, Size, MoveFactor, World.DefaultStandardInit, new Random(Seed));
             _from = _world.GetPosition(1, 1);

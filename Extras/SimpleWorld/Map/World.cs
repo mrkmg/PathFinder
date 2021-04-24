@@ -127,8 +127,8 @@ namespace SimpleWorld.Map
             };
             if (init.IncludeDemoRooms)
             {
-                // add between 10 and 30 random rooms
-                for (var i = _random.Next(10, 30); i > 0; i--)
+                // add between 10 and 50 random rooms
+                for (var i = _random.Next(10, 50); i > 0; i--)
                 {
                     _maze.AddRoom();
                 }

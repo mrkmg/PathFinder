@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Profile" type="DotNetProject" factoryName=".NET Project">
     <option name="EXE_PATH" value="$PROJECT_DIR$/Extras/PathFinder.Benchmark/bin/Release/net5.0/PathFinder.Benchmark.exe" />
-    <option name="PROGRAM_PARAMETERS" value="profile 1000 1" />
+    <option name="PROGRAM_PARAMETERS" value="profile 500 1 standard solve" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Extras/PathFinder.Benchmark/bin/Release/net5.0" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
