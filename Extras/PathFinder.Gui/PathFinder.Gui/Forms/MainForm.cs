@@ -118,11 +118,11 @@ namespace PathFinder.Gui.Forms
                 "Maze" => new World(_mapWidget.BitmapWidth, _mapWidget.BitmapHeight, _moveCostStepper.Value,
                     new World.MazeInitializationOptions
                     {
-                        LineWeight = (int) Math.Pow(_initML.Value, MazeOptionsScale), 
-                        TurnWeight = (int) Math.Pow(_initMT.Value, MazeOptionsScale), 
-                        ForkWeight = (int) Math.Pow(_initMF.Value, MazeOptionsScale),
-                        FillEmpty = _initMFE.Checked ?? false,
-                        IncludeDemoRooms = _initMDR.Checked ?? false,
+                        LineWeight = (int) Math.Pow(_mazeInitLineWeight.Value, MazeOptionsScale), 
+                        TurnWeight = (int) Math.Pow(_mazeInitTurnWeight.Value, MazeOptionsScale), 
+                        ForkWeight = (int) Math.Pow(_madeInitForkWeight.Value, MazeOptionsScale),
+                        FillEmpty = _mazeInitFillEmpty.Checked ?? false,
+                        IncludeDemoRooms = _mazeInitDemoRooms.Checked ?? false,
                     }, new Random(int.Parse(_worldSeed.Text))),
                 _ => _world
             };

@@ -162,7 +162,7 @@ namespace PathFinder.Gui.Forms
         
         
 
-        private readonly Slider _initML = new () {
+        private readonly Slider _mazeInitLineWeight = new () {
             MinValue = 0,
             MaxValue = MazeOptionsMax,
             Value = StaticRandom.Next(MazeOptionsMax),
@@ -170,7 +170,7 @@ namespace PathFinder.Gui.Forms
             ToolTip = "Maze Line Weight"
         }; 
 
-        private readonly Slider _initMT = new () {
+        private readonly Slider _mazeInitTurnWeight = new () {
             MinValue = 0,
             MaxValue = MazeOptionsMax,
             Value = StaticRandom.Next(MazeOptionsMax),
@@ -178,21 +178,23 @@ namespace PathFinder.Gui.Forms
             ToolTip = "Maze Turn Weight"
         }; 
 
-        private readonly Slider _initMF = new () {
+        private readonly Slider _madeInitForkWeight = new () {
             MinValue = 0,
             MaxValue = MazeOptionsMax,
             Value = StaticRandom.Next(MazeOptionsMax),
             ToolTip = "Maze Fork Weight"
         };
 
-        private readonly CheckBox _initMFE = new()
+        private readonly CheckBox _mazeInitFillEmpty = new()
         {
-            ToolTip = "Maze Fill Empty"
+            ToolTip = "Maze Fill Empty",
+            Checked = true
         };
 
-        private readonly CheckBox _initMDR = new()
+        private readonly CheckBox _mazeInitDemoRooms = new()
         {
-            ToolTip = "Include Demo Rooms in Maze"
+            ToolTip = "Include Demo Rooms in Maze",
+            Checked = true
         };
         
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
@@ -303,19 +305,19 @@ namespace PathFinder.Gui.Forms
                 Rows ={
                     new TableRow { Cells = {
                         new TableCell { Control = "Line"},
-                        new TableCell { Control = _initML}}},
+                        new TableCell { Control = _mazeInitLineWeight}}},
                     new TableRow { Cells = {
                         new TableCell { Control = "Turn"},
-                        new TableCell { Control = _initMT}}},
+                        new TableCell { Control = _mazeInitTurnWeight}}},
                     new TableRow { Cells = {
                         new TableCell { Control = "Fork"},
-                        new TableCell { Control = _initMF}}},
+                        new TableCell { Control = _madeInitForkWeight}}},
                     new TableRow { Cells = {
                         new TableCell { Control = "Fill"},
-                        new TableCell { Control = _initMFE}}},
+                        new TableCell { Control = _mazeInitFillEmpty}}},
                     new TableRow { Cells = {
                         new TableCell { Control = "Rooms"},
-                        new TableCell { Control = _initMDR}}},}};
+                        new TableCell { Control = _mazeInitDemoRooms}}},}};
             
             _traverserTable = new TableLayout { Rows = {
                 new TableRow { Cells = {

@@ -50,11 +50,11 @@ namespace PathFinder.Gui.Forms
             
             _initRatio12.ValueChanged += _worldInitChanged.Handle;
             
-            _initML.ValueChanged += _worldInitChanged.Handle;
-            _initMT.ValueChanged += _worldInitChanged.Handle;
-            _initMF.ValueChanged += _worldInitChanged.Handle;
-            _initMFE.CheckedChanged += _worldInitChanged.Handle;
-            _initMDR.CheckedChanged += _worldInitChanged.Handle;
+            _mazeInitLineWeight.ValueChanged += _worldInitChanged.Handle;
+            _mazeInitTurnWeight.ValueChanged += _worldInitChanged.Handle;
+            _madeInitForkWeight.ValueChanged += _worldInitChanged.Handle;
+            _mazeInitFillEmpty.CheckedChanged += _worldInitChanged.Handle;
+            _mazeInitDemoRooms.CheckedChanged += _worldInitChanged.Handle;
             
             _newWorldButton.Click += OnNewWorldClick;
             
@@ -130,9 +130,9 @@ namespace PathFinder.Gui.Forms
             _initSY2.Value = StaticRandom.Next(StandardOptionsMax);
             _initRatio12.Value = StaticRandom.Next(StandardOptionsMax);
             
-            _initML.Value = StaticRandom.Next(MazeOptionsMax);
-            _initMT.Value = StaticRandom.Next(MazeOptionsMax);
-            _initMF.Value = StaticRandom.Next(MazeOptionsMax);
+            _mazeInitLineWeight.Value = StaticRandom.Next(MazeOptionsMax);
+            _mazeInitTurnWeight.Value = StaticRandom.Next(MazeOptionsMax);
+            _madeInitForkWeight.Value = StaticRandom.Next(MazeOptionsMax);
             
             KillRunning();
             _mapWidget.Clear();

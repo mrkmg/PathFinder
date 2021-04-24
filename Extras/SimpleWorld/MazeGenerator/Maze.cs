@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace SimpleWorld.Map
+namespace SimpleWorld.MazeGenerator
 {
     [Flags]
     public enum NodeFlag
@@ -20,23 +20,24 @@ namespace SimpleWorld.Map
     public class Maze
     {
         public int LineWeight = 50;
-        public int TurnWeight = 50;
-        public int ForkWeight = 50;
+        public int TurnWeight = 30;
+        public int ForkWeight = 20;
         public bool FillEmpty = true;
 
         public bool IsGenerated { get; private set; }
         
         public readonly int Width;
         public readonly int Height;
+        public readonly int StartX;
+        public readonly int StartY;
         public readonly NodeFlag[,] Grid;
         
         private readonly Random _random;
         private readonly HashSet<(int X, int Y)> _open = new (new NodeComparer());
+        private readonly List<(int MinX, int MinY, int MaxX, int MaxY)> _roomRects = new ();
         private readonly Queue<(int X, int Y, NodeFlag Direction)> _openPathExits = new ();
         private readonly Queue<(int X, int Y, NodeFlag Direction)> _roomExits = new ();
 
-        private readonly int _startX;
-        private readonly int _startY;
 
         public Maze(int width, int height, Random random = null, int? startX = null, int? startY = null)
         {
@@ -44,41 +45,138 @@ namespace SimpleWorld.Map
             Height = height;
             Grid = new NodeFlag[width, height];
             _random = random ?? new Random();
-            _startX = startX ?? Width / 2;
-            _startY = startY ?? Height / 2;
-            
-            // add all positions to open
-            for (var x = 0; x < Width; x++)
-            for (var y = 0; y < Height; y++)
+            StartX = startX ?? Width / 2;
+            StartY = startY ?? Height / 2;
+        }
+
+        /// <summary>
+        /// Adds a random room to the maze
+        /// </summary>
+        public void AddRoom()
+        {
+            static bool Within(int v, int min, int max) => v >= min && v <= max;
+            static bool PointWithinRect(int px, int py, int minx, int miny, int maxx, int maxy) =>
+                Within(px, minx, maxx) && Within(py, miny, maxy);
+            const int buffer = 3;
+
+            var templateAndExits = _random.Next(5) switch
             {
-                _open.Add((x, y));
+                0 => RoomTemplates.Square,
+                1 => RoomTemplates.H,
+                2 => RoomTemplates.L,
+                3 => RoomTemplates.U,
+                4 => RoomTemplates.Plus,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            
+            for (var triesLeft = 50; triesLeft > 0; triesLeft--)
+            {
+                // Randomly flip/scale/rotate/translate room
+                templateAndExits = templateAndExits.Flip(_random.Next(2) == 0, _random.Next(2) == 0);
+                if (_random.Next(2) == 0)
+                    templateAndExits = templateAndExits.Rotate();
+                var (template, exits) = templateAndExits
+                    .Scale(1 + _random.NextDouble() * Math.Min(Width / 20, Height / 20))
+                    .Translate((
+                        Width / 2 + _random.Next(-(Width / 2), Width / 2), 
+                        Height / 2 + _random.Next(-(Height / 2), Height / 2)));
+                
+                // get min/max with buffer of room
+                var (minX, minY) = template.Min().Translate((-buffer, -buffer));
+                var (maxX, maxY) = template.Max().Translate((buffer, buffer));
+                
+                // the room is too close to the center
+                if (PointWithinRect(StartX, StartY, minX, minY, maxX, maxY)) continue;
+
+                // the room is too close to an edge
+                if (minX < buffer || 
+                    maxX >= Width - buffer || 
+                    minY < buffer ||
+                    maxY >= Height - buffer)
+                    continue;
+                
+                // if any other room intersects current room
+                if (_roomRects.Any(o =>
+                {
+                    var (oMinX, oMinY, oMaxX, oMaxY) = o;
+
+                    return 
+                        // other corner is inside current
+                        PointWithinRect(oMinX, oMinY, minX, minY, maxX, maxY) ||
+                        PointWithinRect(oMinX, oMaxY, minX, minY, maxX, maxY) ||
+                        PointWithinRect(oMaxX, oMinY, minX, minY, maxX, maxY) ||
+                        PointWithinRect(oMaxX, oMaxY, minX, minY, maxX, maxY) ||
+                        // current corner is inside other
+                        PointWithinRect(minX, minY, oMinX, oMinY, oMaxX, oMaxY) ||
+                        PointWithinRect(minX, maxY, oMinX, oMinY, oMaxX, oMaxY) ||
+                        PointWithinRect(maxX, minY, oMinX, oMinY, oMaxX, oMaxY) ||
+                        PointWithinRect(maxX, maxY, oMinX, oMinY, oMaxX, oMaxY) ||
+                        // rooms cross each other in centers
+                        oMinX < minX && oMaxX > maxX && oMinY > minY && oMaxY < maxY ||
+                        minX < oMinX && maxX > oMaxX && minY > oMinY && maxY < oMaxY;
+                })) continue;
+
+                AddRoom(template, exits);
+                break;
             }
         }
 
+        /// <summary>
+        /// Adds the given room to the maze. 
+        /// </summary>
+        /// <param name="corners">a list of points which represents the corners.</param>
+        /// <param name="exits">a collection of points which represents exits of the room.</param>
+        /// <exception cref="ArgumentException"></exception>
         public void AddRoom(IList<(int X, int Y)> corners, ICollection<(int X, int Y)> exits)
         {
             var currentPoint = corners[corners.Count - 1];
 
+            var (minX, minY) = corners[0];
+            var (maxX, maxY) = corners[0];
+            var wallPoints = new HashSet<(int, int)>(new NodeComparer());
             foreach (var targetPoint in corners)
             {
                 if (currentPoint.X != targetPoint.X && currentPoint.Y != targetPoint.Y)
                     throw new ArgumentException("Invalid edges. Edges must not be diagonal", nameof(corners));
-                MakeRoomWall(currentPoint, targetPoint);
+                if (currentPoint.X < minX) minX = currentPoint.X;
+                if (currentPoint.X > maxX) maxX = currentPoint.X;
+                if (currentPoint.Y < minY) minY = currentPoint.Y;
+                if (currentPoint.Y > maxY) maxY = currentPoint.Y;
+                var points = MakeRoomWall(currentPoint, targetPoint);
+                foreach (var p in points) wallPoints.Add(p);
                 currentPoint = targetPoint;
             }
+            _roomRects.Add((minX, minY, maxX, maxY));
+
+            (int X, int Y)? insidePoint = null;
+            for (var x = minX + 1; x < maxX && insidePoint == null; x++)
+            for (var y = minY + 1; y < maxY && insidePoint == null; y++)
+            {
+                if (Grid[x, y] != 0) continue;
+                var intersections = 0;
+                var lastWasIntersection = false;
+                for (var tX = x; tX <= maxX; tX++)
+                {
+                    if (wallPoints.Contains((tX, y)))
+                    {
+                        if (!lastWasIntersection)
+                            intersections++;
+                        lastWasIntersection = true;
+                    }
+                    else
+                    {
+                        lastWasIntersection = false;
+                    }
+                }
+
+                if (intersections % 2 == 1) 
+                    insidePoint = (x, y);
+            }
+
+            if (!insidePoint.HasValue) return;
             
-            var x = corners[0].X < corners[1].X ? 1 :
-                corners[0].X > corners[1].X ? -1 :
-                corners[0].X < corners[corners.Count - 1].X ? 1 :
-                corners[0].X > corners[corners.Count - 1].X ? -1 :
-                throw new Exception("All three corners have same X. Invalid shape");
-            var y = corners[0].Y < corners[1].Y ? 1 :
-                corners[0].Y > corners[1].Y ? -1 :
-                corners[0].Y < corners[corners.Count - 1].Y ? 1 :
-                corners[0].Y > corners[corners.Count - 1].Y ? -1 :
-                throw new Exception("All three corners have same Y. Invalid shape");
-            
-            FillRoom(corners[0].X + x, corners[0].Y + y, exits);
+            // makes exits a hashset to improve lookup performance
+            FillRoom(insidePoint.Value.X, insidePoint.Value.Y, new HashSet<(int X, int Y)>(exits, new NodeComparer()));
         }
 
         public void Generate()
@@ -87,11 +185,15 @@ namespace SimpleWorld.Map
                 throw new InvalidOperationException("Already generated");
             IsGenerated = true;
 
+
+            if (Grid[StartX, StartY] != 0)
+                throw new InvalidOperationException(
+                    "Start Point is invalid and already assigned. Likely a room is intersecting the point");
+            
             // add first node to open path exits list
             // TODO: check to see if that direction is valid
-            Grid[_startX, _startY] = RandomDirection();
-            _openPathExits.Enqueue((_startX, _startY, Grid[_startX, _startY]));
-            _open.Remove((_startX, _startY));
+            Grid[StartX, StartY] = RandomDirection();
+            _openPathExits.Enqueue((StartX, StartY, Grid[StartX, StartY]));
             
             ProcessOpenExits();
             
@@ -101,7 +203,7 @@ namespace SimpleWorld.Map
             ProcessRoomExits();
         }
 
-        private void MakeRoomWall((int X, int Y) start, (int X, int Y) end)
+        private List<(int X, int Y)> MakeRoomWall((int X, int Y) start, (int X, int Y) end)
         {
             NodeFlag direction;
             if (start.X < end.X) direction = NodeFlag.East;
@@ -109,10 +211,10 @@ namespace SimpleWorld.Map
             else if (start.Y < end.Y) direction = NodeFlag.South;
             else if (start.Y > end.Y) direction = NodeFlag.North;
             else throw new Exception("Failed to find direction");
-            
+            var points = new List<(int X, int Y)>();
             while (start.X != end.X || start.Y != end.Y)
             {
-                _open.Remove(start);
+                points.Add(start);
                 Grid[start.X, start.Y] |= direction | NodeFlag.Room | NodeFlag.RoomEdge;
                 start = GetPositionInDirection(start.X, start.Y, direction);
                 // TODO: Fix this as currently it will always throw
@@ -120,29 +222,35 @@ namespace SimpleWorld.Map
                 //     throw new Exception("Room walls intersect.");
                 Grid[start.X, start.Y] |= OppositeDirection(direction);
             }
+
+            return points;
         }
 
         private static readonly NodeFlag[] Directions = {NodeFlag.North, NodeFlag.South, NodeFlag.West, NodeFlag.East};
         private void FillRoom(int sX, int sY, ICollection<(int X, int Y)> exits)
         {
             var openRoomPositions = new Queue<(int X, int Y)>();
+            var seenRoomPositions = new HashSet<(int X, int Y)>(new NodeComparer());
             openRoomPositions.Enqueue((sX, sY));
             while (openRoomPositions.Count > 0)
             {
-                var current = openRoomPositions.Dequeue();
-                _open.Remove(current);
-                Grid[current.X, current.Y] |= NodeFlag.Room | NodeFlag.North | NodeFlag.East | NodeFlag.West | NodeFlag.South;
+                var (x, y) = openRoomPositions.Dequeue();
+                Debug.Assert(x != StartX || y != StartY);
+                Grid[x, y] |= NodeFlag.Room | NodeFlag.North | NodeFlag.East | NodeFlag.West | NodeFlag.South;
                 foreach (var direction in Directions)
                 {
-                    var neighbor = GetPositionInDirection(current.X, current.Y, direction);
+                    var neighbor = GetPositionInDirection(x, y, direction);
                     if (IsRoomEdge(neighbor.X, neighbor.Y))
                     {
                         Grid[neighbor.X, neighbor.Y] |= OppositeDirection(direction);
-                        if (exits.Any(e => e.X == neighbor.X && e.Y == neighbor.Y))
+                        if (exits.Contains(neighbor))
                             _roomExits.Enqueue((neighbor.X, neighbor.Y, direction));
                     }
-                    else if (IsOpen(neighbor.X, neighbor.Y) && !openRoomPositions.Any(o => o.X == neighbor.X && o.Y == neighbor.Y))
+                    else if (IsOpen(neighbor.X, neighbor.Y) && !seenRoomPositions.Contains(neighbor))
+                    {
                         openRoomPositions.Enqueue(neighbor);
+                        seenRoomPositions.Add(neighbor);
+                    }
                 }
             }
         }
@@ -167,12 +275,12 @@ namespace SimpleWorld.Map
                 // find an open node which is "next to" a closed node
                 // then carve a path from it to the closed node, then
                 // carve a path in open nodes
+                var didFind = false;
                 foreach (var (x, y) in _open)
                 {
                     Debug.Assert(Grid[x, y] == 0);
                     var i = 0;
                     var d = RandomDirection();
-                    var didFind = false;
                     do
                     {
                         var (nx, ny) = GetPositionInDirection(x, y, d);
@@ -196,9 +304,9 @@ namespace SimpleWorld.Map
                             _ => throw new ArgumentOutOfRangeException()
                         };
                     } while (++i < 4);
-
                     if (didFind) break;
                 }
+                if (!didFind) break;
             }
         }
 
@@ -211,26 +319,34 @@ namespace SimpleWorld.Map
                 // get the first exit in the path
                 var (cx, cy, previousDirection) = _openPathExits.Dequeue();
 
-                // get a random mode (from the weights)
-                // try to find a move using that mode. If not, check "lesser"
-                // modes. Order is Fork, Turn, Line
                 while (true)
                 {
 
                     var nextDirection = TryCarve(cx, cy, previousDirection);
                     if (nextDirection == null) break;
-                    
+
                     if (!IsOpenInDirection(cx, cy, nextDirection.Value)) break;
                     (cx, cy) = GetPositionInDirection(cx, cy, nextDirection.Value);
                     previousDirection = OppositeDirection(nextDirection.Value);
                     Grid[cx, cy] = previousDirection;
                     _open.Remove((cx, cy));
+                    
+                    if (IsOpenInDirection(cx, cy, NodeFlag.North))
+                        _open.Add(GetPositionInDirection(cx, cy, NodeFlag.North));
+                    if (IsOpenInDirection(cx, cy, NodeFlag.South))
+                        _open.Add(GetPositionInDirection(cx, cy, NodeFlag.South));
+                    if (IsOpenInDirection(cx, cy, NodeFlag.East))
+                        _open.Add(GetPositionInDirection(cx, cy, NodeFlag.East));
+                    if (IsOpenInDirection(cx, cy, NodeFlag.West))
+                        _open.Add(GetPositionInDirection(cx, cy, NodeFlag.West));
                 }
             }
         }
 
         private NodeFlag? TryCarve(int x, int y, NodeFlag previousDirection)
         {
+            // get a random mode (from the weights) then try to find a move using that mode.
+            // If not, check other modes.
             var mode = RandomMode();
             var triedTurn = false;
             var triedLine = false;
@@ -322,23 +438,10 @@ namespace SimpleWorld.Map
             return IsOpen(dx, dy);
         }
 
-        private bool IsClosed(int x, int y)
-        {
-            if (x < 0 || x >= Width || y < 0 || y >= Height) return false;
-            return Grid[x, y] != 0;
-        }
-
-        private bool IsRoomEdge(int x, int y)
-        {
-            if (x < 0 || x >= Width || y < 0 || y >= Height) return false;
-            return Grid[x, y].IsRoomEdge();
-        }
-
-        private bool IsOpen(int x, int y)
-        {
-            if (x < 0 || x >= Width || y < 0 || y >= Height) return false;
-            return Grid[x, y] == 0;
-        }
+        private bool IsInMaze(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
+        private bool IsClosed(int x, int y) => IsInMaze(x, y) && Grid[x, y] != 0;
+        private bool IsRoomEdge(int x, int y) => IsInMaze(x, y) && Grid[x, y].IsRoomEdge();
+        private bool IsOpen(int x, int y) => IsInMaze(x, y) && Grid[x, y] == 0;
 
         private static (int X, int Y) GetPositionInDirection(int x, int y, NodeFlag d) => 
             d switch {
