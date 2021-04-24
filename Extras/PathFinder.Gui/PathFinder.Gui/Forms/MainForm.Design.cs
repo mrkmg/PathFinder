@@ -196,6 +196,12 @@ namespace PathFinder.Gui.Forms
             ToolTip = "Include Demo Rooms in Maze",
             Checked = true
         };
+
+        private readonly CheckBox _mazeInitWideWalls = new()
+        {
+            ToolTip = "Wide Walls In Maze",
+            Checked = false
+        };
         
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
         private readonly CheckBox _doBlindSearch = new() {Checked = false};
@@ -317,7 +323,10 @@ namespace PathFinder.Gui.Forms
                         new TableCell { Control = _mazeInitFillEmpty}}},
                     new TableRow { Cells = {
                         new TableCell { Control = "Rooms"},
-                        new TableCell { Control = _mazeInitDemoRooms}}},}};
+                        new TableCell { Control = _mazeInitDemoRooms}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "Wide"},
+                        new TableCell { Control = _mazeInitWideWalls}}},}};
             
             _traverserTable = new TableLayout { Rows = {
                 new TableRow { Cells = {

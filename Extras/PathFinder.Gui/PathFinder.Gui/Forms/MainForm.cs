@@ -123,6 +123,7 @@ namespace PathFinder.Gui.Forms
                         ForkWeight = (int) Math.Pow(_madeInitForkWeight.Value, MazeOptionsScale),
                         FillEmpty = _mazeInitFillEmpty.Checked ?? false,
                         IncludeDemoRooms = _mazeInitDemoRooms.Checked ?? false,
+                        WideWalls = _mazeInitWideWalls.Checked ?? false
                     }, new Random(int.Parse(_worldSeed.Text))),
                 _ => _world
             };

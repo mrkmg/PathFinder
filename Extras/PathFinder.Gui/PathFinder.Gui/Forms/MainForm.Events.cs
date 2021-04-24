@@ -55,6 +55,7 @@ namespace PathFinder.Gui.Forms
             _madeInitForkWeight.ValueChanged += _worldInitChanged.Handle;
             _mazeInitFillEmpty.CheckedChanged += _worldInitChanged.Handle;
             _mazeInitDemoRooms.CheckedChanged += _worldInitChanged.Handle;
+            _mazeInitWideWalls.CheckedChanged += _worldInitChanged.Handle;
             
             _newWorldButton.Click += OnNewWorldClick;
             
