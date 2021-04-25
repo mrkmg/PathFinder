@@ -143,10 +143,9 @@ namespace PathFinder.Gui.Widgets
         private static readonly Color SearchPointColor = Color.FromArgb(0, 0, 150, 100);
         private static readonly Color ActiveSearchPointColor = Color.FromArgb(100, 100, 0, 100);
         private static readonly Color MarkerPointColor = Color.FromArgb(150, 0, 150);
-        
-        private static Color GetColorForLevel(int level)
-        {
-            var intensity = level switch
+
+        private static int GetIntensityForLevel(int level) =>
+            level switch
             {
                 0 => 0,
                 1 => 200,
@@ -155,7 +154,17 @@ namespace PathFinder.Gui.Widgets
                 4 => 125,
                 _ => throw new ArgumentOutOfRangeException(nameof(level), level, null)
             };
-            return Color.FromArgb(0, intensity, 0);
+
+        private static Color GetColorForLevel(int level)
+        {
+            return Color.FromArgb(0, GetIntensityForLevel(level), 0);
+        }
+
+        private static Color Adjust(Color color, float ratio)
+        {
+            var hsl = color.ToHSL();
+            hsl.L *= Math.Min(1, Math.Max(0, ratio));
+            return hsl.ToColor();
         }
 
         internal static IEnumerable<DrawPoint> AsMazeDrawPoints(this IEnumerable<Position> positions)
@@ -174,7 +183,7 @@ namespace PathFinder.Gui.Widgets
             => positions.Where(p => p != null).Select(AsPathDrawPoint);
 
         internal static DrawPoint AsPathDrawPoint(this Position p) 
-            => new(p.X, p.Y, PathPointColor);
+            => new(p.X, p.Y, Adjust(PathPointColor, (4 - p.Cost - 1) / 6f + 0.5f));
         
         internal static DrawPoint AsSearchDrawPoint(this Position p) 
             => new(p.X, p.Y, SearchPointColor);
