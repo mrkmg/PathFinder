@@ -159,7 +159,7 @@ namespace PathFinder.Gui.Widgets
         }
 
         internal static IEnumerable<DrawPoint> AsMazeDrawPoints(this IEnumerable<Position> positions)
-            => positions.Select(p => new DrawPoint(p.X, p.Y, Colors.Gray));
+            => positions.Select(AsMazeDrawPoint);
         
         internal static IEnumerable<DrawPoint> AsMapDrawPoints(this IEnumerable<Position> positions) 
             => positions.Select(AsMapDrawPoint);
@@ -184,6 +184,9 @@ namespace PathFinder.Gui.Widgets
         
         internal static DrawPoint AsMapDrawPoint(this Position p) 
             => new (p.X, p.Y, GetColorForLevel(p.Cost));
+
+        internal static DrawPoint AsMazeDrawPoint(this Position p)
+            => new(p.X, p.Y, Colors.Gray);
 
         internal static IEnumerable<(int x, int y)> ToMarkerPoints(this Position position, int size)
         {
