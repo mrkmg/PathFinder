@@ -201,7 +201,6 @@ namespace PathFinder.Gui.Widgets
         {
             for (var i = 0; i <= size; i++)
             {
-                
                 yield return (position.X + i, position.Y + i);
                 yield return (position.X + i, position.Y - i);
                 yield return (position.X - i, position.Y + i);
