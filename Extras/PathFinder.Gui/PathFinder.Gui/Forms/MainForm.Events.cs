@@ -105,6 +105,9 @@ namespace PathFinder.Gui.Forms
         private void OnTraverserChanged(object? sender, EventArgs e)
         {
             _stepSizeStepper.Enabled = _traverserSelector.Text == "LargeStep";
+            _moveCostStepper.MaxValue = _traverserSelector.Text == "Level" ? 500 : 5;
+            _moveCostStepper.Increment = _traverserSelector.Text == "Level" ? 0.1 : 1;
+            _moveCostStepper.MaximumDecimalPlaces = _traverserSelector.Text == "Level" ? 0 : 1;
             if (_world == null) return;
             Reset();
         }
@@ -198,8 +201,7 @@ namespace PathFinder.Gui.Forms
         private void OnMoveCostSelectorChanged(object sender, EventArgs args)
         {
             if (_world == null) return;
-            KillRunning();
-            MakeWorld();
+            _world.MoveCost = _moveCostStepper.Value;
         }
         private void OnScaleSelectorChanged(object sender, EventArgs args)
         {

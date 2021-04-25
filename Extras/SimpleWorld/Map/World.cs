@@ -64,7 +64,7 @@ namespace SimpleWorld.Map
             IncludeDemoRooms = true
         };
         
-        public double MoveCost { get; }
+        public double MoveCost { get; set; }
 
         public readonly int XSize;
         public readonly int YSize;

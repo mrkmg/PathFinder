@@ -155,6 +155,7 @@ namespace PathFinder.Gui.Forms
                 "Default" => new DefaultTraverser<Position>(),
                 "Grid" => new GridTraverser(),
                 "LargeStep" => new LargerStepTraverser((int)_stepSizeStepper.Value),
+                "Level" => new LevelTraverser(),
                 _ => throw new ArgumentException("Unknown traverser")
             };
 

@@ -215,7 +215,7 @@ namespace PathFinder.Gui.Forms
 
         private readonly ComboBox _traverserSelector = new()
         {
-            DataStore = new[] {"Default", "Grid", "LargeStep"},
+            DataStore = new[] {"Default", "Grid", "LargeStep","Level"},
             Text = "Default",
             ReadOnly = true
         };
