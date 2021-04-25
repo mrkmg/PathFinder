@@ -36,7 +36,7 @@ namespace PathFinder.Solvers.Generic
             // for very large search spaces, it may be beneficial to allow
             // this to be configured to a larger starting number to prevent
             // many resizes.
-            MetaDict = new Dictionary<T, GraphNodeMetaData<T>>(53);
+            _nodeMetaDatas = new Dictionary<T, GraphNodeMetaData<T>>(53);
             
             // create the origin node metadata manually as the "GetMeta" method
             // needs to use the CurrentMetaData
@@ -55,7 +55,7 @@ namespace PathFinder.Solvers.Generic
         public IEnumerable<T> Open => OpenNodes.Select(n => n.Node);
 
         /// <inheritdoc cref="IGraphSolver{T}.Closed"/>
-        public IEnumerable<T> Closed => MetaDict.Values
+        public IEnumerable<T> Closed => _nodeMetaDatas.Values
             .Where(n => n.Status == NodeStatus.Closed)
             .Select(n => n.Node);
 
@@ -72,7 +72,7 @@ namespace PathFinder.Solvers.Generic
         public double PathCost => GetCost();
 
         /// <inheritdoc cref="IGraphSolver{T}.State"/>
-        public SolverState State { get; protected set; } = SolverState.Incomplete;
+        public SolverState State { get; private set; } = SolverState.Incomplete;
 
         /// <inheritdoc cref="IGraphSolver{T}.Ticks"/>
         public int Ticks { get; private set; }
@@ -93,9 +93,9 @@ namespace PathFinder.Solvers.Generic
         public int MaxTicks { get; set; } = int.MaxValue;
         
         [DocsHidden]
-        protected C5.IntervalHeap<GraphNodeMetaData<T>> OpenNodes;
-        [DocsHidden]
-        protected readonly Dictionary<T, GraphNodeMetaData<T>> MetaDict = new Dictionary<T, GraphNodeMetaData<T>>();
+        protected readonly C5.IntervalHeap<GraphNodeMetaData<T>> OpenNodes;
+        [DocsHidden] 
+        private readonly Dictionary<T, GraphNodeMetaData<T>> _nodeMetaDatas;
         [DocsHidden]
         protected GraphNodeMetaData<T> CurrentMetaData;
         [DocsHidden]
@@ -103,7 +103,6 @@ namespace PathFinder.Solvers.Generic
         
         private IList<T> _path;
         private GraphNodeMetaData<T> _closest;
-        private double? _cost;
         private long _nextGraphNodeId;
         private int _remainingTicks;
         
@@ -158,25 +157,16 @@ namespace PathFinder.Solvers.Generic
             Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
         }
 
-        [NotNull, DocsHidden]
-        protected GraphNodeMetaData<T> GetMeta(T node, bool onlyExisting = false)
+        private GraphNodeMetaData<T> CreateMeta(T node, double fromCost)
         {
-            if (MetaDict.TryGetValue(node, out var meta)) return meta;
-            if (onlyExisting)
-                throw new InvalidOperationException($"MetaDict data not found for {node}. The Equals or GetHashCode function on {typeof(T).Name} is likely invalid");
-            var fromCost = Traverser.RealCost(CurrentMetaData.Node, node);
-            meta = new GraphNodeMetaData<T>(node, _nextGraphNodeId++)
+            var meta = new GraphNodeMetaData<T>(node, _nextGraphNodeId++)
             {
                 ToCost = Traverser.EstimatedCost(node, Destination),
                 FromCost = CurrentMetaData.FromCost + fromCost,
                 Parent = CurrentMetaData,
                 PathLength = CurrentMetaData.PathLength + 1
             };
-            MetaDict.Add(node, meta);
-            // If the fromCost has a negative value, it is not actually traversable so
-            // close the node to prevent it from being searched further.
-            // TODO determine if this should actually be the case
-            if (fromCost < 0) meta.Status = NodeStatus.Closed;
+            _nodeMetaDatas.Add(node, meta);
             return meta;
         }
         
@@ -198,7 +188,20 @@ namespace PathFinder.Solvers.Generic
             foreach (var neighbor in Traverser.NeighborNodes(Current))
             {
                 if (neighbor == null) throw new ArgumentNullException(nameof(neighbor), "Neighbors can not be null");
-                var neighborMetaData = GetMeta(neighbor);
+
+                if (!_nodeMetaDatas.TryGetValue(neighbor, out var neighborMetaData))
+                {
+                    var fromCost = Traverser.RealCost(CurrentMetaData.Node, neighbor);
+                    // per the ITraversableNode and INodeTraverser interfaces,
+                    // do not consider traversing to a node with a negative cost
+                    if (fromCost < 0) continue;
+                    neighborMetaData = CreateMeta(neighbor, fromCost);
+                }
+                if (neighborMetaData.FromCost < 0)
+                {
+                    _nodeMetaDatas.Remove(neighborMetaData.Node);
+                    continue;
+                }
                 // do not check already checked nodes
                 if (neighborMetaData.Status == NodeStatus.Closed) continue;
                 // if a node somehow is connected to itself, do not check
@@ -220,18 +223,22 @@ namespace PathFinder.Solvers.Generic
         {
             if (Origin.Equals(node)) return new T[0];
 
-            // iterate from the 'node' back to the origin.
-            // add them from the back to the front, so the
-            // returned path starts at the origin. 
-            
-            var cMeta = GetMeta(node, true);
+            // iterate from the node back to the origin.
+            // add insert them from the back to the front,
+            // so the returned path starts at the origin. 
+            // 
+            // to improve performance, instead of testing
+            // every node to see if it is null or the 
+            // origin node use the PathLength.
+            var cMeta = _nodeMetaDatas[node];
+            Debug.Assert(cMeta != null);
             var path = new T[cMeta.PathLength];
             var pathIndex = cMeta.PathLength - 1;
             do
             {
                 path[pathIndex--] = cMeta!.Node;
-                Debug.Assert(cMeta.Parent != null, "cMeta.Parent should not be null while building path");
-                Debug.Assert(!cMeta.Node.Equals(Origin));
+                Debug.Assert(cMeta.Parent != null, "cMeta.Parent is null, the graph is broken.");
+                Debug.Assert(!cMeta.Node.Equals(Origin), "cMeta.Parent is Origin, the PathLength is invalid.");
                 cMeta = cMeta.Parent;
             } while (pathIndex >= 0);
             return path;
@@ -240,7 +247,8 @@ namespace PathFinder.Solvers.Generic
         private double GetCost()
         {
             if (State != SolverState.Success) return -1;
-            return _cost ??= GetMeta(Destination, true).FromCost;
+            Debug.Assert(_nodeMetaDatas.ContainsKey(Destination));
+            return _nodeMetaDatas[Destination].FromCost;
         }
 
         // used internally by the implementations
