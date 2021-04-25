@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using JetBrains.Annotations;
 using SharpNoise;
@@ -118,7 +119,7 @@ namespace SimpleWorld.Map
         {
             var cols = XSize / (init.WideWalls ? 3 : 2);
             var rows = YSize / (init.WideWalls ? 3 : 2);
-            _maze = new Maze(cols, rows, _random)
+            _maze = new Maze(new Size(cols, rows), _random)
             {
                 LineWeight = init.LineWeight, 
                 TurnWeight = init.TurnWeight, 
