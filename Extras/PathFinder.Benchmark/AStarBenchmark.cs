@@ -37,8 +37,8 @@ namespace PathFinder.Benchmark
         public void SetupAsMaze()
         {
             _world = new World(Size, Size, MoveFactor, World.DefaultMazeInit, new Random(Seed));
-            _from = _world.GetPosition(1, 1);
-            _to = _world.GetPosition(Size-1, Size-1);
+            _from = _world.GetPosition(0, 0);
+            _to = _world.GetPosition(Size-2, Size-2);
         }
 
         [Benchmark(Baseline = true)]
