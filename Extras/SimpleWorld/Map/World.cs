@@ -8,7 +8,6 @@ using SharpNoise.Builders;
 using SharpNoise.Modules;
 using SimpleWorld.MazeGenerator;
 
-
 namespace SimpleWorld.Map
 {
     public class World
@@ -38,6 +37,7 @@ namespace SimpleWorld.Map
             public bool FillEmpty;
             public bool IncludeDemoRooms;
             public bool WideWalls;
+            public bool WidePaths;
         }
 
         public static readonly StandardInitializationOptions DefaultStandardInit = new ()
@@ -117,8 +117,8 @@ namespace SimpleWorld.Map
 
         private void Maze(MazeInitializationOptions init)
         {
-            var cols = XSize / (init.WideWalls ? 3 : 2);
-            var rows = YSize / (init.WideWalls ? 3 : 2);
+            var cols = XSize / (init.WideWalls || init.WidePaths ? 3 : 2);
+            var rows = YSize / (init.WideWalls || init.WidePaths ? 3 : 2);
             _maze = new Maze(new Size(cols, rows), _random)
             {
                 LineWeight = init.LineWeight, 
@@ -140,75 +140,79 @@ namespace SimpleWorld.Map
 
         private void PopulateMazeWorldPositions(MazeInitializationOptions init, int cols, int rows)
         {
-            static bool IsFullWidth(NodeFlag self, NodeFlag other) =>
-                self.IsRoomEdge() && other.IsRoomFloor() ||
-                self.IsRoomExit() && !other.IsRoom() ||
-                !self.IsRoom() && other.IsRoomExit();
-
+            var dx = init.WideWalls || init.WidePaths ? 3 : 2;
+            var dy = init.WideWalls || init.WidePaths ? 3 : 2;
             for (var x = 0; x < cols; x++)
             for (var y = 0; y < rows; y++)
             {
-                var xOff = x * (init.WideWalls ? 3 : 2);
-                var yOff = y * (init.WideWalls ? 3 : 2);
-                var type = _maze.Grid[x, y];
-                if (type != 0)
-                    _allNodes[xOff + 1][yOff + 1] = new Position(this, xOff + 1, yOff + 1, 1);
-                else
-                    continue;
+                var wx = x * dx;
+                var wy = y * dy;
+                var grid = 
+                    init.WideWalls ? _wideWallsMatchGrid : 
+                    init.WidePaths ? _widePathMatchGrid : 
+                                     _standardMatchGrid;
 
-                if (type.IsRoomFloor())
-                {
-                    _allNodes[xOff][yOff] = new Position(this, xOff, yOff, 1);
-                    if (init.WideWalls) _allNodes[xOff + 2][yOff] = new Position(this, xOff + 2, yOff, 1);
-                    _allNodes[xOff][yOff + 2] = new Position(this, xOff, yOff + 2, 1);
-                    if (init.WideWalls) _allNodes[xOff + 2][yOff + 2] = new Position(this, xOff + 2, yOff + 2, 1);
-                }
-
-                if (type.Has(NodeFlag.North))
-                {
-                    _allNodes[xOff + 1][yOff] = new Position(this, xOff + 1, yOff, 1);
-
-                    if (IsFullWidth(type, _maze.Grid[x, y - 1]))
+                for (var ox = 0; ox < dx; ox++)
+                for (var oy = 0; oy < dy; oy++)
+                    foreach (var (type, flags) in grid[ox, oy])
                     {
-                        _allNodes[xOff][yOff] = new Position(this, xOff, yOff, 1);
-                        if (init.WideWalls) _allNodes[xOff + 2][yOff] = new Position(this, xOff + 2, yOff, 1);
+                        if ((type != NCT.Any || (flags & _maze.Grid[x, y]) == 0) &&
+                            (type != NCT.All || (flags & _maze.Grid[x, y]) != flags)) continue;
+                        _allNodes[wx + ox][wy + oy] = new Position(this, wx + ox, wy + oy, 1);
+                        break;
                     }
-                }
-
-                if (type.Has(NodeFlag.South) && init.WideWalls)
-                {
-                    _allNodes[xOff + 1][yOff + 2] = new Position(this, xOff + 1, yOff + 2, 1);
-
-                    if (IsFullWidth(type, _maze.Grid[x, y + 1]))
-                    {
-                        _allNodes[xOff][yOff + 2] = new Position(this, xOff, yOff + 2, 1);
-                        _allNodes[xOff + 2][yOff + 2] = new Position(this, xOff + 2, yOff + 2, 1);
-                    }
-                }
-
-                if (type.Has(NodeFlag.West))
-                {
-                    _allNodes[xOff][yOff + 1] = new Position(this, xOff, yOff + 1, 1);
-
-                    if (IsFullWidth(type, _maze.Grid[x - 1, y]))
-                    {
-                        _allNodes[xOff][yOff] = new Position(this, xOff, yOff, 1);
-                        if (init.WideWalls) _allNodes[xOff][yOff + 2] = new Position(this, xOff, yOff + 2, 1);
-                    }
-                }
-
-                if (type.Has(NodeFlag.East) && init.WideWalls)
-                {
-                    _allNodes[xOff + 2][yOff + 1] = new Position(this, xOff + 2, yOff + 1, 1);
-
-                    if (IsFullWidth(type, _maze.Grid[x + 1, y]))
-                    {
-                        _allNodes[xOff + 2][yOff] = new Position(this, xOff + 2, yOff, 1);
-                        _allNodes[xOff + 2][yOff + 2] = new Position(this, xOff + 2, yOff + 2, 1);
-                    }
-                }
             }
         }
+
+        private enum NCT { Any, All };
+        private const NodeFlag AllDirections = NodeFlag.East | NodeFlag.North | NodeFlag.West | NodeFlag.South;
+
+        private readonly (NCT Type, NodeFlag Flags)[,][] _standardMatchGrid = {
+            {
+                new []{(NCT.Any, AllDirections)}, 
+                new []{(NCT.Any, NodeFlag.South), (NCT.All, NodeFlag.RoomEdge | NodeFlag.South | NodeFlag.East)}
+            },
+            {
+                new []{(NCT.Any, NodeFlag.East)},
+                new []{(NCT.All, AllDirections), (NCT.All, NodeFlag.RoomEdge | NodeFlag.South | NodeFlag.East)}
+            },
+        };
+        
+        private readonly (NCT Type, NodeFlag Flags)[,][] _wideWallsMatchGrid = {
+            {
+                new []{(NCT.Any, NodeFlag.Room), (NCT.All, NodeFlag.RoomEdge | NodeFlag.North | NodeFlag.West)},
+                new []{(NCT.Any, NodeFlag.West)},
+                new []{(NCT.Any, NodeFlag.Room), (NCT.All, NodeFlag.RoomEdge | NodeFlag.South | NodeFlag.West)}
+            },
+            {
+                new []{(NCT.Any, NodeFlag.North)},
+                new []{(NCT.Any, AllDirections)},
+                new []{(NCT.Any, NodeFlag.South)}
+            },
+            {
+                new []{(NCT.Any, NodeFlag.Room), (NCT.All, NodeFlag.RoomEdge | NodeFlag.North | NodeFlag.East)},
+                new []{(NCT.Any, NodeFlag.East)},
+                new []{(NCT.Any, NodeFlag.Room), (NCT.All, NodeFlag.RoomEdge | NodeFlag.South | NodeFlag.East)}
+            }
+        };
+        
+        private readonly (NCT Type, NodeFlag Flags)[,][] _widePathMatchGrid = {
+            {
+                new []{(NCT.Any, AllDirections)}, 
+                new []{(NCT.Any, AllDirections)}, 
+                new []{(NCT.Any, NodeFlag.South), (NCT.All, NodeFlag.RoomEdge | NodeFlag.South | NodeFlag.East)}
+            },
+            {
+                new []{(NCT.Any, AllDirections)}, 
+                new []{(NCT.Any, AllDirections)}, 
+                new []{(NCT.Any, NodeFlag.South), (NCT.All, NodeFlag.RoomEdge | NodeFlag.South | NodeFlag.East)}
+            },
+            {
+                new []{(NCT.Any, NodeFlag.East)},
+                new []{(NCT.Any, NodeFlag.East)},
+                new []{(NCT.All, AllDirections), (NCT.All, NodeFlag.RoomEdge | NodeFlag.South | NodeFlag.East)}
+            }
+        };
 
         private void Standard(StandardInitializationOptions standardInitializationOptions)
         {

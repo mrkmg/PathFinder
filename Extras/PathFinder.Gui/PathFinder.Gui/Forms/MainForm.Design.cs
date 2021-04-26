@@ -178,7 +178,7 @@ namespace PathFinder.Gui.Forms
             ToolTip = "Maze Turn Weight"
         }; 
 
-        private readonly Slider _madeInitForkWeight = new () {
+        private readonly Slider _mazeInitForkWeight = new () {
             MinValue = 0,
             MaxValue = MazeOptionsMax,
             Value = StaticRandom.Next(MazeOptionsMax),
@@ -197,10 +197,11 @@ namespace PathFinder.Gui.Forms
             Checked = true
         };
 
-        private readonly CheckBox _mazeInitWideWalls = new()
+        private readonly ComboBox _mazeInitDisplayType = new()
         {
-            ToolTip = "Wide Walls In Maze",
-            Checked = false
+            ReadOnly = true,
+            Text = "1x1",
+            DataStore = new[] {"1x1", "1x2", "2x1"}
         };
         
         private readonly CheckBox _showSearchCheckbox = new() {Checked = true};
@@ -256,8 +257,8 @@ namespace PathFinder.Gui.Forms
             Text = "New World Options",
         };
 
-        private TableLayout _standardWorldOptions;
-        private TableLayout _mazeWorldOptions;
+        private StackLayoutItem _standardWorldOptions;
+        private StackLayoutItem _mazeWorldOptions;
         private TableLayout _traverserTable;
 
         private void InitUi()
@@ -280,53 +281,53 @@ namespace PathFinder.Gui.Forms
             var sectionFont = Fonts.Sans(10f, FontStyle.Bold);
             var titleFont = Fonts.Sans(12f, FontStyle.Bold);
             
-            _standardWorldOptions = new TableLayout { Rows = {
-                new TableRow { Cells = {
-                    new TableCell { Control = ""},
-                    new TableCell { Control = new Label {Text = "1", TextAlignment = TextAlignment.Center, Width = 80}},
-                    new TableCell { Control = new Label {Text = "2", TextAlignment = TextAlignment.Center, Width = 80}}}},
-                new TableRow { Cells = {
-                    new TableCell { Control = "F"},
-                    new TableCell { Control = _initF1},
-                    new TableCell { Control = _initF2}}},
-                new TableRow { Cells = {
-                    new TableCell { Control = "L"},
-                    new TableCell { Control = _initL1},
-                    new TableCell { Control = _initL2}}},
-                new TableRow { Cells = {
-                    new TableCell { Control = "P"},
-                    new TableCell { Control = _initP1},
-                    new TableCell { Control = _initP2}}},
-                new TableRow { Cells = {
-                    new TableCell { Control = "SX"},
-                    new TableCell { Control = _initSX1},
-                    new TableCell { Control = _initSX2}}},
-                new TableRow { Cells = {
-                    new TableCell { Control = "SY"},
-                    new TableCell { Control = _initSY1},
-                    new TableCell { Control = _initSY2}}}}};
+            _standardWorldOptions = new StackLayoutItem {
+                Control = new TableLayout { Rows = {
+                    new TableRow { Cells = {
+                        new TableCell { Control = ""},
+                        new TableCell { Control = new Label {Text = "1", TextAlignment = TextAlignment.Center, Width = 80}},
+                        new TableCell { Control = new Label {Text = "2", TextAlignment = TextAlignment.Center, Width = 80}}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "F"},
+                        new TableCell { Control = _initF1},
+                        new TableCell { Control = _initF2}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "L"},
+                        new TableCell { Control = _initL1},
+                        new TableCell { Control = _initL2}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "P"},
+                        new TableCell { Control = _initP1},
+                        new TableCell { Control = _initP2}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "SX"},
+                        new TableCell { Control = _initSX1},
+                        new TableCell { Control = _initSX2}}},
+                    new TableRow { Cells = {
+                        new TableCell { Control = "SY"},
+                        new TableCell { Control = _initSY1},
+                        new TableCell { Control = _initSY2}}}}}};
             
-            _mazeWorldOptions = new TableLayout {
-                Visible = false,
-                Rows ={
-                    new TableRow { Cells = {
-                        new TableCell { Control = "Line"},
-                        new TableCell { Control = _mazeInitLineWeight}}},
-                    new TableRow { Cells = {
-                        new TableCell { Control = "Turn"},
-                        new TableCell { Control = _mazeInitTurnWeight}}},
-                    new TableRow { Cells = {
-                        new TableCell { Control = "Fork"},
-                        new TableCell { Control = _madeInitForkWeight}}},
-                    new TableRow { Cells = {
-                        new TableCell { Control = "Fill"},
-                        new TableCell { Control = _mazeInitFillEmpty}}},
-                    new TableRow { Cells = {
-                        new TableCell { Control = "Rooms"},
-                        new TableCell { Control = _mazeInitDemoRooms}}},
-                    new TableRow { Cells = {
-                        new TableCell { Control = "Wide"},
-                        new TableCell { Control = _mazeInitWideWalls}}},}};
+            _mazeWorldOptions = new StackLayoutItem {
+                Control = new TableLayout { Visible = false, Rows ={
+                        new TableRow { Cells = {
+                            new TableCell { Control = "Line"},
+                            new TableCell { Control = _mazeInitLineWeight}}},
+                        new TableRow { Cells = {
+                            new TableCell { Control = "Turn"},
+                            new TableCell { Control = _mazeInitTurnWeight}}},
+                        new TableRow { Cells = {
+                            new TableCell { Control = "Fork"},
+                            new TableCell { Control = _mazeInitForkWeight}}},
+                        new TableRow { Cells = {
+                            new TableCell { Control = "Display"},
+                            new TableCell { Control = _mazeInitDisplayType}}},
+                        new TableRow { Cells = {
+                            new TableCell { Control = "Rooms"},
+                            new TableCell { Control = _mazeInitDemoRooms}}},
+                        new TableRow { Cells = {
+                            new TableCell { Control = "Fill"},
+                            new TableCell { Control = _mazeInitFillEmpty}}}}}};
             
             _traverserTable = new TableLayout { Rows = {
                 new TableRow { Cells = {

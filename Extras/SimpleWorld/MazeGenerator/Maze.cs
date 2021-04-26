@@ -171,7 +171,7 @@ namespace SimpleWorld.MazeGenerator
             for (;;)
             {
                 points.Add(start);
-                Grid[start.X, start.Y] |= direction | NodeFlag.Room | NodeFlag.RoomEdge;
+                Grid[start.X, start.Y] |= direction | NodeFlag.RoomEdge;
                 start = GetPositionInDirection(start, direction);
                 Grid[start.X, start.Y] |= OppositeDirection(direction);
                 // if (IsRoomEdge(start)) 
@@ -227,7 +227,6 @@ namespace SimpleWorld.MazeGenerator
             // check if there are any open nodes
             while (_open.Count > 0)
             {
-                
                 // find an open node which is "next to" a closed node
                 // then carve a path from it to the closed node, then
                 // carve a path in open nodes
@@ -272,7 +271,7 @@ namespace SimpleWorld.MazeGenerator
                     point = GetPositionInDirection(point, nextDirection.Value);
                     previousDirection = OppositeDirection(nextDirection.Value);
                     Grid[point.X, point.Y] = previousDirection;
-                    _open.Remove((point));
+                    _open.Remove(point);
                     
                     if (IsOpen(GetPositionInDirection(point, NodeFlag.North)))
                         _open.Add(GetPositionInDirection(point, NodeFlag.North));
@@ -307,14 +306,14 @@ namespace SimpleWorld.MazeGenerator
                         break;
                     case Mode.Turn when !triedTurn:
                         triedTurn = true;
-                        var turnDirection = TryCurveTurn(point, previousDirection);
+                        var turnDirection = TryCarveTurn(point, previousDirection);
                         if (turnDirection != null)
                             return turnDirection;
                         else
                             mode = Mode.Line;
                         break;
                     case Mode.Fork:
-                        var forkDirection = TryCurveFork(point, previousDirection);
+                        var forkDirection = TryCarveFork(point, previousDirection);
                         if (forkDirection != null)
                             return forkDirection;
                         else
@@ -335,7 +334,7 @@ namespace SimpleWorld.MazeGenerator
             return toDirection;
         }
 
-        private NodeFlag? TryCurveTurn(Point point, NodeFlag fromNodeFlag)
+        private NodeFlag? TryCarveTurn(Point point, NodeFlag fromNodeFlag)
         {
             var toDirection = RandomDirection(new[] {fromNodeFlag, OppositeDirection(fromNodeFlag)});
 
@@ -347,9 +346,12 @@ namespace SimpleWorld.MazeGenerator
             return toDirection;
         }
 
-        private NodeFlag? TryCurveFork(Point point, NodeFlag fromNodeFlag)
+        private NodeFlag? TryCarveFork(Point point, NodeFlag fromNodeFlag)
         {
-            var nextDirection = RandomDirection(new[] {fromNodeFlag});
+            var nextDirection = 
+                RandomModeLineOrTurn() == Mode.Line ? 
+                    OppositeDirection(fromNodeFlag) : 
+                    RandomDirection(new[] {fromNodeFlag | OppositeDirection(fromNodeFlag)});
             var exitDirection = RandomDirection(new[] {fromNodeFlag, nextDirection});
             if (!IsOpen(GetPositionInDirection(point, nextDirection)) || !IsOpen(GetPositionInDirection(point, exitDirection))) return null;
             Grid[point.X, point.Y] |= nextDirection | exitDirection;

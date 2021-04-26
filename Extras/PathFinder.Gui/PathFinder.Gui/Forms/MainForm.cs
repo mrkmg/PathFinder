@@ -120,10 +120,11 @@ namespace PathFinder.Gui.Forms
                     {
                         LineWeight = (int) Math.Pow(_mazeInitLineWeight.Value, MazeOptionsScale), 
                         TurnWeight = (int) Math.Pow(_mazeInitTurnWeight.Value, MazeOptionsScale), 
-                        ForkWeight = (int) Math.Pow(_madeInitForkWeight.Value, MazeOptionsScale),
+                        ForkWeight = (int) Math.Pow(_mazeInitForkWeight.Value, MazeOptionsScale),
                         FillEmpty = _mazeInitFillEmpty.Checked ?? false,
                         IncludeDemoRooms = _mazeInitDemoRooms.Checked ?? false,
-                        WideWalls = _mazeInitWideWalls.Checked ?? false
+                        WideWalls = _mazeInitDisplayType.Text == "1x2",
+                        WidePaths = _mazeInitDisplayType.Text == "2x1"
                     }, new Random(int.Parse(_worldSeed.Text))),
                 _ => _world
             };

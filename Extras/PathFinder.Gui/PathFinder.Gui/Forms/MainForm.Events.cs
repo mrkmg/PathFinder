@@ -52,10 +52,10 @@ namespace PathFinder.Gui.Forms
             
             _mazeInitLineWeight.ValueChanged += _worldInitChanged.Handle;
             _mazeInitTurnWeight.ValueChanged += _worldInitChanged.Handle;
-            _madeInitForkWeight.ValueChanged += _worldInitChanged.Handle;
+            _mazeInitForkWeight.ValueChanged += _worldInitChanged.Handle;
             _mazeInitFillEmpty.CheckedChanged += _worldInitChanged.Handle;
             _mazeInitDemoRooms.CheckedChanged += _worldInitChanged.Handle;
-            _mazeInitWideWalls.CheckedChanged += _worldInitChanged.Handle;
+            _mazeInitDisplayType.TextChanged += _worldInitChanged.Handle;
             
             _newWorldButton.Click += OnNewWorldClick;
             
@@ -75,16 +75,16 @@ namespace PathFinder.Gui.Forms
             switch (_worldGenType.Text)
             {
                 case "Standard":
-                    _standardWorldOptions.Visible = true;
+                    _standardWorldOptions.Control.Visible = true;
                     _initRatio12.Visible = true;
-                    _mazeWorldOptions.Visible = false;
+                    _mazeWorldOptions.Control.Visible = false;
                     _traverserSelector.Text = "Default";
                     _traverserTable.Visible = true;
                     break;
                 case "Maze":
-                    _standardWorldOptions.Visible = false;
+                    _standardWorldOptions.Control.Visible = false;
                     _initRatio12.Visible = false;
-                    _mazeWorldOptions.Visible = true;
+                    _mazeWorldOptions.Control.Visible = true;
                     _traverserSelector.Text = "Grid";
                     _traverserTable.Visible = false;
                     break;
@@ -136,7 +136,7 @@ namespace PathFinder.Gui.Forms
             
             _mazeInitLineWeight.Value = StaticRandom.Next(MazeOptionsMax);
             _mazeInitTurnWeight.Value = StaticRandom.Next(MazeOptionsMax);
-            _madeInitForkWeight.Value = StaticRandom.Next(MazeOptionsMax);
+            _mazeInitForkWeight.Value = StaticRandom.Next(MazeOptionsMax);
             
             KillRunning();
             _mapWidget.Clear();
