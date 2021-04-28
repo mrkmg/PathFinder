@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="Eto.Forms" Version="2.5.10" />
+        <PackageReference Include="Gravy.ImmutableGeometry" Version="0.1.0-alpha" />
     </ItemGroup>
 
     <ItemGroup>

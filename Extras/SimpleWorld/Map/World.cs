@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+using ImmutableGeometry;
 using JetBrains.Annotations;
 using SharpNoise;
 using SharpNoise.Builders;
@@ -135,15 +135,15 @@ namespace SimpleWorld.Map
                 }
             }
             _maze.Generate();
-            PopulateMazeWorldPositions(init, cols, rows);
+            PopulateMazeWorldPositions(init);
         }
 
-        private void PopulateMazeWorldPositions(MazeInitializationOptions init, int cols, int rows)
+        private void PopulateMazeWorldPositions(MazeInitializationOptions init)
         {
             var dx = init.WideWalls || init.WidePaths ? 3 : 2;
             var dy = init.WideWalls || init.WidePaths ? 3 : 2;
-            for (var x = 0; x < cols; x++)
-            for (var y = 0; y < rows; y++)
+            for (var x = 0; x < _maze.Size.Width; x++)
+            for (var y = 0; y < _maze.Size.Height; y++)
             {
                 var wx = x * dx;
                 var wy = y * dy;

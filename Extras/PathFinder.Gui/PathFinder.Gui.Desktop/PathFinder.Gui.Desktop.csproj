@@ -12,6 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="Eto.Forms" Version="2.5.10" />
+        <PackageReference Include="Gravy.ImmutableGeometry" Version="0.1.0-alpha" />
         <PackageReference Condition="'$(OS)' == 'Unix'" Include="Eto.Platform.Gtk" Version="2.5.10" />
         <PackageReference Condition="'$(OS)' == 'Windows_NT'" Include="Eto.Platform.Wpf" Version="2.5.10" />
         <PackageReference Condition="'$(OS)' == 'Unix'" Include="GtkSharp" Version="3.24.24.34" />
