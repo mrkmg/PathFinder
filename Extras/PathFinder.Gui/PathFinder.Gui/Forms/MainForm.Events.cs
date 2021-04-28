@@ -70,7 +70,7 @@ namespace PathFinder.Gui.Forms
             _worldInitChanged.Fired += OnWorldInitChanged;
         }
 
-        private void WorldGenChanged(object? sender, EventArgs e)
+        private void WorldGenChanged(object sender, EventArgs e)
         {
             switch (_worldGenType.Text)
             {
@@ -96,13 +96,13 @@ namespace PathFinder.Gui.Forms
             MakeWorld();
         }
 
-        private void DoBlindSearchChanged(object? sender, EventArgs e)
+        private void DoBlindSearchChanged(object sender, EventArgs e)
         {
             if (_world == null) return;
             Reset();
         }
 
-        private void OnTraverserChanged(object? sender, EventArgs e)
+        private void OnTraverserChanged(object sender, EventArgs e)
         {
             _stepSizeStepper.Enabled = _traverserSelector.Text == "LargeStep";
             _moveCostStepper.MaxValue = _traverserSelector.Text == "Level" ? 500 : 5;
@@ -112,7 +112,7 @@ namespace PathFinder.Gui.Forms
             Reset();
         }
 
-        private void OnStepSizeChanged(object? sender, EventArgs e)
+        private void OnStepSizeChanged(object sender, EventArgs e)
         {
             if (_world == null) return;
             if (_traverserSelector.Text != "LargeStep") return;
@@ -120,7 +120,7 @@ namespace PathFinder.Gui.Forms
             Reset();
         }
 
-        private void OnNewWorldClick(object? sender, EventArgs e)
+        private void OnNewWorldClick(object sender, EventArgs e)
         {
             _initF1.Value = StaticRandom.Next(StandardOptionsMax/2);
             _initF2.Value = StaticRandom.Next(StandardOptionsMax/2) + StandardOptionsMax/2;
@@ -142,7 +142,7 @@ namespace PathFinder.Gui.Forms
             _mapWidget.Clear();
         }
 
-        private void OnWorldInitChanged(object? sender, EventArgs e)
+        private void OnWorldInitChanged(object sender, EventArgs e)
         {
             MakeWorld();
         }
