@@ -183,18 +183,22 @@ namespace PathFinder.Solvers.Generic
             }
             neighborMetaData.Status = NodeStatus.Open;
             neighborMetaData.TotalCost = neighborMetaData.FromCost + neighborMetaData.ToCost * _greedFactor;
+#if DEBUG
             var didAdd = OpenNodes.Add(ref neighborMetaData.Handle, neighborMetaData);
             Debug.Assert(didAdd, "Failed to add neighborNode to open nodes list. The comparer is probably invalid.");
+#else
+            OpenNodes.Add(ref neighborMetaData.Handle, neighborMetaData);
+#endif
         }
         
-        // For aStar, we want the node with a lowest total cost first
+        // For aStar, we want the node with the lowest total cost first
         // If total costs are the same, then the node which has a lower "to cost"
         // if to costs are the same, use the latest found node
         [DocsHidden]
         public override int Compare(GraphNodeMetaData<T> x, GraphNodeMetaData<T> y)
         {
             Debug.Assert(x != null && y != null, "Graph Nodes should never be null");
-            return x.TotalCost <  y.TotalCost ? -1
+            return x!.TotalCost <  y!.TotalCost ? -1
                 : x.TotalCost >  y.TotalCost ?  1
                 : x.ToCost    <  y.ToCost    ? -1
                 : x.ToCost    >  y.ToCost    ?  1
