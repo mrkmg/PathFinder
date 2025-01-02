@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <PackageVersion>1.0</PackageVersion>
         <Title>PathFinderGui</Title>
         <Copyright>Copyright © 2019</Copyright>
         <Description>Description of PathFinderGui</Description>
-        <LangVersion>9</LangVersion>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Eto.Forms" Version="2.5.10" />
-        <PackageReference Include="Gravy.ImmutableGeometry" Version="0.1.0-alpha" />
+        <PackageReference Include="Gravy.ImmutableGeometry" Version="0.3.0-alpha" />
     </ItemGroup>
 
     <ItemGroup>

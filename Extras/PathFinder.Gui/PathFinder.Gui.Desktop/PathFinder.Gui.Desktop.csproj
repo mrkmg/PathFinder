@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <LangVersion>default</LangVersion>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <LangVersion>10</LangVersion>
+        <TargetFramework>net6.0-windows</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="Eto.Forms" Version="2.5.10" />
-        <PackageReference Include="Gravy.ImmutableGeometry" Version="0.1.0-alpha" />
+        <PackageReference Include="Gravy.ImmutableGeometry" Version="0.3.0-alpha" />
         <PackageReference Condition="'$(OS)' == 'Unix'" Include="Eto.Platform.Gtk" Version="2.5.10" />
         <PackageReference Condition="'$(OS)' == 'Windows_NT'" Include="Eto.Platform.Wpf" Version="2.5.10" />
         <PackageReference Condition="'$(OS)' == 'Unix'" Include="GtkSharp" Version="3.24.24.34" />
