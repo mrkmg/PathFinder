@@ -11,7 +11,6 @@ namespace PathFinder.Gui.Widgets
         private IList<Position> _lastBestPath;
         private ICollection<Position> _lastCheckedPoints;
 
-        
         public MapWidget() : base(1, 4)
         {
         }
@@ -70,25 +69,9 @@ namespace PathFinder.Gui.Widgets
             _lastBestPath = frameData.CurrentBestPath;
         }
 
-        public void ClearMarkers(Position startPoint, Position endPoint)
+        public void ClearMarkers()
         {
-            if (startPoint != null)
-            {
-                var p = startPoint
-                    .ToMarkerPoints(10 / Scale)
-                    .Where(IsPointInBitmap)
-                    .Select(xy => new DrawPoint(xy.x, xy.y, Colors.Transparent));
-                DrawAllPoints(2, p);
-            }
-
-            if (endPoint != null)
-            {
-                var p = endPoint
-                    .ToMarkerPoints(10 / Scale)
-                    .Where(IsPointInBitmap)
-                    .Select(xy => new DrawPoint(xy.x, xy.y, Colors.Transparent));
-                DrawAllPoints(2, p);
-            }
+            ClearLayer(2);
         }
 
         public void DrawMarkers(Position startPoint, Position endPoint)
@@ -206,6 +189,8 @@ namespace PathFinder.Gui.Widgets
                 yield return (position.X - i, position.Y + i);
                 yield return (position.X - i, position.Y - i);
             }
+
+            yield return (position.X, position.Y);
         }
 
         internal static DrawPoint AsMarkerDrawPoint(this (int x, int y) xy)

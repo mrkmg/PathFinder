@@ -152,7 +152,7 @@ namespace PathFinder.Gui.Forms
             if (e.Key != Keys.Enter && e.Key != Keys.Tab) return;
             if (!int.TryParse(_pointsSeed.Text, out _)) return;
             KillRunning();
-            _mapWidget.ClearMarkers(_startPoint, _endPoint);
+            _mapWidget.ClearMarkers();
             SetRandomPoints();
             _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
@@ -222,7 +222,7 @@ namespace PathFinder.Gui.Forms
         {
             _pointsSeed.Text = new Random().Next(10000, 99999).ToString();
             KillRunning();
-            _mapWidget.ClearMarkers(_startPoint, _endPoint);
+            _mapWidget.ClearMarkers();
             SetRandomPoints();
             _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
@@ -231,7 +231,7 @@ namespace PathFinder.Gui.Forms
             _worldSeed.Text = new Random().Next(10000, 99999).ToString();
             _mapWidget.Clear();
             Application.Instance.RunIteration();
-            _mapWidget.ClearMarkers(_startPoint, _endPoint);
+            _mapWidget.ClearMarkers();
             MakeWorld();
             _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
@@ -246,13 +246,13 @@ namespace PathFinder.Gui.Forms
 
             if (args.Buttons == MouseButtons.Primary)
             {
-                _mapWidget.ClearMarkers(_startPoint, _endPoint);
+                _mapWidget.ClearMarkers();
                 _startPoint = position;
                 _mapWidget.DrawMarkers(_startPoint, _endPoint);
             }
             else
             {
-                _mapWidget.ClearMarkers(_startPoint, _endPoint);
+                _mapWidget.ClearMarkers();
                 _endPoint = position;
                 _mapWidget.DrawMarkers(_startPoint, _endPoint);
             }

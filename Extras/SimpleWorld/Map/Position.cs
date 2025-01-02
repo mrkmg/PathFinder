@@ -20,7 +20,6 @@ namespace SimpleWorld.Map
             X = x;
             Y = y;
             Cost = cost;
-            
             // precalculate hashcode
             var hashCode = X;
             hashCode = (hashCode * 397) ^ Y;
@@ -71,8 +70,7 @@ namespace SimpleWorld.Map
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Position) obj);
+            return obj.GetType() == GetType() && Equals((Position) obj);
         }
 
         public override int GetHashCode() => _hashCode;

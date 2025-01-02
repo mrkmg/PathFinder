@@ -35,7 +35,7 @@ namespace SimpleWorld.MazeGenerator
         
         private readonly Random _random;
         private readonly C5.HashSet<Point> _open = new ();
-        private readonly List<Rectangle> _roomRects = new ();
+        private readonly List<RoomTemplate> _rooms = new ();
         private readonly Queue<(Point Point, NodeFlag Direction)> _openPathExits = new ();
         private readonly Queue<(Point Point, NodeFlag Direction)> _roomExits = new ();
         
@@ -52,7 +52,7 @@ namespace SimpleWorld.MazeGenerator
             Size = size;
             Grid = new NodeFlag[size.Width, size.Height];
             _random = random ?? new Random();
-            StartPoint = startPoint ?? (Point) (size / 2);
+            StartPoint = startPoint ?? size / 2;
         }
 
         /// <summary>
@@ -60,23 +60,21 @@ namespace SimpleWorld.MazeGenerator
         /// </summary>
         public void AddRoom()
         {
-            const int buffer = 3;
-
-            var template = RoomTemplates.AllTemplates[_random.Next(RoomTemplates.AllTemplates.Length)];
+            var roomTemplate = RoomTemplates.AllTemplates[_random.Next(RoomTemplates.AllTemplates.Length)];
             
             for (var triesLeft = 50; triesLeft > 0; triesLeft--)
             {
                 // Randomly flip/scale/rotate/translate room
-                var testTemplate = template
+                var room = roomTemplate
                     .Mirror(_random.Next(2) == 0, _random.Next(2) == 0)
+                    // .Rotate((double)_random.Next(4)/2 * Math.PI)
                     .Scale(1 + _random.NextDouble() * Math.Min(Size.Width / 24, Size.Height / 24))
-                    .Rotate((double)_random.Next(4)/2 * Math.PI)
                     .Translate(new Vector(
                         Size.Width / 2 + _random.Next(-(Size.Width / 2), Size.Width / 2),
                         Size.Height / 2 + _random.Next(-(Size.Height / 2), Size.Height / 2)));
 
                 // get min/max with buffer of room
-                var bounds = testTemplate.Shape.Bounds.Inflate(new Size(4, 4));
+                var bounds = room.Shape.Bounds.Inflate(4, 4);
                 
                 // the room is too close to the center
                 if (bounds.Contains(StartPoint)) continue;
@@ -85,11 +83,10 @@ namespace SimpleWorld.MazeGenerator
                 if (!new Rectangle(0, 0, Size.Width, Size.Height).Contains(bounds))
                     continue;
                 
-                // if any other room intersects current room
-                if (_roomRects.Any(r => r.IntersectsWith(bounds))) continue;
+                // if any other room bounds intersects bounds
+                if (_rooms.Any(r => r.Shape.Bounds.IntersectsWith(bounds))) continue;
 
-                _roomRects.Add(bounds);
-                AddRoom(testTemplate);
+                AddRoom(room);
                 break;
             }
         }
@@ -317,33 +314,27 @@ namespace SimpleWorld.MazeGenerator
         {
             return _random.Next(LineWeight + TurnWeight) < LineWeight ? Mode.Line : Mode.Turn;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         private bool IsInMaze(Point point) => IsInMaze(point.X, point.Y);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         private bool IsInMaze(int x, int y) => x >= 0 && x < Size.Width && y >= 0 && y < Size.Height;
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsClosed(Point point) => IsClosed(point.X, point.Y);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         private bool IsClosed(int x, int y) => IsInMaze(x, y) && Grid[x, y] != 0;
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsRoom(Point point) => IsRoom(point.X, point.Y);
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsRoomEdge(Point point) => IsRoomEdge(point.X, point.Y);
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsRoomEdge(int x, int y) => IsInMaze(x, y) && Grid[x, y].IsRoomEdge();
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsRoom(int x, int y) => IsInMaze(x, y) && Grid[x, y].IsRoom();
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsOpen(Point point) => IsOpen(point.X, point.Y);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         private bool IsOpen(int x, int y) => IsInMaze(x, y) && Grid[x, y] == 0;
+        
         private static NodeFlag OppositeDirection(NodeFlag d) =>
             d switch {
                 NodeFlag.North => NodeFlag.South,
@@ -381,50 +372,10 @@ namespace SimpleWorld.MazeGenerator
         };
     }
 
-    // TODO Validate
-    public class Polygon : IReadOnlyList<Point>
-    {
-        public readonly Rectangle Bounds;
-        public Point Center => Bounds.Center;
-        
-        private readonly IReadOnlyList<Point> _points;
-
-        public Polygon(IEnumerable<Point> points)
-        {
-            _points = new List<Point>(points);
-            var l = int.MaxValue;
-            var r = int.MinValue;
-            var t = int.MaxValue;
-            var b = int.MinValue;
-            foreach (var p in _points)
-            {
-                if (p.X < l) l = p.X;
-                if (p.X > r) r = p.X;
-                if (p.Y < t) t = p.Y;
-                if (p.Y > b) b = p.Y;
-            }
-            Bounds = Rectangle.FromLTRB(l, t, r, b);
-        }
-
-        public IEnumerator<Point> GetEnumerator()
-        {
-            return _points.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable) _points).GetEnumerator();
-        }
-
-        public int Count => _points.Count;
-
-        public Point this[int index] => _points[index];
-    }
-
     public class RoomTemplate
     {
         public readonly Shape Shape;
-        public readonly IReadOnlyCollection<Point> Exits;
+        public readonly Points Exits;
 
         public RoomTemplate(IEnumerable<Point> polygonPoints, IEnumerable<Point> exits) :
             this(new Shape(polygonPoints), exits) { }
@@ -432,7 +383,7 @@ namespace SimpleWorld.MazeGenerator
         public RoomTemplate(Shape shape, IEnumerable<Point> exits)
         {
             Shape = shape;
-            Exits = new List<Point>(exits);
+            Exits = new(exits);
         }
     }
 

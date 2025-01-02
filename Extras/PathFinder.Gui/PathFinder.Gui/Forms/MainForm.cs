@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Eto.Forms;
 using PathFinder.Graphs;
 using PathFinder.Solvers.Generic;
@@ -34,6 +35,21 @@ namespace PathFinder.Gui.Forms
             _timer.Elapsed += (_, _) => ProcessFrame();
         }
 
+        private void CheckRandomPoints()
+        {
+            if (_world == null) return;
+            if (_startPoint == null || _endPoint == null)
+            {
+                SetRandomPoints();
+                return;
+            }
+
+            _startPoint = _world.GetPosition(_startPoint.X, _startPoint.Y);
+            _endPoint = _world.GetPosition(_endPoint.X, _endPoint.Y);
+            
+            if (_startPoint == null || _endPoint == null) SetRandomPoints();
+        }
+
         private void SetRandomPoints()
         {
             if (_world == null) return;
@@ -42,7 +58,7 @@ namespace PathFinder.Gui.Forms
             var worldSize = Math.Sqrt(_world.XSize * _world.XSize + _world.YSize * _world.YSize);
             var targetSize = (int)(worldSize * 0.75);
                 
-            _mapWidget.ClearMarkers(_startPoint, _endPoint);
+            _mapWidget.ClearMarkers();
             Position randomFromNode = null;
             Position randomToNode = null;
 
@@ -128,8 +144,9 @@ namespace PathFinder.Gui.Forms
                     }, new Random(int.Parse(_worldSeed.Text))),
                 _ => _world
             };
-            SetRandomPoints();
             _mapWidget.DrawWorld(_world);
+            CheckRandomPoints();
+            _mapWidget.DrawMarkers(_startPoint, _endPoint);
         }
 
         private void Go()
